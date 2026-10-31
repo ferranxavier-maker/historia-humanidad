@@ -2823,10 +2823,9 @@ function dibujarEventos(yL){
   // Si hay más de un libro a la vista, se reserva siempre el sitio de la fila de libros de arriba,
   // para que un libro que ya se veía no desaparezca cuando se apilan más personas.
   const librosVisibles = EVENTOS.filter(e => e.fila === "libros" && visib(e) && xDe(e.año) > -300 && xDe(e.año) < W + 300).length;
-  CARRILES.personas = FILAS.libros.off
-    // Sin libros: las personas se apilan hasta el título
-    ? Math.min(7, 1 + Math.max(0, Math.floor((yFila("personas", yBase) - 10 - finTitulo) / ALTO_CARRIL)))
-    : carrilesPersonas(hueco - ALTO_LIBRO);   // siempre se reserva la fila de libros de arriba (estable al hacer zoom)
+  // Las personas se apilan hasta el título, haya libros o no: los libros nunca les quitan sitio.
+  // Los libros van encima de las personas; si ahí no caben, bajan a un hueco entre ellas o no salen.
+  CARRILES.personas = Math.min(7, 1 + Math.max(0, Math.floor((yFila("personas", yBase) - 10 - finTitulo) / ALTO_CARRIL)));
   const items = [];
   // Zonas de tiempo fijas para cada zoom (tamaño potencia de 2): al acercarse, cada zona se parte
   // en dos y la zona afectada por algo que no cabe solo se encoge.
@@ -2842,7 +2841,9 @@ function dibujarEventos(yL){
     const F = FILAS[fila];
     const sube = F.lado < 0 && F.n > FILAS.personas.n ? extra : 0;
     const yF = yFila(fila, yL) - sube;
-    items.push(...colocar(fila, yF, fila === "libros" ? (usarFilaLibros && cabeFilaLibros(yF) ? 2 : 1) : 0).its);
+    const its = colocar(fila, yF, fila === "libros" ? (usarFilaLibros && cabeFilaLibros(yF) ? 2 : 1) : 0).its;
+    if (fila === "libros") for (const it of its) if (it.cabe && it.yF - 38 < finTitulo + 4) it.cabe = false;   // no se meten bajo el título
+    items.push(...its);
   }
   // Orden común a todas las filas: lo que no cabe en una fila bloquea, cerca de él, lo más reciente
   // de todas las filas (las personas se colocan primero; para las demás se repasa al final).
@@ -2860,7 +2861,7 @@ function dibujarEventos(yL){
     // Por encima de las personas de su tramo (y de la línea)
     let tope = yL - 14;
     for (const o of cerca) if (o.e.cara) tope = Math.min(tope, cajaY(o)[0] - 6);
-    for (let y = it.yF; y + 66 <= tope; y += 4){
+    for (let y = Math.max(it.yF, finTitulo + 44); y + 66 <= tope; y += 4){   // nunca bajo el título
       if (cerca.some(o => { const [a1, b1] = cajaY(o); return y - 38 < b1 + 4 && y + 66 > a1 - 4; })) continue;
       it.cabe = true; it.yF = y; it.escala = 1; it.carril = 1;
       break;
