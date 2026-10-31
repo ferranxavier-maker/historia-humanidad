@@ -1211,6 +1211,16 @@ const EVENTOS = [
       { h: "Itaipú", p: "Su gran obra fue la presa de Itaipú, construida con Brasil en el río Paraná entre 1975 y 1984, durante años la central hidroeléctrica más potente del mundo. La economía creció en los setenta, pero el régimen estuvo marcado por la corrupción y el contrabando, que enriquecieron a militares y allegados." },
       { h: "La caída", p: "En la noche del 2 al 3 de febrero de 1989, el general Andrés Rodríguez, su consuegro y número dos del Ejército, lo derrocó con un golpe. Stroessner se exilió en Brasil y nunca volvió a Paraguay ni fue juzgado. Murió en Brasilia el 16 de agosto de 2006, con 93 años." }
     ] },
+  { nace: "1925-08-02", f: "2013-05-17", fila: "personas", bandera: "argentina", t: "Jorge Rafael Videla", nivel: 2, corto: "Videla", cara: "videla",
+    resumen: "Nació en Mercedes (Buenos Aires) el 2 de agosto de 1925 y murió en la cárcel de Marcos Paz el 17 de mayo de 2013. Comandante en jefe del Ejército, encabezó el golpe de Estado del 24 de marzo de 1976 y presidió la dictadura militar argentina hasta 1981. Bajo su gobierno se organizó el terrorismo de Estado: miles de personas fueron secuestradas, torturadas y asesinadas en centros clandestinos, los «desaparecidos». Fue juzgado y condenado a cadena perpetua.",
+    detalle: [
+      { h: "Un militar de carrera", p: "Hijo de un coronel, ingresó en el Colegio Militar de la Nación y salió oficial de infantería en 1944. Hizo una carrera sobre todo administrativa y de enseñanza militar. En 1975, durante el gobierno de María Estela Martínez de Perón, viuda de Juan Domingo Perón, fue nombrado comandante en jefe del Ejército, en un país sacudido por la violencia de las guerrillas y de grupos parapoliciales como la Triple A." },
+      { h: "El golpe de 1976", p: "El 24 de marzo de 1976 las Fuerzas Armadas derrocaron a la presidenta y una Junta Militar, formada por Videla, el almirante Emilio Massera y el brigadier Orlando Agosti, tomó el poder con el nombre de «Proceso de Reorganización Nacional». Videla fue nombrado presidente y se disolvieron el Congreso y los partidos políticos." },
+      { h: "Los desaparecidos", p: "Las Fuerzas Armadas montaron cientos de centros clandestinos de detención, como el de la Escuela de Mecánica de la Armada (ESMA), donde los secuestrados eran torturados y muchos asesinados; a algunos los arrojaban vivos al mar desde aviones, los «vuelos de la muerte». La comisión de la verdad de 1984, la CONADEP, documentó unos 9.000 desaparecidos, y los organismos de derechos humanos calculan unos 30.000. Cientos de bebés nacidos en cautiverio fueron robados y entregados a otras familias." },
+      { h: "Madres y Abuelas", p: "Desde 1977, las madres de los desaparecidos se reunieron cada jueves en la plaza de Mayo de Buenos Aires para reclamar por sus hijos: las Madres de Plaza de Mayo. Las Abuelas de Plaza de Mayo buscan desde entonces a los nietos robados y han logrado identificar a más de un centenar. En 1978 el régimen aprovechó el Mundial de fútbol, celebrado en Argentina, como propaganda." },
+      { h: "Después del poder", p: "En 1981 lo sucedió en la presidencia el general Roberto Viola. La dictadura se hundió tras la derrota en la guerra de las Malvinas de 1982, y en 1983 Raúl Alfonsín ganó las elecciones. En el Juicio a las Juntas de 1985, Videla fue condenado a cadena perpetua, pero en 1990 el presidente Carlos Menem lo indultó." },
+      { h: "Nuevos juicios y muerte", p: "El robo de bebés no estaba incluido en el indulto, y en 1998 volvió a ser detenido. Tras la anulación de las leyes de impunidad, en 2010 fue condenado de nuevo a cadena perpetua por crímenes contra la humanidad, y en 2012 a 50 años por el plan sistemático de robo de bebés. Murió en la cárcel de Marcos Paz el 17 de mayo de 2013, con 87 años." }
+    ] },
   { nace: "1889-04-20", f: "1945-04-30", fila: "personas", bandera: "nazi", t: "Adolf Hitler", nivel: 2, corto: "Hitler", cara: "hitler",
     resumen: "Nació en Braunau am Inn (Austria) el 20 de abril de 1889 y murió en Berlín el 30 de abril de 1945. Líder del partido nazi, fue canciller de Alemania desde 1933 y gobernó como dictador desde 1934. Su régimen desencadenó la Segunda Guerra Mundial al invadir Polonia en 1939 y fue responsable del Holocausto, en el que fueron asesinados unos seis millones de judíos y millones de personas más. Se suicidó en su búnker de Berlín días antes de la rendición alemana.",
     detalle: [
@@ -1880,6 +1890,13 @@ function bandera(cx, cy, tipo){
     ctx.strokeStyle = "#2e7d32"; ctx.lineWidth = .9;
     ctx.beginPath(); ctx.arc(cx, cy, 2.6, 0, Math.PI * 2); ctx.stroke();
     ctx.fillStyle = "#ffd21f"; ctx.beginPath(); ctx.arc(cx, cy, 1.1, 0, Math.PI * 2); ctx.fill();
+  }
+  if (tipo === "argentina"){                     // celeste, blanca y celeste, con el Sol de Mayo
+    ctx.fillStyle = "#74acdf"; ctx.fillRect(x0 - 2, y0 - 3, w + 4, h + 6);
+    ctx.fillStyle = "#fffdf7"; ctx.fillRect(x0 - 2, y0 + h / 3, w + 4, h / 3);
+    ctx.strokeStyle = "#f6b40e"; ctx.lineWidth = .7;
+    for (let i = 0; i < 12; i++){ const a = i * Math.PI / 6; ctx.beginPath(); ctx.moveTo(cx + Math.cos(a) * 1.4, cy + Math.sin(a) * 1.4); ctx.lineTo(cx + Math.cos(a) * 2.5, cy + Math.sin(a) * 2.5); ctx.stroke(); }
+    ctx.fillStyle = "#f6b40e"; ctx.beginPath(); ctx.arc(cx, cy, 1.3, 0, Math.PI * 2); ctx.fill();
   }
   if (tipo === "nazi"){
     ctx.fillStyle = "#c8102e"; ctx.fillRect(x0 - 2, y0 - 3, w + 4, h + 6);
@@ -3124,6 +3141,41 @@ function cara(quien, x, y, r, s){
     for (const k of [-1, 1]){ ctx.beginPath(); ctx.moveTo(x + k * r * .5, y + r * .2); ctx.quadraticCurveTo(x + k * r * .55, y + r * .45, x + k * r * .4, y + r * .62); ctx.stroke(); }
     ctx.beginPath(); ctx.moveTo(x - r * .34, y + r * .82); ctx.quadraticCurveTo(x, y + r * .97, x + r * .34, y + r * .82); ctx.stroke();
   }
+  if (quien === "videla"){
+    ctx.strokeStyle = TINTA; ctx.fillStyle = TINTA; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    // Pelo oscuro peinado hacia atrás, con entradas
+    ctx.beginPath();
+    ctx.moveTo(x - r * .95, y - r * .1);
+    ctx.quadraticCurveTo(x - r * 1.06, y - r * .95, x, y - r * 1.08);
+    ctx.quadraticCurveTo(x + r * 1.06, y - r * .95, x + r * .95, y - r * .1);
+    ctx.quadraticCurveTo(x + r * .86, y - r * .45, x + r * .6, y - r * .5);
+    ctx.quadraticCurveTo(x + r * .32, y - r * .58, x, y - r * .62);
+    ctx.quadraticCurveTo(x - r * .32, y - r * .58, x - r * .6, y - r * .5);
+    ctx.quadraticCurveTo(x - r * .86, y - r * .45, x - r * .95, y - r * .1);
+    ctx.fill();
+    ctx.save(); ctx.strokeStyle = "rgba(255, 253, 247, .55)"; ctx.lineWidth = .9;
+    for (let k = -2; k <= 2; k++){ ctx.beginPath(); ctx.moveTo(x + k * r * .2, y - r * .62); ctx.quadraticCurveTo(x + k * r * .23, y - r * .82, x + k * r * .25, y - r * (.98 - Math.abs(k) * .1)); ctx.stroke(); }
+    ctx.restore();
+    // Ojos hundidos y cejas oscuras
+    for (const k of [-1, 1]){
+      ctx.beginPath(); ctx.arc(x + k * r * .28, y - r * .08, 1.8, 0, Math.PI * 2); ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x + k * r * .12, y - r * .24); ctx.lineTo(x + k * r * .44, y - r * .28); ctx.stroke();
+    }
+    // Nariz larga
+    raya(x + r * .02, y - r * .08, x - r * .05, y + r * .26, s + 6, 1.4);
+    // Bigote grande y espeso
+    ctx.beginPath();
+    ctx.moveTo(x - r * .34, y + r * .5);
+    ctx.quadraticCurveTo(x - r * .26, y + r * .3, x, y + r * .33);
+    ctx.quadraticCurveTo(x + r * .26, y + r * .3, x + r * .34, y + r * .5);
+    ctx.quadraticCurveTo(x, y + r * .44, x - r * .34, y + r * .5); ctx.fill();
+    // Boca fina, mejillas hundidas y cara alargada
+    ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(x - r * .12, y + r * .62); ctx.lineTo(x + r * .12, y + r * .62); ctx.stroke();
+    ctx.lineWidth = 1.1;
+    for (const k of [-1, 1]){ ctx.beginPath(); ctx.moveTo(x + k * r * .5, y + r * .02); ctx.quadraticCurveTo(x + k * r * .42, y + r * .36, x + k * r * .44, y + r * .62); ctx.stroke(); }
+  }
   if (quien === "hitler"){
     // Pelo con el flequillo cayendo sobre la frente
     ctx.beginPath();
@@ -4260,6 +4312,27 @@ Capilla Sixtina
 Juicio Final|El Juicio Final (Miguel Ángel)
 Galería de la Academia|Galería de la Academia de Florencia
 Piedad|La Piedad (Miguel Ángel)
+Mercedes|Mercedes (Buenos Aires)
+Marcos Paz|Marcos Paz (Buenos Aires)
+Colegio Militar de la Nación
+María Estela Martínez de Perón
+Juan Domingo Perón
+Triple A|Alianza Anticomunista Argentina
+Emilio Massera|Emilio Eduardo Massera
+Orlando Agosti|Orlando Ramón Agosti
+Proceso de Reorganización Nacional
+Escuela de Mecánica de la Armada
+vuelos de la muerte|Vuelos de la muerte
+CONADEP|Comisión Nacional sobre la Desaparición de Personas
+Madres de Plaza de Mayo
+Abuelas de Plaza de Mayo
+plaza de Mayo|Plaza de Mayo
+Mundial de fútbol|Copa Mundial de Fútbol de 1978
+Roberto Viola|Roberto Eduardo Viola
+guerra de las Malvinas|Guerra de las Malvinas
+Raúl Alfonsín
+Juicio a las Juntas
+Carlos Menem
 Encarnación|Encarnación (Paraguay)
 Brasilia
 guerra del Chaco|Guerra del Chaco
