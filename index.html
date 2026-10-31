@@ -1181,6 +1181,16 @@ const EVENTOS = [
       { h: "La caída", p: "Los Jemeres Rojos atacaron también a Vietnam, que a finales de 1978 invadió Camboya y el 7 de enero de 1979 tomó Nom Pen. Pol Pot huyó a la selva junto a la frontera con Tailandia y siguió la guerra durante años. Con el apoyo de China, y ante la oposición de muchos países a la ocupación vietnamita, los Jemeres Rojos conservaron el asiento de Camboya en la ONU hasta comienzos de los noventa." },
       { h: "El final", p: "En 1997 mandó matar a uno de sus antiguos compañeros, Son Sen, junto a su familia, y sus propios seguidores lo detuvieron y lo condenaron en un juicio improvisado a arresto domiciliario. Murió el 15 de abril de 1998, oficialmente de un ataque al corazón, sin haber sido juzgado nunca por sus crímenes. Años después, un tribunal apoyado por la ONU condenó a varios dirigentes de los Jemeres Rojos, y en 2018 sentenció por genocidio a Nuon Chea y Khieu Samphan." }
     ] },
+  { nace: "1926-08-13", f: "2016-11-25", fila: "personas", bandera: "cuba", t: "Fidel Castro", nivel: 2, corto: "Castro", cara: "castro",
+    resumen: "Nació en Birán (Cuba) el 13 de agosto de 1926 y murió en La Habana el 25 de noviembre de 2016. Abogado y guerrillero, encabezó la revolución que derrocó al dictador Fulgencio Batista en 1959 y gobernó Cuba durante casi medio siglo, hasta 2008, al frente de un régimen comunista de partido único aliado de la Unión Soviética. Sus defensores destacan la educación y la sanidad universales; sus críticos, la falta de libertades, los presos políticos y el exilio de cientos de miles de cubanos.",
+    detalle: [
+      { h: "Hijo de un gallego", p: "Era hijo de Ángel Castro, un emigrante gallego de Láncara (Lugo) que se había hecho terrateniente en el oriente de Cuba, y de Lina Ruz. Estudió con los jesuitas en el colegio de Belén de La Habana y se licenció en Derecho en la Universidad de La Habana, donde empezó a hacer política." },
+      { h: "Moncada y Sierra Maestra", p: "En 1952 el general Fulgencio Batista dio un golpe de Estado. El 26 de julio de 1953, Castro dirigió el asalto al cuartel Moncada, en Santiago de Cuba, que fracasó; en su juicio pronunció el alegato «La historia me absolverá». Amnistiado en 1955, se exilió en México, donde conoció al argentino Ernesto «Che» Guevara. En diciembre de 1956 desembarcó en Cuba con 82 hombres a bordo del yate Granma y empezó una guerrilla en la Sierra Maestra. Batista huyó el 1 de enero de 1959." },
+      { h: "La revolución", p: "Nombrado primer ministro en febrero de 1959, nacionalizó tierras, empresas y bancos, muchos de ellos estadounidenses, y cientos de partidarios de Batista fueron fusilados tras juicios sumarios. Estados Unidos rompió relaciones e impuso un embargo, y en abril de 1961 fracasó en Playa Girón, la bahía de Cochinos, una invasión de exiliados organizada por la CIA. Castro proclamó entonces el carácter socialista de la revolución y se alió con la Unión Soviética." },
+      { h: "La crisis de los misiles", p: "En octubre de 1962, Estados Unidos descubrió misiles nucleares soviéticos instalados en Cuba. Durante trece días, Kennedy y Jruschov llevaron al mundo al borde de una guerra nuclear, hasta que la Unión Soviética aceptó retirarlos a cambio de que Estados Unidos no invadiera la isla. La CIA intentó además asesinar a Castro en varias ocasiones." },
+      { h: "Luces y sombras", p: "El régimen llevó a cabo una gran campaña de alfabetización en 1961 y extendió la educación y la sanidad gratuitas a toda la población. Al mismo tiempo, Cuba se convirtió en un Estado de partido único, sin elecciones libres ni libertad de prensa, con miles de presos políticos y campos de trabajo como las UMAP, adonde se envió entre otros a homosexuales y religiosos. Cientos de miles de cubanos se exiliaron, como los unos 125.000 que salieron en el éxodo del Mariel de 1980. Castro envió además tropas a Angola y otros países de África." },
+      { h: "El Periodo Especial y la retirada", p: "Con el hundimiento de la Unión Soviética en 1991, Cuba perdió su gran apoyo económico y entró en el llamado Periodo Especial, años de escasez y apagones; en 1994 miles de cubanos huyeron en balsas hacia Florida. En 2006, enfermo, cedió el poder a su hermano Raúl, que lo sustituyó oficialmente en 2008. Murió en La Habana el 25 de noviembre de 2016, con 90 años, y sus cenizas reposan en el cementerio de Santa Ifigenia, en Santiago de Cuba." }
+    ] },
   { nace: "1889-04-20", f: "1945-04-30", fila: "personas", bandera: "nazi", t: "Adolf Hitler", nivel: 2, corto: "Hitler", cara: "hitler",
     resumen: "Nació en Braunau am Inn (Austria) el 20 de abril de 1889 y murió en Berlín el 30 de abril de 1945. Líder del partido nazi, fue canciller de Alemania desde 1933 y gobernó como dictador desde 1934. Su régimen desencadenó la Segunda Guerra Mundial al invadir Polonia en 1939 y fue responsable del Holocausto, en el que fueron asesinados unos seis millones de judíos y millones de personas más. Se suicidó en su búnker de Berlín días antes de la rendición alemana.",
     detalle: [
@@ -1827,6 +1837,13 @@ function bandera(cx, cy, tipo){
       ctx.beginPath(); ctx.moveTo(bx + k * 3, by - 1.4); ctx.lineTo(bx + k * 4.4, by - 6); ctx.lineTo(bx + k * 5.8, by - 1.4); ctx.fill();
       ctx.fillRect(bx + k * 6.5 - 1, by - 3.4, 2, 2);
     }
+  }
+  if (tipo === "cuba"){                          // cinco franjas azules y blancas, triángulo rojo con estrella blanca
+    for (let i = 0; i < 5; i++){ ctx.fillStyle = i % 2 ? "#fffdf7" : "#002a8f"; ctx.fillRect(x0 - 2, y0 - 3 + i * (h + 6) / 5, w + 4, (h + 6) / 5 + .5); }
+    ctx.fillStyle = "#cf142b"; ctx.beginPath(); ctx.moveTo(x0 - 2, y0 - 3); ctx.lineTo(x0 + w * .45, cy); ctx.lineTo(x0 - 2, y0 + h + 3); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#fffdf7"; ctx.beginPath();
+    for (let i = 0; i < 10; i++){ const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? 1 : 2.4; ctx.lineTo(x0 + 4.2 + Math.cos(a) * rr, cy + Math.sin(a) * rr); }
+    ctx.fill();
   }
   if (tipo === "nazi"){
     ctx.fillStyle = "#c8102e"; ctx.fillRect(x0 - 2, y0 - 3, w + 4, h + 6);
@@ -2956,6 +2973,44 @@ function cara(quien, x, y, r, s){
     ctx.beginPath(); ctx.moveTo(x - r * .22, y + r * .5); ctx.quadraticCurveTo(x, y + r * .6, x + r * .22, y + r * .5); ctx.stroke();
     ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(x - r * .3, y + r * .84); ctx.quadraticCurveTo(x, y + r * .94, x + r * .3, y + r * .84); ctx.stroke();
+  }
+  if (quien === "castro"){
+    ctx.strokeStyle = TINTA; ctx.fillStyle = TINTA; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    // Gorra militar verde oliva de visera
+    ctx.beginPath();
+    ctx.moveTo(x - r * .95, y - r * .45);
+    ctx.lineTo(x - r * .88, y - r * 1.1); ctx.quadraticCurveTo(x, y - r * 1.25, x + r * .88, y - r * 1.1);
+    ctx.lineTo(x + r * .95, y - r * .45); ctx.closePath();
+    ctx.fillStyle = "rgba(95, 105, 60, .97)"; ctx.fill(); ctx.lineWidth = 1.8; ctx.stroke();
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x - r * .9, y - r * .62); ctx.lineTo(x + r * .9, y - r * .62); ctx.stroke();
+    ctx.fillStyle = TINTA;                        // visera
+    ctx.beginPath(); ctx.moveTo(x - r * .92, y - r * .45); ctx.quadraticCurveTo(x, y - r * .12, x + r * .92, y - r * .45);
+    ctx.quadraticCurveTo(x, y - r * .32, x - r * .92, y - r * .45); ctx.fill();
+    // Barba negra muy poblada, con bigote
+    ctx.beginPath();
+    ctx.moveTo(x - r * .95, y - r * .2);
+    ctx.quadraticCurveTo(x - r * 1.05, y + r * .85, x - r * .3, y + r * 1.3);
+    ctx.quadraticCurveTo(x, y + r * 1.45, x + r * .3, y + r * 1.3);
+    ctx.quadraticCurveTo(x + r * 1.05, y + r * .85, x + r * .95, y - r * .2);
+    ctx.quadraticCurveTo(x + r * .65, y + r * .25, x + r * .32, y + r * .26);
+    ctx.quadraticCurveTo(x, y + r * .18, x - r * .32, y + r * .26);
+    ctx.quadraticCurveTo(x - r * .65, y + r * .25, x - r * .95, y - r * .2);
+    ctx.fillStyle = "rgba(35, 32, 30, .97)"; ctx.fill();
+    ctx.save(); ctx.strokeStyle = "rgba(255, 253, 247, .45)"; ctx.lineWidth = .9;   // pelos de la barba
+    for (let k = -3; k <= 3; k++){ ctx.beginPath(); ctx.moveTo(x + k * r * .18, y + r * (.5 + Math.abs(k) * .02)); ctx.quadraticCurveTo(x + k * r * .2, y + r * .85, x + k * r * .14, y + r * (1.15 - Math.abs(k) * .08)); ctx.stroke(); }
+    ctx.restore();
+    // Ojos y cejas
+    ctx.fillStyle = TINTA;
+    for (const k of [-1, 1]){
+      ctx.beginPath(); ctx.arc(x + k * r * .3, y - r * .1, 1.9, 0, Math.PI * 2); ctx.fill();
+    }
+    // Nariz grande y recta
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x + r * .02, y - r * .14); ctx.lineTo(x + r * .1, y + r * .16); ctx.lineTo(x - r * .06, y + r * .2); ctx.stroke();
+    // Boca entre la barba
+    ctx.save(); ctx.strokeStyle = "#fffdf7"; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(x - r * .12, y + r * .44); ctx.lineTo(x + r * .12, y + r * .44); ctx.stroke(); ctx.restore();
   }
   if (quien === "hitler"){
     // Pelo con el flequillo cayendo sobre la frente
@@ -4093,6 +4148,29 @@ Capilla Sixtina
 Juicio Final|El Juicio Final (Miguel Ángel)
 Galería de la Academia|Galería de la Academia de Florencia
 Piedad|La Piedad (Miguel Ángel)
+Birán
+La Habana
+Fulgencio Batista
+Láncara
+Universidad de La Habana
+cuartel Moncada|Asalto al cuartel Moncada
+Santiago de Cuba
+La historia me absolverá
+Che Guevara|Ernesto Guevara
+Ernesto «Che» Guevara|Ernesto Guevara
+Granma|Granma (yate)
+Sierra Maestra
+Playa Girón|Invasión de Bahía de Cochinos
+CIA|Agencia Central de Inteligencia
+crisis de los misiles|Crisis de los misiles de Cuba
+Kennedy|John F. Kennedy
+campaña de alfabetización|Campaña Nacional de Alfabetización en Cuba
+UMAP|Unidades Militares de Ayuda a la Producción
+éxodo del Mariel|Éxodo del Mariel
+Angola
+Periodo Especial
+Raúl|Raúl Castro
+cementerio de Santa Ifigenia|Cementerio de Santa Ifigenia
 Jemeres Rojos
 Camboya
 Kampong Thom|Provincia de Kampong Thom
