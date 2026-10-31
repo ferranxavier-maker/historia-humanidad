@@ -1407,8 +1407,9 @@ function tramoVida(it, y){
   // Por etapas según el zoom: 1 = cara y nombre; 2 = además la raya de vida y las fechas; 3 = además la edad
   const etapa = it.etapa || 3;
   if (etapa >= 2){
-  if (x - r - 8 - x1 > 4) raya(x1, y, x - r - 8, y, s + 1, 2.2);
-  if (x2 - (x + r + 8) > 4) raya(x + r + 8, y, x2, y, s + 2, 2.2);
+  // La raya de vida, de una sola pasada (con dos, a veces se veía doble)
+  if (x - r - 8 - x1 > 4) raya(x1, y, x - r - 8, y, s + 1, 2.6, 1);
+  if (x2 - (x + r + 8) > 4) raya(x + r + 8, y, x2, y, s + 2, 2.6, 1);
   if (x2 - x1 > 2 * r + 20){                    // topes en los extremos
     raya(x1, y - 8, x1, y + 8, s + 3, 2.2);
     raya(x2, y - 8, x2, y + 8, s + 4, 2.2);
@@ -2643,7 +2644,7 @@ function dibujarEventos(yL){
   //    (Sócrates, Platón y Aristóteles, por ejemplo): se apilan hacia arriba.
   //    Solo se apilan los carriles que caben sin meterse bajo el título
   //    (si arrastras la línea hacia abajo, caben más).
-  const ALTO_CARRIL = 52;
+  const ALTO_CARRIL = 66;                   // separación entre alturas de personas (las caras no se tocan)
   const finTitulo = document.querySelector("header").getBoundingClientRect().bottom;
   // El reparto solo depende del zoom, no de dónde esté la vista (ni horizontal ni verticalmente):
   // así, al desplazarse, lo que se ve no cambia.
