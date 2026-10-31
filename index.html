@@ -63,6 +63,16 @@ header{position:fixed;top:0;left:0;right:0;padding:24px 16px 0;pointer-events:no
 #detalle .fecha{font:600 24px "Caveat",system-ui,sans-serif;color:#555;margin:14px 0 18px}
 #detalle h2{font:400 24px/1.2 "Permanent Marker",system-ui,sans-serif;margin:30px 0 6px}
 #detalle p.t{font:500 24px/1.32 "Caveat",system-ui,sans-serif;margin:0 0 10px}
+/* Foto pegada en el papel con dos esquinas (abajo a la izquierda y arriba a la derecha) */
+#detalle figure.foto{position:relative;margin:8px auto 22px;width:min(260px,70%);padding:8px 8px 6px;background:#fffdf7;box-shadow:0 2px 6px rgba(0,0,0,.18);transform:rotate(1.6deg)}
+#detalle figure.foto img{display:block;width:100%;height:auto}
+#detalle figure.foto::before,#detalle figure.foto::after{content:"";position:absolute;width:34px;height:34px;background:rgba(40,36,32,.88);box-shadow:0 1px 2px rgba(0,0,0,.25)}
+#detalle figure.foto::before{top:-7px;right:-7px;clip-path:polygon(0 0,100% 0,100% 100%)}
+#detalle figure.foto::after{bottom:-7px;left:-7px;clip-path:polygon(0 0,0 100%,100% 100%)}
+#detalle figure.foto figcaption{font:500 19px/1.15 "Caveat",system-ui,sans-serif;color:#444;margin-top:6px;text-align:center}
+#detalle figure.foto figcaption small{display:block;font-size:14px;color:#888;margin-top:2px}
+@media (min-width:700px){#detalle figure.foto{float:right;margin:6px 4px 14px 24px}}
+#detalle h2{clear:both}
 #nota button{position:absolute;top:6px;right:8px;border:0;background:none;font:700 22px "Caveat",sans-serif;cursor:pointer;color:#555}
 .ayuda{position:fixed;right:16px;bottom:18px;z-index:3;color:#7d776b;font-size:19px;pointer-events:none;transform:rotate(-2deg)}
 @media (max-width:600px){.ayuda{display:none}}
@@ -988,7 +998,7 @@ const EVENTOS = [
     detalle: [
       { h: "Mármol con la leche", p: "Nació en Caprese, donde su padre era el magistrado del pueblo, y se crió en Florencia. Su nodriza era hija y esposa de canteros de Settignano, y él bromeaba con que había mamado el gusto por el cincel con la leche. Con 13 años entró en el taller del pintor Ghirlandaio, y poco después Lorenzo de Médici lo acogió en su palacio, donde estudió las esculturas antiguas. Allí, en una pelea, otro aprendiz, Pietro Torrigiano, le rompió la nariz de un puñetazo, y la tuvo torcida toda la vida." },
       { h: "La Piedad", p: "Con unos 23 años recibió en Roma el encargo de la Piedad, la Virgen con Cristo muerto en el regazo, que terminó hacia 1499 y hoy está en la basílica de San Pedro. Es la única obra que firmó: según Giorgio Vasari, oyó que algunos la atribuían a otro escultor y esa noche grabó su nombre en la cinta que cruza el pecho de la Virgen." },
-      { h: "El David", p: "Entre 1501 y 1504 esculpió en Florencia el David, de más de cinco metros, a partir de un bloque de mármol que otros escultores habían empezado y abandonado décadas antes. Representa al joven que va a enfrentarse a Goliat, concentrado antes del combate, y se convirtió en símbolo de la república florentina. Estuvo en la plaza de la Señoría hasta 1873; hoy está en la Galería de la Academia y en la plaza hay una copia." },
+      { h: "El David", foto: { src: "fotos/david.webp", alt: "El David de Miguel Ángel en la Galería de la Academia de Florencia", pie: "El David, en la Galería de la Academia de Florencia", credito: "Foto: Jörg Bittner Unna · CC BY-SA 3.0 · Wikimedia Commons" }, p: "Entre 1501 y 1504 esculpió en Florencia el David, de más de cinco metros, a partir de un bloque de mármol que otros escultores habían empezado y abandonado décadas antes. Representa al joven que va a enfrentarse a Goliat, concentrado antes del combate, y se convirtió en símbolo de la república florentina. Estuvo en la plaza de la Señoría hasta 1873; hoy está en la Galería de la Academia y en la plaza hay una copia." },
       { h: "La Capilla Sixtina", p: "En 1508 el papa Julio II le encargó pintar la bóveda de la Capilla Sixtina, aunque él se consideraba escultor y no pintor. Trabajó cuatro años, hasta 1512, de pie sobre un andamio y con la cabeza echada hacia atrás, no tumbado como dice la leyenda. Pintó más de 300 figuras, con escenas del Génesis como la Creación de Adán, cuyos dedos a punto de tocarse son una de las imágenes más famosas del arte." },
       { h: "El Juicio Final y el Moisés", p: "Entre 1536 y 1541 volvió a la Sixtina para pintar el Juicio Final en la pared del altar, con un Cristo juez rodeado de cientos de cuerpos desnudos. Tras el Concilio de Trento, a Daniele da Volterra le encargaron taparlos con telas pintadas, y le quedó el apodo de «el Braguetero». Durante cuarenta años arrastró además el encargo de la tumba de Julio II, que acabó muy reducida; su gran figura es el Moisés de San Pietro in Vincoli, en Roma." },
       { h: "Arquitecto y poeta", p: "En 1546, con 71 años, se hizo cargo de las obras de la basílica de San Pedro y proyectó su gran cúpula, que se terminó en 1590, después de su muerte. En Roma también diseñó la plaza del Capitolio. Escribió cerca de 300 poemas, muchos dedicados a la poetisa Vittoria Colonna y al joven noble Tommaso de' Cavalieri." },
@@ -3487,7 +3497,16 @@ function abrirDetalle(ev, sinHistorial){
   for (const sec of ev.detalle){
     const h = document.createElement("h2"); h.textContent = sec.h;
     const p = document.createElement("p"); p.className = "t"; p.textContent = sec.p;
-    cuerpo.append(h, p);
+    cuerpo.append(h);
+    if (sec.foto){                               // foto real, pegada como en un álbum
+      const fig = document.createElement("figure"); fig.className = "foto";
+      const img = document.createElement("img");
+      img.src = sec.foto.src; img.alt = sec.foto.alt || sec.h; img.loading = "lazy";
+      const cap = document.createElement("figcaption"); cap.textContent = sec.foto.pie || "";
+      if (sec.foto.credito){ const sm = document.createElement("small"); sm.textContent = sec.foto.credito; cap.append(sm); }
+      fig.append(img, cap); cuerpo.append(fig);
+    }
+    cuerpo.append(p);
   }
   det.classList.add("abierta"); det.scrollTop = 0;
   // Enlace propio (#nombre-del-evento) y el botón "atrás" del navegador cierra la subpágina
