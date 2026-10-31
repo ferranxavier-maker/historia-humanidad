@@ -1201,6 +1201,16 @@ const EVENTOS = [
       { h: "El plebiscito del No", p: "En 1980 hizo aprobar una nueva Constitución que preveía un plebiscito para prolongar su mandato. El 5 de octubre de 1988 ganó el «No», con cerca del 56 % de los votos, y Pinochet aceptó el resultado. En 1989 hubo elecciones libres, y el 11 de marzo de 1990 entregó la presidencia al democristiano Patricio Aylwin, aunque siguió al frente del Ejército hasta 1998 y luego fue senador vitalicio." },
       { h: "Londres y los juicios", p: "En octubre de 1998, durante un viaje a Londres, fue detenido por una orden del juez español Baltasar Garzón, que lo acusaba de genocidio, terrorismo y torturas. Pasó más de un año retenido, hasta que en marzo de 2000 el gobierno británico lo dejó volver a Chile por motivos de salud. En Chile se le abrieron varios procesos, también por millones de dólares ocultos en cuentas en el extranjero, pero murió el 10 de diciembre de 2006, con 91 años, sin haber sido condenado." }
     ] },
+  { nace: "1912-11-03", f: "2006-08-16", fila: "personas", bandera: "paraguay", t: "Alfredo Stroessner", nivel: 2, corto: "Stroessner", cara: "stroessner",
+    resumen: "Nació en Encarnación (Paraguay) el 3 de noviembre de 1912 y murió en Brasilia el 16 de agosto de 2006. General del Ejército, tomó el poder con un golpe de Estado en 1954 y gobernó Paraguay como dictador durante 35 años, hasta que otro golpe lo derrocó en 1989. Es una de las dictaduras más largas de la historia de América Latina, con estado de sitio casi permanente, represión de los opositores y una corrupción enorme.",
+    detalle: [
+      { h: "Origen y guerra del Chaco", p: "Era hijo de Hugo Strößner, un emigrante alemán de Baviera, y de una paraguaya, Heriberta Matiauda. Entró en la escuela militar en 1929 y se distinguió como oficial de artillería en la guerra del Chaco contra Bolivia (1932-1935). Ascendió rápido: en la guerra civil de 1947 apoyó al bando ganador y en 1951 era comandante en jefe del Ejército." },
+      { h: "El golpe de 1954", p: "El 4 de mayo de 1954 encabezó un golpe militar contra el presidente Federico Chaves, y en agosto fue elegido presidente como candidato único del Partido Colorado. Después se hizo reelegir siete veces más, en elecciones sin garantías. Gobernó casi todo el tiempo bajo estado de sitio, que se renovaba cada tres meses." },
+      { h: "La represión", p: "Su policía detuvo y torturó a opositores, sindicalistas, campesinos y estudiantes, y muchos paraguayos se exiliaron. Según la Comisión de Verdad y Justicia de 2008, casi 20.000 personas fueron detenidas, la mayoría torturadas, y hubo cientos de muertos y desaparecidos. En 1992 se descubrieron en una comisaría de Asunción los «Archivos del Terror», que documentaban la represión y la colaboración con otras dictaduras en la Operación Cóndor. El régimen fue acusado también de genocidio contra los indígenas aché." },
+      { h: "Aliado anticomunista", p: "En plena Guerra Fría, Estados Unidos lo apoyó como aliado frente al comunismo. Paraguay dio refugio a personajes buscados, como el médico nazi Josef Mengele, que vivió allí y obtuvo la nacionalidad paraguaya en 1959, y el dictador nicaragüense Anastasio Somoza, asesinado en Asunción en 1980." },
+      { h: "Itaipú", p: "Su gran obra fue la presa de Itaipú, construida con Brasil en el río Paraná entre 1975 y 1984, durante años la central hidroeléctrica más potente del mundo. La economía creció en los setenta, pero el régimen estuvo marcado por la corrupción y el contrabando, que enriquecieron a militares y allegados." },
+      { h: "La caída", p: "En la noche del 2 al 3 de febrero de 1989, el general Andrés Rodríguez, su consuegro y número dos del Ejército, lo derrocó con un golpe. Stroessner se exilió en Brasil y nunca volvió a Paraguay ni fue juzgado. Murió en Brasilia el 16 de agosto de 2006, con 93 años." }
+    ] },
   { nace: "1889-04-20", f: "1945-04-30", fila: "personas", bandera: "nazi", t: "Adolf Hitler", nivel: 2, corto: "Hitler", cara: "hitler",
     resumen: "Nació en Braunau am Inn (Austria) el 20 de abril de 1889 y murió en Berlín el 30 de abril de 1945. Líder del partido nazi, fue canciller de Alemania desde 1933 y gobernó como dictador desde 1934. Su régimen desencadenó la Segunda Guerra Mundial al invadir Polonia en 1939 y fue responsable del Holocausto, en el que fueron asesinados unos seis millones de judíos y millones de personas más. Se suicidó en su búnker de Berlín días antes de la rendición alemana.",
     detalle: [
@@ -1862,6 +1872,14 @@ function bandera(cx, cy, tipo){
     ctx.fillStyle = "#fffdf7"; ctx.beginPath();
     for (let i = 0; i < 10; i++){ const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? 1 : 2.4; ctx.lineTo(x0 + w / 6 + Math.cos(a) * rr, y0 + h / 4 - .5 + Math.sin(a) * rr); }
     ctx.fill();
+  }
+  if (tipo === "paraguay"){                      // roja, blanca y azul, con el escudo en el centro
+    ctx.fillStyle = "#d52b1e"; ctx.fillRect(x0 - 2, y0 - 3, w + 4, h / 3 + 3);
+    ctx.fillStyle = "#fffdf7"; ctx.fillRect(x0 - 2, y0 + h / 3, w + 4, h / 3);
+    ctx.fillStyle = "#0038a8"; ctx.fillRect(x0 - 2, y0 + 2 * h / 3, w + 4, h / 3 + 3);
+    ctx.strokeStyle = "#2e7d32"; ctx.lineWidth = .9;
+    ctx.beginPath(); ctx.arc(cx, cy, 2.6, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = "#ffd21f"; ctx.beginPath(); ctx.arc(cx, cy, 1.1, 0, Math.PI * 2); ctx.fill();
   }
   if (tipo === "nazi"){
     ctx.fillStyle = "#c8102e"; ctx.fillRect(x0 - 2, y0 - 3, w + 4, h + 6);
@@ -3070,6 +3088,42 @@ function cara(quien, x, y, r, s){
     ctx.lineWidth = 1;
     for (const k of [-1, 1]){ ctx.beginPath(); ctx.moveTo(x + k * r * .55, y + r * .3); ctx.quadraticCurveTo(x + k * r * .5, y + r * .62, x + k * r * .3, y + r * .78); ctx.stroke(); }
   }
+  if (quien === "stroessner"){
+    ctx.strokeStyle = TINTA; ctx.fillStyle = TINTA; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    // Pelo rubio canoso, corto y peinado hacia atrás, con entradas
+    ctx.beginPath();
+    ctx.moveTo(x - r * .95, y - r * .05);
+    ctx.quadraticCurveTo(x - r * 1.06, y - r * .95, x, y - r * 1.06);
+    ctx.quadraticCurveTo(x + r * 1.06, y - r * .95, x + r * .95, y - r * .05);
+    ctx.quadraticCurveTo(x + r * .86, y - r * .4, x + r * .58, y - r * .5);
+    ctx.quadraticCurveTo(x + r * .3, y - r * .6, x, y - r * .66);
+    ctx.quadraticCurveTo(x - r * .3, y - r * .6, x - r * .58, y - r * .5);
+    ctx.quadraticCurveTo(x - r * .86, y - r * .4, x - r * .95, y - r * .05);
+    ctx.fillStyle = "rgba(205, 185, 135, .97)"; ctx.fill(); ctx.lineWidth = 1.6; ctx.stroke();
+    ctx.lineWidth = .9;
+    for (let k = -2; k <= 2; k++){ ctx.beginPath(); ctx.moveTo(x + k * r * .2, y - r * .64); ctx.quadraticCurveTo(x + k * r * .23, y - r * .82, x + k * r * .25, y - r * (.98 - Math.abs(k) * .1)); ctx.stroke(); }
+    ctx.fillStyle = TINTA;
+    // Ojos pequeños y cejas rectas
+    for (const k of [-1, 1]){
+      ctx.beginPath(); ctx.arc(x + k * r * .29, y - r * .06, 1.7, 0, Math.PI * 2); ctx.fill();
+      ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(x + k * r * .13, y - r * .22); ctx.lineTo(x + k * r * .45, y - r * .24); ctx.stroke();
+    }
+    // Nariz carnosa
+    ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(x + r * .02, y - r * .04); ctx.lineTo(x - r * .04, y + r * .22);
+    ctx.moveTo(x - r * .16, y + r * .28); ctx.quadraticCurveTo(x, y + r * .36, x + r * .16, y + r * .28); ctx.stroke();
+    // Bigote fino recortado
+    ctx.beginPath();
+    ctx.moveTo(x - r * .2, y + r * .45); ctx.quadraticCurveTo(x, y + r * .37, x + r * .2, y + r * .45);
+    ctx.quadraticCurveTo(x, y + r * .48, x - r * .2, y + r * .45); ctx.fill();
+    // Boca, mofletes y papada
+    ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(x - r * .14, y + r * .6); ctx.lineTo(x + r * .14, y + r * .6); ctx.stroke();
+    ctx.lineWidth = 1;
+    for (const k of [-1, 1]){ ctx.beginPath(); ctx.moveTo(x + k * r * .5, y + r * .2); ctx.quadraticCurveTo(x + k * r * .55, y + r * .45, x + k * r * .4, y + r * .62); ctx.stroke(); }
+    ctx.beginPath(); ctx.moveTo(x - r * .34, y + r * .82); ctx.quadraticCurveTo(x, y + r * .97, x + r * .34, y + r * .82); ctx.stroke();
+  }
   if (quien === "hitler"){
     // Pelo con el flequillo cayendo sobre la frente
     ctx.beginPath();
@@ -4206,6 +4260,20 @@ Capilla Sixtina
 Juicio Final|El Juicio Final (Miguel Ángel)
 Galería de la Academia|Galería de la Academia de Florencia
 Piedad|La Piedad (Miguel Ángel)
+Encarnación|Encarnación (Paraguay)
+Brasilia
+guerra del Chaco|Guerra del Chaco
+Bolivia
+Federico Chaves
+Partido Colorado|Asociación Nacional Republicana
+Comisión de Verdad y Justicia|Comisión de Verdad y Justicia (Paraguay)
+Asunción
+Archivos del Terror
+aché|Aché
+Josef Mengele
+Anastasio Somoza|Anastasio Somoza Debayle
+Itaipú|Represa de Itaipú
+Andrés Rodríguez|Andrés Rodríguez Pedotti
 Valparaíso
 Santiago de Chile
 Salvador Allende
