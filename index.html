@@ -980,6 +980,17 @@ const EVENTOS = [
       { h: "Los últimos años", p: "Volvió enfermo y reclamando los títulos y las rentas que le habían quitado, y murió en Valladolid el 20 de mayo de 1506, con unos 54 años, convencido de haber llegado a Asia. El nuevo continente acabó llamándose América por Américo Vespucio, que defendió que era un mundo nuevo. Sus restos viajaron de Valladolid a Sevilla, Santo Domingo y La Habana, y volvieron a Sevilla en 1898; los análisis de ADN han confirmado que los de la catedral de Sevilla son suyos, aunque Santo Domingo también reclama tenerlos." },
       { h: "Su legado", p: "Sus viajes unieron para siempre los dos lados del Atlántico: plantas, animales y personas cruzaron en ambas direcciones, el llamado intercambio colombino, que llevó a Europa la patata, el maíz o el tomate, y a América el caballo, el trigo o la vaca. Para los pueblos indígenas fue una catástrofe: las enfermedades traídas de Europa, la guerra y el trabajo forzado diezmaron a la población, y los taínos de las Antillas casi desaparecieron en pocas décadas." }
     ] },
+  { nace: "1480", f: "1521-04-27", aproxNace: true, fila: "personas", t: "Fernando de Magallanes", nivel: 2, corto: "Magallanes", cara: "magallanes",
+    resumen: "Navegante portugués nacido hacia 1480 y muerto en la isla filipina de Mactán el 27 de abril de 1521. Al servicio de Carlos I de España, dirigió la expedición que buscaba llegar a las islas de las especias navegando hacia el oeste: descubrió el estrecho que lleva su nombre y fue el primer europeo en cruzar el océano Pacífico. Murió en Filipinas, y Juan Sebastián Elcano completó la primera vuelta al mundo en 1522.",
+    detalle: [
+      { h: "Un portugués en Oriente", p: "Nació en el norte de Portugal hacia 1480, en una familia de la pequeña nobleza, y de joven fue paje en la corte. En 1505 se embarcó hacia la India en la flota de Francisco de Almeida, y durante ocho años luchó en Oriente: estuvo en la batalla de Diu (1509) y en la conquista de Malaca (1511), la puerta de las islas de las especias. De vuelta, en una campaña en Marruecos, una herida en la pierna lo dejó cojo para siempre." },
+      { h: "Al servicio de España", p: "Enemistado con el rey Manuel I de Portugal, que rechazó sus peticiones, se fue a Sevilla en 1517 y se casó con Beatriz Barbosa. Propuso a Carlos I llegar a las Molucas, las islas del clavo y la nuez moscada, navegando hacia el oeste, convencido de que según el Tratado de Tordesillas caían en la mitad española del mundo. En 1518 el rey aceptó y lo nombró capitán general de la expedición." },
+      { h: "La salida y el motín", p: "El 20 de septiembre de 1519 salió de Sanlúcar de Barrameda con cinco naos, la Trinidad, la San Antonio, la Concepción, la Victoria y la Santiago, y unos 240 hombres. Bajó por la costa de Sudamérica buscando un paso, y en abril de 1520, mientras invernaban en la bahía de San Julián, en la Patagonia, varios capitanes castellanos se amotinaron. Magallanes aplastó el motín: uno fue ejecutado y otro abandonado en la costa. Poco después la Santiago naufragó." },
+      { h: "El estrecho y el Pacífico", p: "En octubre de 1520 encontró por fin el paso, el estrecho que hoy lleva su nombre, y tardó más de un mes en atravesarlo. Por el camino, la San Antonio desertó y volvió a España. El 28 de noviembre salieron a un océano tan tranquilo que lo llamó Pacífico, pero era inmenso: lo cruzaron durante más de tres meses sin tocar casi tierra, y los marineros llegaron a comer cuero, serrín y ratas. Muchos murieron de escorbuto antes de llegar a Guam, en marzo de 1521." },
+      { h: "La muerte en Mactán", p: "En marzo de 1521 llegaron a las Filipinas. En Cebú, el rajá Humabon y cientos de los suyos se bautizaron, y Magallanes quiso someter a los jefes vecinos que no lo aceptaban. El 27 de abril de 1521 desembarcó en la isla de Mactán con unos 50 hombres contra los guerreros del jefe Lapulapu, que hoy es un héroe nacional en Filipinas, y murió en la playa con unos 41 años." },
+      { h: "Elcano y la primera vuelta al mundo", p: "Con solo dos barcos ya, los supervivientes llegaron a las Molucas en noviembre de 1521 y cargaron clavo. Juan Sebastián Elcano, de Getaria, tomó el mando de la Victoria y volvió por el océano Índico y el cabo de Buena Esperanza, evitando los puertos portugueses. El 6 de septiembre de 1522 llegó a Sanlúcar con 18 hombres: habían dado la primera vuelta al mundo. Carlos I le dio a Elcano un escudo con un globo terráqueo y el lema «Primus circumdedisti me», «fuiste el primero en rodearme»." },
+      { h: "Su legado", p: "El viaje demostró que la Tierra era mucho más grande de lo que se creía, que los océanos estaban conectados y que América era un continente separado de Asia. Lo sabemos con detalle gracias al diario del italiano Antonio Pigafetta, uno de los 18 supervivientes. Además del estrecho, llevan su nombre las Nubes de Magallanes, dos pequeñas galaxias que se ven desde el hemisferio sur y que describieron sus marineros." }
+    ] },
   { nace: "1769-08-15", f: "1821-05-05", fila: "personas", t: "Napoleón Bonaparte", nivel: 2, corto: "Napoleón", cara: "napoleon",
     resumen: "Nació en Ajaccio (Córcega) el 15 de agosto de 1769 y murió desterrado en la isla de Santa Elena el 5 de mayo de 1821. Militar salido de la Revolución francesa, tomó el poder en 1799 y en 1804 se coronó emperador de los franceses. Llegó a dominar casi toda Europa, impuso un código de leyes que todavía influye en medio mundo y acabó derrotado en Waterloo en 1815.",
     detalle: [
@@ -2267,6 +2278,46 @@ function cara(quien, x, y, r, s){
     // Boca fina y sin barba
     ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.moveTo(x - r * .18, y + r * .6); ctx.quadraticCurveTo(x, y + r * .64, x + r * .18, y + r * .6); ctx.stroke();
+  }
+  if (quien === "magallanes"){
+    ctx.strokeStyle = TINTA; ctx.fillStyle = TINTA; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    // Pelo corto y oscuro
+    ctx.beginPath();
+    ctx.moveTo(x - r * .95, y - r * .22);
+    ctx.quadraticCurveTo(x - r * 1.0, y - r * 1.05, x, y - r * 1.04);
+    ctx.quadraticCurveTo(x + r * 1.0, y - r * 1.05, x + r * .95, y - r * .22);
+    ctx.quadraticCurveTo(x + r * .85, y - r * .58, x + r * .4, y - r * .62);
+    ctx.quadraticCurveTo(x, y - r * .55, x - r * .4, y - r * .62);
+    ctx.quadraticCurveTo(x - r * .85, y - r * .58, x - r * .95, y - r * .22);
+    ctx.fill();
+    // Barba oscura y poblada, acabada en punta
+    ctx.beginPath();
+    ctx.moveTo(x - r * .95, y - r * .05);
+    ctx.quadraticCurveTo(x - r * .95, y + r * .75, x, y + r * 1.22);
+    ctx.quadraticCurveTo(x + r * .95, y + r * .75, x + r * .95, y - r * .05);
+    ctx.quadraticCurveTo(x + r * .72, y + r * .25, x + r * .45, y + r * .32);
+    ctx.quadraticCurveTo(x, y + r * .22, x - r * .45, y + r * .32);
+    ctx.quadraticCurveTo(x - r * .72, y + r * .25, x - r * .95, y - r * .05);
+    ctx.fillStyle = "rgba(55, 45, 40, .95)"; ctx.fill(); ctx.lineWidth = 1.8; ctx.stroke();
+    // Rizos de la barba
+    ctx.save(); ctx.strokeStyle = "rgba(255, 253, 247, .8)"; ctx.lineWidth = 1;
+    for (const [dx, dy] of [[-.5, .5], [-.2, .62], [.15, .62], [.48, .5], [-.3, .85], [.05, .9], [.32, .82]]){
+      ctx.beginPath(); ctx.arc(x + dx * r, y + dy * r, r * .07, Math.PI * .2, Math.PI * 1.3); ctx.stroke();
+    }
+    ctx.restore();
+    ctx.fillStyle = TINTA;
+    // Ojos y cejas fruncidas
+    for (const k of [-1, 1]){
+      ctx.beginPath(); ctx.arc(x + k * r * .3, y - r * .12, 1.9, 0, Math.PI * 2); ctx.fill();
+      ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.moveTo(x + k * r * .12, y - r * .28); ctx.lineTo(x + k * r * .46, y - r * .34); ctx.stroke();
+    }
+    // Nariz
+    raya(x + r * .02, y - r * .1, x - r * .05, y + r * .18, s + 6, 1.4);
+    // Boca asomando entre la barba
+    ctx.save(); ctx.strokeStyle = "#fffdf7"; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(x - r * .14, y + r * .4); ctx.lineTo(x + r * .14, y + r * .4); ctx.stroke();
+    ctx.restore();
   }
   if (quien === "hitler"){
     // Pelo con el flequillo cayendo sobre la frente
