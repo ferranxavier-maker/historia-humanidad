@@ -391,29 +391,31 @@ const AÑO_HOY = new Date().getFullYear();
 
 /* ================= CONTENIDO =================
    Filas (no se ven, sirven para ordenar). De arriba abajo:
-     ENCIMA de la línea:  1 libros · 2 personas · 3 hitos (acontecimientos)
-     DEBAJO de la línea:  inventos (inventos y construcciones)
+     ENCIMA de la línea:  1 libros · 2 personas · 3 hitos (acontecimientos) e inventos, que comparten fila
+     DEBAJO de la línea:  los periodos históricos (imperios, épocas de Egipto…), bajo las fechas
    Fecha: "AAAA", "AAAA-MM" o "AAAA-MM-DD" (años a.C. en negativo: "-753"). */
 // lado: -1 encima, 1 debajo · n: distancia a la línea (1 = la más cercana)
 const FILAS = {
   libros:   { lado: -1, n: 3 },
   personas: { lado: -1, n: 2 },
   hitos:    { lado: -1, n: 1 },
-  inventos: { lado:  1, n: 1 }
+  inventos: { lado: -1, n: 1, junto: "hitos" }   // van en la fila de los hitos
 };
 // Categorías que se ven (casillas de arriba a la derecha). Las que se quitan liberan su sitio:
 // las demás se acercan a la línea y las personas pueden apilarse más.
-const ORDEN_FILAS = { arriba: ["hitos", "personas", "libros"], abajo: ["inventos"] };
+const ORDEN_FILAS = { arriba: ["hitos", "personas", "libros"], abajo: [] };
 // Al abrir la página, todas las categorías marcadas
 let filasActivas = new Set(Object.keys(FILAS));
 function aplicarFilas(){
   for (const lado of ["arriba", "abajo"]){
     let n = 0;
     for (const f of ORDEN_FILAS[lado]){
-      FILAS[f].off = !filasActivas.has(f);
+      // La fila de los hitos se mantiene si hay hitos o inventos (los inventos van en ella)
+      FILAS[f].off = !filasActivas.has(f) && !(f === "hitos" && filasActivas.has("inventos"));
       if (!FILAS[f].off) FILAS[f].n = ++n;
     }
   }
+  FILAS.inventos.off = !filasActivas.has("inventos");
 }
 aplicarFilas();
 
@@ -981,7 +983,7 @@ const EVENTOS = [
       { h: "Los últimos años", p: "Volvió enfermo y reclamando los títulos y las rentas que le habían quitado, y murió en Valladolid el 20 de mayo de 1506, con unos 54 años, convencido de haber llegado a Asia. El nuevo continente acabó llamándose América por Américo Vespucio, que defendió que era un mundo nuevo. Sus restos viajaron de Valladolid a Sevilla, Santo Domingo y La Habana, y volvieron a Sevilla en 1898; los análisis de ADN han confirmado que los de la catedral de Sevilla son suyos, aunque Santo Domingo también reclama tenerlos." },
       { h: "Su legado", p: "Sus viajes unieron para siempre los dos lados del Atlántico: plantas, animales y personas cruzaron en ambas direcciones, el llamado intercambio colombino, que llevó a Europa la patata, el maíz o el tomate, y a América el caballo, el trigo o la vaca. Para los pueblos indígenas fue una catástrofe: las enfermedades traídas de Europa, la guerra y el trabajo forzado diezmaron a la población, y los taínos de las Antillas casi desaparecieron en pocas décadas." }
     ] },
-  { nace: "1475-03-06", f: "1564-02-18", fila: "personas", t: "Miguel Ángel", nivel: 2, cara: "miguelangel",
+  { nace: "1475-03-06", f: "1564-02-18", fila: "personas", simbolo: "artista", t: "Miguel Ángel", nivel: 2, cara: "miguelangel",
     resumen: "Miguel Ángel Buonarroti nació en Caprese (Toscana) el 6 de marzo de 1475 y murió en Roma el 18 de febrero de 1564. Escultor, pintor, arquitecto y poeta, es una de las grandes figuras del Renacimiento: esculpió la Piedad del Vaticano y el David de Florencia, pintó la bóveda y el Juicio Final de la Capilla Sixtina y proyectó la cúpula de San Pedro. Sus contemporáneos lo llamaban «el Divino».",
     detalle: [
       { h: "Mármol con la leche", p: "Nació en Caprese, donde su padre era el magistrado del pueblo, y se crió en Florencia. Su nodriza era hija y esposa de canteros de Settignano, y él bromeaba con que había mamado el gusto por el cincel con la leche. Con 13 años entró en el taller del pintor Ghirlandaio, y poco después Lorenzo de Médici lo acogió en su palacio, donde estudió las esculturas antiguas. Allí, en una pelea, otro aprendiz, Pietro Torrigiano, le rompió la nariz de un puñetazo, y la tuvo torcida toda la vida." },
@@ -1521,6 +1523,32 @@ function probeta(cx, cy){
   ctx.restore();
 }
 
+// Paleta de pintor con manchas de colores: el símbolo del arte en general, sello de los artistas
+function paleta(cx, cy){
+  ctx.save(); ctx.strokeStyle = TINTA; ctx.lineJoin = "round"; ctx.lineWidth = 1.5;
+  // Contorno en forma de riñón, con la muesca para el pulgar abajo a la derecha
+  ctx.beginPath();
+  ctx.moveTo(cx + 6, cy + 6.5);
+  ctx.quadraticCurveTo(cx - 1, cy + 9.5, cx - 7, cy + 6);
+  ctx.quadraticCurveTo(cx - 12, cy + 1, cx - 9, cy - 5);
+  ctx.quadraticCurveTo(cx - 3, cy - 10.5, cx + 5, cy - 8);
+  ctx.quadraticCurveTo(cx + 12, cy - 5, cx + 11, cy + 1);
+  ctx.quadraticCurveTo(cx + 10.5, cy + 4, cx + 7.5, cy + 3);
+  ctx.quadraticCurveTo(cx + 4.5, cy + 3, cx + 6, cy + 6.5);
+  ctx.closePath();
+  ctx.fillStyle = "rgba(225, 185, 130, .97)"; ctx.fill(); ctx.stroke();
+  // Agujero para el pulgar
+  ctx.fillStyle = "#f6f4ee"; ctx.lineWidth = 1.1;
+  ctx.beginPath(); ctx.ellipse(cx + 3.5, cy - 1, 1.8, 1.5, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  // Manchas de pintura
+  ctx.lineWidth = .8;
+  for (const [dx, dy, col] of [[-6.5, 1.5, "rgba(220, 50, 50, .95)"], [-5, -4.5, "rgba(255, 205, 40, .95)"],
+                               [.5, -6, "rgba(50, 110, 210, .95)"], [6.5, -4, "rgba(60, 170, 90, .95)"], [-1.5, 5, "rgba(150, 80, 170, .95)"]]){
+    ctx.fillStyle = col; ctx.beginPath(); ctx.arc(cx + dx, cy + dy, 1.9, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  }
+  ctx.restore();
+}
+
 // Tramo de la vida de una persona: |———— (cara) ————|
 function tramoVida(it, y){
   const e = it.e, r = 23, x = it.x, s = e.id * 17 + 5;
@@ -1540,6 +1568,7 @@ function tramoVida(it, y){
   // Icono de su oficio, fuera de la cara arriba a la izquierda, con hueco para que no la toque
   if (e.simbolo === "filosofo") lechuza(x - r * 1.55, y - r * 1.35);
   if (e.simbolo === "cientifico") probeta(x - r * 1.55, y - r * 1.35);
+  if (e.simbolo === "artista") paleta(x - r * 1.55, y - r * 1.35);
   // Nombre (y años): se guardan para dibujarlos al final, encima de todas las caras
   const txt = etapa === 1 ? (e.corto || e.t) : etapa === 2 ? (e.etiquetaFechas || e.etiqueta) : e.etiqueta;
   nombresPendientes.push({ txt, x: x + r * 1.5 + 6, y: y - 4, a: ctx.globalAlpha });
@@ -2819,7 +2848,7 @@ let zonasPer = [];
 // Periodos sobre la línea. Si dos se solapan en el tiempo, uno va en la línea (carril 0)
 // y el otro justo encima, pegado (carril 1, 2…).
 // "desvanece": año en el que acaba de desvanecerse la franja (empieza a hacerlo en "f").
-const SEP_CARRIL = 34;
+const SEP_CARRIL = 34, Y_PER_ABAJO = 90;   // Y_PER_ABAJO: distancia de la línea a la primera franja de debajo
 function asignarCarriles(){
   const per = EVENTOS.filter(e => e.desde);
   const fin = e => e.añoDesvanece ?? e.añoHasta;
@@ -2841,7 +2870,10 @@ function dibujarPeriodos(yL){
   for (const e of EVENTOS){
     if (!e.desde) continue;
     const carril = e.carril || 0;
-    const yB = yL - carril * SEP_CARRIL;
+    // Los periodos históricos (imperios, épocas de Egipto…) van debajo de la línea, bajo las fechas,
+    // y se apilan hacia abajo; la prehistoria y las especies siguen en la línea
+    const abajo = e.añoDesde > -10000;
+    const yB = abajo ? yL + Y_PER_ABAJO + carril * SEP_CARRIL : yL - carril * SEP_CARRIL;
     const alto = carril ? 15 : 17;                // las de encima, algo más finas
     let x1 = xDe(e.añoDesde), x2 = xDe(e.añoHasta);
     const xFin = e.añoDesvanece !== undefined ? xDe(e.añoDesvanece) : x2;
@@ -2853,7 +2885,7 @@ function dibujarPeriodos(yL){
     if (!a) continue;
     // Nunca más estrecho de 10 px: así se sigue viendo al alejarse
     if (x2 - x1 < 10){ const m = (x1 + x2) / 2; x1 = m - 5; x2 = m + 5; }
-    franjas.push({ e, x1, x2, xFin: Math.max(xFin, x2), yB, alto, a, carril });
+    franjas.push({ e, x1, x2, xFin: Math.max(xFin, x2), yB, alto, a, carril, abajo });
   }
   // 2) Franjas: dos pasadas de rotulador que se pisan; degradado si se desvanece
   for (const f of franjas){
@@ -2924,8 +2956,21 @@ function dibujarPeriodos(yL){
     }
     ctx.font = `15px ${MARCADOR}`;
     // Si no cabe dentro y es una franja apilada, sin nombre (aparece al acercarse)
-    if (f.carril > 0){ ctx.restore(); zonasPer.push({ x0: x1 - 4, y0: yB - alto, x1: xFin + 4, y1: yB + alto, e }); continue; }
+    if (f.carril > 0 && !f.abajo){ ctx.restore(); zonasPer.push({ x0: x1 - 4, y0: yB - alto, x1: xFin + 4, y1: yB + alto, e }); continue; }
     let yTexto = yB - alto - 2, subidas = 0, tapada = false;
+    if (f.abajo){
+      // Debajo de la línea el nombre va bajo su franja; si choca con otra franja o con otro nombre, no sale
+      const yT = yB + alto + 2;
+      const choca = franjas.some(o => o !== f && o.yB > yB && tx1 < o.xFin && tx2 > o.x1 && yT + 16 > o.yB - o.alto)
+                 || ocupadas.some(o => o.y === yT && tx1 < o.x2 + 10 && tx2 > o.x1 - 10);
+      if (choca || xFin - x1 < 12){ ctx.restore(); zonasPer.push({ x0: x1 - 4, y0: yB - alto, x1: xFin + 4, y1: yB + alto, e }); continue; }
+      ocupadas.push({ x1: tx1, x2: tx2, y: yT });
+      ctx.globalAlpha *= 1 - geoA;
+      ctx.textBaseline = "top"; ctx.fillText(txt, xTexto, yT);
+      ctx.restore();
+      zonasPer.push({ x0: Math.min(x1, tx1), y0: yB - alto, x1: Math.max(xFin, tx2), y1: yT + 20, e });
+      continue;
+    }
     // ¿Choca con alguna franja de encima, con HOY o con otro nombre? Entonces sube.
     for (let intentos = 0; intentos < 8; intentos++, subidas++){
       const tapa = franjas.find(o => o !== f && o.yB < yB && tx1 < o.xFin && tx2 > o.x1 &&
@@ -3007,7 +3052,10 @@ function dibujarEventos(yL){
     const arriba = FILAS[fila].lado < 0;
     const max = forzarMax || (fila === "libros" ? (cabeFilaLibros(yF) ? 2 : 1) : CARRILES[fila] || 1);
     const cands = [];
-    const lista = EVENTOS.filter(e => e.fila === fila).sort((a, b) => a.año - b.año);
+    // En la fila de los hitos también van los inventos (cada uno según su casilla)
+    const lista = EVENTOS.filter(e => fila === "hitos"
+      ? (e.fila === "hitos" && filasActivas.has("hitos")) || (e.fila === "inventos" && filasActivas.has("inventos"))
+      : e.fila === fila).sort((a, b) => a.año - b.año);
     for (const e of lista){
       if (!visib(e)) continue;                     // ya desvanecido: no ocupa sitio
       const x = xDe(e.año);
@@ -3185,7 +3233,7 @@ function dibujarEventos(yL){
   items.push(...pers.its);
   const extra = (pers.usados - 1) * ALTO_CARRIL;     // lo que crece la fila de personas
   for (const fila of Object.keys(FILAS)){
-    if (fila === "personas") continue;
+    if (fila === "personas" || FILAS[fila].junto) continue;
     const F = FILAS[fila];
     const sube = F.lado < 0 && F.n > FILAS.personas.n ? extra : 0;
     const yF = yFila(fila, yL) - sube;
