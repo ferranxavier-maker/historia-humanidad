@@ -1162,11 +1162,14 @@ EVENTOS.forEach((e, i) => {
       // Si se conoce lo que vivió, va entre paréntesis como en los demás personajes; si no, nada
       e.edad = e.vivio || "";
       const par = e.edad ? ` (${e.edad})` : "";
-      e.etiqueta = e.etiqueta.replace(" · ", " · reinó ") + par;
+      e.etiqueta = e.etiqueta.replace(" · ", " · reinó ");
+      e.etiquetaFechas = e.etiqueta;
+      e.etiqueta += par;
       e.txt = "reinó " + e.txt + par;
     } else {
       e.edad = `${cN || c ? "c. " : ""}${edad} años`;
       e.txt += ` (${e.edad})`;
+      e.etiquetaFechas = e.etiqueta;
       e.etiqueta += ` (${e.edad})`;
     }
   }
@@ -1401,15 +1404,20 @@ function bombilla(cx, cy, semilla){
 function tramoVida(it, y){
   const e = it.e, r = 23, x = it.x, s = e.id * 17 + 5;
   const x1 = xDe(e.añoNace), x2 = xDe(e.añoMuere);
+  // Por etapas según el zoom: 1 = cara y nombre; 2 = además la raya de vida y las fechas; 3 = además la edad
+  const etapa = it.etapa || 3;
+  if (etapa >= 2){
   if (x - r - 8 - x1 > 4) raya(x1, y, x - r - 8, y, s + 1, 2.2);
   if (x2 - (x + r + 8) > 4) raya(x + r + 8, y, x2, y, s + 2, 2.2);
   if (x2 - x1 > 2 * r + 20){                    // topes en los extremos
     raya(x1, y - 8, x1, y + 8, s + 3, 2.2);
     raya(x2, y - 8, x2, y + 8, s + 4, 2.2);
   }
+  }
   cara(e.cara, x, y, r, s);
-  // Nombre y años: se guardan para dibujarlos al final, encima de todas las caras
-  nombresPendientes.push({ txt: e.etiqueta, x: x + r * 1.5 + 6, y: y - 4, a: ctx.globalAlpha });
+  // Nombre (y años): se guardan para dibujarlos al final, encima de todas las caras
+  const txt = etapa === 1 ? (e.corto || e.t) : etapa === 2 ? (e.etiquetaFechas || e.etiqueta) : e.etiqueta;
+  nombresPendientes.push({ txt, x: x + r * 1.5 + 6, y: y - 4, a: ctx.globalAlpha });
 }
 let nombresPendientes = [];
 function dibujarNombres(){
@@ -2658,11 +2666,18 @@ function dibujarEventos(yL){
       const x = xDe(e.año);
       const pie = e.txt + (e.sub ? " · " + e.sub : "");
       let w, cx;
-      if (e.cara){                                     // tramo de vida + cara + nombre
+      let cajas = null;
+      if (e.cara){                                     // cara + nombre; con más sitio, tramo de vida, fechas y edad
         const x1 = xDe(e.añoNace), x2 = xDe(e.añoMuere);
         ctx.font = `600 17px ${FUENTE}`;
-        const der = x + 23 * 1.5 + 6 + ctx.measureText(e.etiqueta).width;
-        cx = Math.min(x1, x - 36); w = Math.max(x2, der) - cx;
+        const der = t => x + 23 * 1.5 + 6 + ctx.measureText(t).width;
+        const ini = Math.min(x1, x - 36);
+        cajas = [
+          [x - 36, der(e.corto || e.t)],                                   // 1: cara y nombre
+          [ini, Math.max(x2, der(e.etiquetaFechas || e.etiqueta))],        // 2: + raya y fechas
+          [ini, Math.max(x2, der(e.etiqueta))]                             // 3: + edad
+        ];
+        cx = cajas[0][0]; w = cajas[0][1] - cx;
       } else {
         if (e.icono === "piramide"){                        // pirámide con el año al lado
           ctx.font = `600 18px ${FUENTE}`;
@@ -2692,7 +2707,7 @@ function dibujarEventos(yL){
       }
       // Personas: zona de la cara y zona del nombre (para que una cara de arriba no tape un nombre de abajo)
       const zonasP = e.cara ? { fa: x - 40, fb: x + 40, la: x + 40, lb: cx + w } : null;
-      cands.push({ e, x, cx, w, pie, zp: zonasP });
+      cands.push({ e, x, cx, w, pie, zp: zonasP, cajas });
     }
     // Colocación por niveles de importancia: primero el 1, luego el 2 y luego el 3.
     // Cada carril guarda los tramos ocupados. Del nivel 1 se pone todo lo que quepa;
@@ -2729,11 +2744,72 @@ function dibujarEventos(yL){
       // Si cerca hay algo más antiguo (de más peso) que no ha cabido, este espera su turno
       // y no ocupa sitio: así nunca sale algo antes que lo anterior, y lo que sale ya no se va.
       const r = intentar(c, tmp);
-      if (r){ puestos.set(c, r); ocup[r.k].push({ k: r.k, a: c.cx + r.d, b: c.cx + r.d + c.w, zp: c.zp }); }
+      if (r){ r.o = { k: r.k, a: c.cx + r.d, b: c.cx + r.d + c.w, zp: c.zp }; r.etapa = 1; puestos.set(c, r); ocup[r.k].push(r.o); }
+    }
+    // Personas: primero se decide qué caras salen, cada una ocupando solo su cara y su nombre.
+    // Después, con el sitio que sobra, cada cara (por orden de importancia) gana el máximo detalle
+    // que quepa, pudiendo subir de carril: 2 = raya de vida y fechas; 3 = además la edad.
+    // Nunca se quita una cara para poner fechas. Todo depende solo del zoom.
+    const conCara = orden.filter(c => c.cajas && puestos.has(c));
+    {
+      // Se recolocan por orden de importancia: cada una con el máximo detalle posible, siempre que
+      // las que vienen detrás sigan cabiendo al menos con su cara y su nombre.
+      const fijos = ocup.map(l => l.filter(o => !conCara.some(c => puestos.get(c).o === o)));
+      const choca = (l, a, b) => l.some(o => a < o.b + 8 && b > o.a - 8);
+      const caben = (lanes, desde) => {
+        const l = lanes.map(x => x.slice());
+        for (let j = desde; j < conCara.length; j++){
+          const [a, b] = conCara[j].cajas[0];
+          let k = 0; while (k < max && choca(l[k], a, b)) k++;
+          if (k === max) return false;
+          l[k].push({ a, b });
+        }
+        return true;
+      };
+      const l2 = fijos.map(l => l.slice()), res = new Map();
+      let ok = true;
+      for (let i = 0; i < conCara.length && ok; i++){
+        const c = conCara[i];
+        let hecho = null;
+        for (let et = 3; et >= 1 && !hecho; et--){
+          const [a, b] = c.cajas[et - 1];
+          for (let k = 0; k < max; k++){
+            if (choca(l2[k], a, b)) continue;
+            const o = { k, a, b, zp: c.zp };
+            l2[k].push(o);
+            if (caben(l2, i + 1)){ hecho = { k, d: 0, o, etapa: et }; break; }
+            l2[k].pop();
+          }
+        }
+        if (hecho) res.set(c, hecho); else ok = false;
+      }
+      if (ok){
+        for (const [c, r] of res) puestos.set(c, r);
+        for (let k = 0; k < max; k++) ocup[k] = l2[k];
+      }
+    }
+    for (let pasada = 0; pasada < 3; pasada++){
+      let cambio = false;
+      for (const c of conCara){
+        const r = puestos.get(c);
+        if (r.etapa === 3) continue;
+        const sin = ocup.map(l => l.filter(o => o !== r.o));
+        let mejor = null;
+        for (let et = 3; et > r.etapa && !mejor; et--){
+          const [a, b] = c.cajas[et - 1];
+          for (let k = 0; k < max; k++) if (!sin[k].some(o => a < o.b + 8 && b > o.a - 8)){ mejor = { k, a, b, et }; break; }
+        }
+        if (!mejor) continue;
+        ocup[r.k] = ocup[r.k].filter(o => o !== r.o);
+        r.o = { k: mejor.k, a: mejor.a, b: mejor.b, zp: c.zp }; r.k = mejor.k; r.etapa = mejor.et; ocup[mejor.k].push(r.o);
+        cambio = true;
+      }
+      if (!cambio) break;
     }
     for (const c of cands){
       const r = puestos.get(c), cabe = !!r, carril = cabe ? r.k : 0, d = cabe ? r.d : 0;
-      its.push({ e: c.e, x: c.x + d, xLinea: c.x, yF: yF - carril * altoCarril(fila), w: c.w, cx: c.cx + d, cabe, arriba,
+      if (cabe && c.cajas){ c.cx = r.o.a; c.w = r.o.b - r.o.a; }
+      its.push({ e: c.e, x: c.x + d, xLinea: c.x, yF: yF - carril * altoCarril(fila), w: c.w, cx: c.cx + d, cabe, arriba, etapa: cabe ? r.etapa : 1,
                  pie: c.pie, carril, apartado: d > 0, p: c.p, escala: fila === "libros" && carril > 0 ? ESC_LIBRO : 1 });
     }
     const usados = ocup.reduce((n, o, k) => o.length ? k + 1 : n, 1);
