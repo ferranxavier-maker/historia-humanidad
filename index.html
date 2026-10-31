@@ -76,7 +76,10 @@ header{position:fixed;top:0;left:0;right:0;padding:24px 16px 0;pointer-events:no
   clip-path:polygon(3% 0,97% 4%,100% 22%,96% 41%,99% 63%,95% 82%,98% 100%,2% 96%,5% 78%,0 58%,4% 37%,1% 17%)}
 #detalle figure.foto::before{top:4px;right:-36px;transform:rotate(43deg)}
 #detalle figure.foto::after{bottom:6px;left:-36px;transform:rotate(36deg)}
-#detalle p.creditos{clear:both;font:500 15px/1.3 system-ui,sans-serif;color:#999;margin:34px 0 0}
+#detalle figure.foto{cursor:pointer}
+#detalle figure.foto .credito{position:absolute;left:0;right:0;bottom:0;padding:6px 8px;background:rgba(20,20,20,.68);color:#fff;
+  font:500 13px/1.3 system-ui,sans-serif;text-align:right;padding-left:44px;opacity:0;transition:opacity .2s;pointer-events:none}
+#detalle figure.foto.ver .credito{opacity:1}
 @media (min-width:700px){#detalle figure.foto{float:right;margin:8px 6px 14px 26px}}
 #detalle h2{clear:both}
 #nota button{position:absolute;top:6px;right:8px;border:0;background:none;font:700 22px "Caveat",sans-serif;cursor:pointer;color:#555}
@@ -3500,7 +3503,6 @@ function abrirDetalle(ev, sinHistorial){
   document.getElementById("detT").textContent = ev.t;
   document.getElementById("detF").textContent = ev.txt + (ev.sub ? " · " + ev.sub : "");
   const cuerpo = document.getElementById("detCuerpo"); cuerpo.innerHTML = "";
-  const creditos = [];                           // autores y licencias de las fotos, al final de la ficha
   for (const sec of ev.detalle){
     const h = document.createElement("h2"); h.textContent = sec.h;
     const p = document.createElement("p"); p.className = "t"; p.textContent = sec.p;
@@ -3510,14 +3512,13 @@ function abrirDetalle(ev, sinHistorial){
       const img = document.createElement("img");
       img.src = sec.foto.src; img.alt = sec.foto.alt || sec.h; img.loading = "lazy";
       fig.append(img); cuerpo.append(fig);
-      if (sec.foto.credito) creditos.push(sec.foto.credito);
+      if (sec.foto.credito){                     // el crédito solo sale al pulsar la foto
+        const cr = document.createElement("span"); cr.className = "credito"; cr.textContent = "Foto: " + sec.foto.credito;
+        fig.append(cr); fig.title = "Pulsa para ver el autor";
+        fig.onclick = () => fig.classList.toggle("ver");
+      }
     }
     cuerpo.append(p);
-  }
-  if (creditos.length){
-    const c = document.createElement("p"); c.className = "creditos";
-    c.textContent = (creditos.length > 1 ? "Fotos: " : "Foto: ") + creditos.join(" · ");
-    cuerpo.append(c);
   }
   det.classList.add("abierta"); det.scrollTop = 0;
   // Enlace propio (#nombre-del-evento) y el botón "atrás" del navegador cierra la subpágina
