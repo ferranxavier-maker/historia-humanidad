@@ -1,0 +1,33 @@
+# Publica la web en Cloudflare Pages (proyecto historia-humanidad) cada vez que se sube algo a main.
+# Necesita el secreto CLOUDFLARE_API_TOKEN en el repo (token con permiso Cloudflare Pages: Edit).
+name: Publicar en Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: publicar
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Preparar los archivos de la web
+        run: |
+          mkdir web
+          cp index.html manifest.webmanifest sw.js web/
+          cp -r icons web/
+
+      - name: Subir a Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: 3a92637fdfd456fa876307a9852bd458
+          command: pages deploy web --project-name=historia-humanidad --branch=main --commit-dirty=true
