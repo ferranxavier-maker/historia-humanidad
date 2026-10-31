@@ -969,6 +969,17 @@ const EVENTOS = [
       { h: "Su legado", p: "Su mensaje dio origen al cristianismo, que se extendió por todo el Imperio romano y hoy es la religión con más seguidores del mundo, con más de 2.000 millones de fieles." }
     ]
   },
+  { nace: "1451", f: "1506-05-20", aproxNace: true, vivio: "c. 54 años", fila: "personas", t: "Cristóbal Colón", nivel: 2, corto: "Colón", cara: "colon",
+    resumen: "Navegante nacido probablemente en Génova en 1451 y muerto en Valladolid el 20 de mayo de 1506. Convencido de que se podía llegar a Asia navegando hacia el oeste, convenció a los Reyes Católicos para que financiaran el viaje, y el 12 de octubre de 1492 llegó a una isla de las Bahamas. Hizo cuatro viajes y murió creyendo que había llegado a Asia, sin saber que había encontrado un continente nuevo para los europeos.",
+    detalle: [
+      { h: "Un origen discutido", p: "Según la versión más aceptada, nació en Génova entre finales de agosto y octubre de 1451, hijo de un tejedor de lana, y de joven navegó por el Mediterráneo como marinero y comerciante. Él mismo fue muy reservado sobre sus orígenes, y por eso han surgido muchas hipótesis: que era catalán, gallego, mallorquín, portugués o judío converso. Ninguna ha desplazado de forma concluyente a la genovesa." },
+      { h: "Portugal y el gran proyecto", p: "Hacia 1476 llegó a Portugal, el gran centro de la navegación de la época, y se casó con Felipa Moniz, con quien tuvo a su hijo Diego. Que la Tierra era redonda se sabía desde los griegos; su error fue creerla mucho más pequeña, con Asia a solo unos miles de kilómetros al oeste. Hacia 1484 presentó su plan al rey Juan II de Portugal, cuyos expertos lo rechazaron porque sus cálculos les parecían equivocados, y tenían razón." },
+      { h: "Los Reyes Católicos", p: "Pasó a Castilla y durante años insistió ante Isabel y Fernando, ocupados en la guerra de Granada. En Córdoba tuvo con Beatriz Enríquez a su segundo hijo, Hernando, que después escribiría su biografía. Tras la toma de Granada, el 17 de abril de 1492 se firmaron las Capitulaciones de Santa Fe: si tenía éxito, Colón sería almirante, virrey y gobernador de las tierras que descubriera y se quedaría con la décima parte de sus riquezas." },
+      { h: "El primer viaje", p: "Salió del puerto de Palos el 3 de agosto de 1492 con tres barcos, la Pinta, la Niña y la Santa María, y unos 90 hombres, entre ellos los hermanos Pinzón. Tras hacer escala en las Canarias, el 12 de octubre llegaron a una isla de las Bahamas que los taínos llamaban Guanahaní y Colón bautizó San Salvador. Después exploró Cuba y La Española; la Santa María encalló en Nochebuena y con sus restos levantó el fuerte de La Navidad. Volvió en marzo de 1493 y los Reyes lo recibieron con honores en Barcelona." },
+      { h: "Tres viajes más", p: "En el segundo viaje (1493-1496) llevó 17 barcos y unos 1.200 hombres para poblar La Española, y encontró el fuerte de La Navidad destruido. En el tercero (1498-1500) tocó por primera vez el continente, en la costa de Venezuela, pero gobernaba tan mal la colonia que los Reyes enviaron a Francisco de Bobadilla, que lo devolvió a España encadenado. En el cuarto (1502-1504) recorrió la costa de Centroamérica buscando un paso hacia Asia y acabó naufragado un año en Jamaica." },
+      { h: "Los últimos años", p: "Volvió enfermo y reclamando los títulos y las rentas que le habían quitado, y murió en Valladolid el 20 de mayo de 1506, con unos 54 años, convencido de haber llegado a Asia. El nuevo continente acabó llamándose América por Américo Vespucio, que defendió que era un mundo nuevo. Sus restos viajaron de Valladolid a Sevilla, Santo Domingo y La Habana, y volvieron a Sevilla en 1898; los análisis de ADN han confirmado que los de la catedral de Sevilla son suyos, aunque Santo Domingo también reclama tenerlos." },
+      { h: "Su legado", p: "Sus viajes unieron para siempre los dos lados del Atlántico: plantas, animales y personas cruzaron en ambas direcciones, el llamado intercambio colombino, que llevó a Europa la patata, el maíz o el tomate, y a América el caballo, el trigo o la vaca. Para los pueblos indígenas fue una catástrofe: las enfermedades traídas de Europa, la guerra y el trabajo forzado diezmaron a la población, y los taínos de las Antillas casi desaparecieron en pocas décadas." }
+    ] },
   { nace: "1769-08-15", f: "1821-05-05", fila: "personas", t: "Napoleón Bonaparte", nivel: 2, corto: "Napoleón", cara: "napoleon",
     resumen: "Nació en Ajaccio (Córcega) el 15 de agosto de 1769 y murió desterrado en la isla de Santa Elena el 5 de mayo de 1821. Militar salido de la Revolución francesa, tomó el poder en 1799 y en 1804 se coronó emperador de los franceses. Llegó a dominar casi toda Europa, impuso un código de leyes que todavía influye en medio mundo y acabó derrotado en Waterloo en 1815.",
     detalle: [
@@ -1187,7 +1198,7 @@ EVENTOS.forEach((e, i) => {
       e.etiqueta += par;
       e.txt = "reinó " + e.txt + par;
     } else {
-      e.edad = `${cN || c ? "c. " : ""}${edad} años`;
+      e.edad = e.vivio || `${cN || c ? "c. " : ""}${edad} años`;   // "vivio": edad propia si la fecha no basta
       e.txt += ` (${e.edad})`;
       e.etiquetaFechas = e.etiqueta;
       e.etiqueta += ` (${e.edad})`;
@@ -2177,6 +2188,52 @@ function cara(quien, x, y, r, s){
     for (const [dx, dy] of [[-.55, .25], [-.48, .38], [.52, .22], [.58, .36], [.46, .44]]){
       ctx.beginPath(); ctx.arc(x + dx * r, y + dy * r, .8, 0, Math.PI * 2); ctx.fill();
     }
+  }
+  if (quien === "colon"){
+    ctx.strokeStyle = TINTA; ctx.fillStyle = TINTA; ctx.lineCap = "round";
+    // Melena canosa hasta la mandíbula (blanca con trazos de tinta)
+    ctx.beginPath();
+    ctx.moveTo(x - r * .92, y + r * .65);
+    ctx.quadraticCurveTo(x - r * 1.18, y - r * .1, x - r * .82, y - r * .72);
+    ctx.lineTo(x + r * .82, y - r * .72);
+    ctx.quadraticCurveTo(x + r * 1.18, y - r * .1, x + r * .92, y + r * .65);
+    ctx.lineTo(x + r * .72, y + r * .6);
+    ctx.quadraticCurveTo(x + r * .82, y - r * .1, x + r * .55, y - r * .5);
+    ctx.lineTo(x - r * .55, y - r * .5);
+    ctx.quadraticCurveTo(x - r * .82, y - r * .1, x - r * .72, y + r * .6);
+    ctx.closePath();
+    ctx.fillStyle = "rgba(225, 225, 220, .95)"; ctx.fill();
+    ctx.lineWidth = 1.8; ctx.lineJoin = "round"; ctx.stroke();
+    ctx.lineWidth = 1;
+    for (const k of [-1, 1]) for (let j = 0; j < 3; j++){
+      ctx.beginPath();
+      ctx.moveTo(x + k * r * (.7 + j * .1), y - r * .45);
+      ctx.quadraticCurveTo(x + k * r * (.95 + j * .05), y, x + k * r * (.78 + j * .05), y + r * .55);
+      ctx.stroke();
+    }
+    // Gorro negro plano (bonete)
+    ctx.fillStyle = TINTA;
+    ctx.beginPath();
+    ctx.moveTo(x - r * 1.0, y - r * .58);
+    ctx.quadraticCurveTo(x - r * 1.35, y - r * 1.1, x - r * .3, y - r * 1.2);
+    ctx.quadraticCurveTo(x + r * 1.05, y - r * 1.28, x + r * 1.08, y - r * .78);
+    ctx.quadraticCurveTo(x, y - r * .78, x - r * 1.0, y - r * .58);
+    ctx.fill();
+    // Banda del gorro
+    ctx.save(); ctx.strokeStyle = "#fffdf7"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x - r * .92, y - r * .7); ctx.quadraticCurveTo(x, y - r * .9, x + r * 1.0, y - r * .88); ctx.stroke();
+    ctx.restore();
+    // Ojos con mirada lejana y cejas algo arqueadas
+    for (const k of [-1, 1]){
+      ctx.beginPath(); ctx.arc(x + k * r * .3, y - r * .02, 1.9, 0, Math.PI * 2); ctx.fill();
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(x + k * r * .14, y - r * .2); ctx.quadraticCurveTo(x + k * r * .3, y - r * .28, x + k * r * .46, y - r * .19); ctx.stroke();
+    }
+    // Nariz larga
+    raya(x + r * .02, y, x - r * .05, y + r * .38, s + 6, 1.4);
+    // Boca fina y sin barba
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x - r * .18, y + r * .6); ctx.quadraticCurveTo(x, y + r * .64, x + r * .18, y + r * .6); ctx.stroke();
   }
   if (quien === "hitler"){
     // Pelo con el flequillo cayendo sobre la frente
