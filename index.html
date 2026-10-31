@@ -1026,7 +1026,7 @@ const EVENTOS = [
       { h: "La Segunda Guerra Mundial", p: "En agosto de 1939 firmó con Hitler el pacto Molotov-Ribbentrop y se repartió con él Polonia. El 22 de junio de 1941 Alemania invadió la URSS por sorpresa y llegó a las puertas de Moscú. La victoria en Stalingrado (1942-1943) cambió el rumbo de la guerra, y en 1945 el Ejército Rojo tomó Berlín. La URSS pagó el precio más alto: unos 27 millones de muertos. En Yalta y Potsdam, Stalin se repartió con Roosevelt, Churchill y Truman el mapa de la posguerra." },
       { h: "Guerra Fría y muerte", p: "Tras la guerra impuso regímenes comunistas en Europa del Este, tras lo que Churchill llamó el «telón de acero», y en 1949 la URSS probó su primera bomba atómica. Sufrió un derrame cerebral en su dacha de Kúntsevo y murió el 5 de marzo de 1953, con 74 años. En 1956 su sucesor, Jruschov, denunció sus crímenes y el culto a su persona en un famoso discurso secreto." }
     ] },
-  { nace: "1879-03-14", f: "1955-04-18", fila: "personas", t: "Albert Einstein", nivel: 2, corto: "Einstein", cara: "einstein",
+  { nace: "1879-03-14", f: "1955-04-18", fila: "personas", simbolo: "cientifico", t: "Albert Einstein", nivel: 2, corto: "Einstein", cara: "einstein",
     resumen: "Nació en Ulm (Alemania) el 14 de marzo de 1879 y murió en Princeton (Estados Unidos) el 18 de abril de 1955. Físico, autor de la teoría de la relatividad, que cambió nuestra forma de entender el espacio, el tiempo y la gravedad. Su fórmula E = mc² muestra que la masa y la energía son dos formas de lo mismo. Recibió el Nobel de Física de 1921 por explicar el efecto fotoeléctrico, una de las bases de la física cuántica, y se convirtió en el símbolo mismo del genio.",
     detalle: [
       { h: "Sus orígenes", p: "Nació el 14 de marzo de 1879 en Ulm, en una familia judía, y creció en Múnich. Que era mal alumno es un mito: destacaba en matemáticas y física, aunque detestaba la disciplina de la escuela alemana. Terminó el bachillerato en Suiza y en 1900 se tituló en el Politécnico de Zúrich, pero no consiguió plaza de profesor." },
@@ -1476,6 +1476,40 @@ function lechuza(cx, cy){
   ctx.restore();
 }
 
+// Probeta pequeñita con líquido y burbujas: sello de los científicos junto a la cara
+function probeta(cx, cy){
+  ctx.save(); ctx.strokeStyle = TINTA; ctx.lineJoin = "round"; ctx.lineCap = "round";
+  const w = 3.6, top = cy - 11, bot = cy + 8;
+  // Líquido verde en la mitad de abajo
+  ctx.save(); ctx.globalCompositeOperation = "multiply";
+  ctx.fillStyle = "rgba(70, 190, 110, .9)";
+  ctx.fillRect(cx - w, cy - 1, w * 2, bot - (cy - 1));
+  ctx.restore();
+  // Burbujas
+  ctx.lineWidth = .9;
+  for (const [dx, dy, rr] of [[-1, 4.5, 1.1], [1.3, 1.5, .9], [-.5, -4, .8], [.8, -7, .6]]){
+    ctx.beginPath(); ctx.arc(cx + dx, cy + dy, rr, 0, Math.PI * 2); ctx.stroke();
+  }
+  // Tubo, con el borde de arriba abierto hacia fuera
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(cx - w - 1.6, top); ctx.lineTo(cx - w, top + 1.4);
+  ctx.lineTo(cx - w, bot); ctx.lineTo(cx + w, bot);
+  ctx.lineTo(cx + w, top + 1.4); ctx.lineTo(cx + w + 1.6, top);
+  ctx.stroke();
+  // Pie
+  ctx.lineWidth = 1.6;
+  ctx.beginPath(); ctx.moveTo(cx - w - 3, bot + 2); ctx.lineTo(cx + w + 3, bot + 2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx - w, bot); ctx.lineTo(cx - w - 1.5, bot + 2); ctx.moveTo(cx + w, bot); ctx.lineTo(cx + w + 1.5, bot + 2); ctx.stroke();
+  // Rayitas de medida
+  ctx.lineWidth = .9;
+  for (let j = 0; j < 4; j++){
+    const yy = top + 4 + j * 3.6;
+    ctx.beginPath(); ctx.moveTo(cx - w, yy); ctx.lineTo(cx - w + (j % 2 ? 2.4 : 1.4), yy); ctx.stroke();
+  }
+  ctx.restore();
+}
+
 // Tramo de la vida de una persona: |———— (cara) ————|
 function tramoVida(it, y){
   const e = it.e, r = 23, x = it.x, s = e.id * 17 + 5;
@@ -1492,7 +1526,9 @@ function tramoVida(it, y){
   }
   }
   cara(e.cara, x, y, r, s);
-  if (e.simbolo === "filosofo") lechuza(x - r * 1.1, y - r * 1.05);   // sello de filósofo, fuera de la cara arriba a la izquierda
+  // Icono de su oficio, fuera de la cara arriba a la izquierda, con hueco para que no la toque
+  if (e.simbolo === "filosofo") lechuza(x - r * 1.55, y - r * 1.35);
+  if (e.simbolo === "cientifico") probeta(x - r * 1.55, y - r * 1.35);
   // Nombre (y años): se guardan para dibujarlos al final, encima de todas las caras
   const txt = etapa === 1 ? (e.corto || e.t) : etapa === 2 ? (e.etiquetaFechas || e.etiqueta) : e.etiqueta;
   nombresPendientes.push({ txt, x: x + r * 1.5 + 6, y: y - 4, a: ctx.globalAlpha });
