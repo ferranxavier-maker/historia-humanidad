@@ -1171,6 +1171,16 @@ const EVENTOS = [
       { h: "La Revolución Cultural", p: "Apartado en parte del poder tras el desastre, en 1966 lanzó la Revolución Cultural para recuperarlo y eliminar a sus rivales. Millones de jóvenes Guardias Rojos, con el Libro rojo de sus citas en la mano, persiguieron a profesores, intelectuales y dirigentes del partido, y destruyeron templos y obras de arte. El presidente Liu Shaoqi murió en prisión y Deng Xiaoping fue purgado. Murieron cientos de miles de personas, y quizá más de un millón." },
       { h: "El final", p: "En 1972 recibió en Pekín al presidente de Estados Unidos, Richard Nixon, un giro histórico en plena Guerra Fría. Murió el 9 de septiembre de 1976, con 82 años. Un mes después fue detenida la «Banda de los Cuatro», encabezada por su viuda, Jiang Qing, y a partir de 1978 Deng Xiaoping abrió la economía china. En 1981 el partido declaró que sus méritos superaban a sus errores, aunque calificó la Revolución Cultural de grave error. Su cuerpo embalsamado está en un mausoleo en Tiananmén y su retrato sigue presidiendo la plaza y los billetes chinos." }
     ] },
+  { nace: "1925", f: "1998-04-15", aproxNace: true, vivio: "c. 72 años", fila: "personas", bandera: "kampuchea", t: "Pol Pot", nivel: 2, cara: "polpot",
+    resumen: "Saloth Sar, conocido como Pol Pot, nació en Camboya hacia 1925 y murió en la selva del norte del país el 15 de abril de 1998. Líder de los Jemeres Rojos, gobernó Camboya de 1975 a 1979 e impuso un régimen comunista agrario extremo que vació las ciudades y abolió el dinero, las escuelas y la religión. En menos de cuatro años murieron entre 1,5 y 2 millones de personas, cerca de una cuarta parte de la población, por ejecuciones, hambre, trabajos forzados y enfermedades.",
+    detalle: [
+      { h: "Saloth Sar", p: "Nació en Prek Sbauv, en la provincia de Kampong Thom, en una familia de campesinos acomodados con contactos en la corte real; la fecha exacta no se conoce. Con una beca, estudió en París entre 1949 y 1953, donde entró en el Partido Comunista Francés y descuidó tanto los estudios que perdió la beca." },
+      { h: "Los Jemeres Rojos", p: "De vuelta en Camboya fue profesor mientras militaba en secreto, y en 1963 se convirtió en el líder del Partido Comunista de Kampuchea, cuyos guerrilleros se llamaron Jemeres Rojos. La guerra de Vietnam se extendió a Camboya: Estados Unidos bombardeó el país entre 1969 y 1973 y en 1970 un golpe de Estado del general Lon Nol derrocó al príncipe Sihanouk, que se alió con los Jemeres Rojos. Su guerrilla creció hasta ganar la guerra." },
+      { h: "El año cero", p: "El 17 de abril de 1975 los Jemeres Rojos entraron en Nom Pen y en pocos días obligaron a toda la población de las ciudades a irse al campo. El nuevo Estado, la Kampuchea Democrática, abolió el dinero, los mercados, las escuelas, los hospitales y la religión, separó familias y convirtió a todo el país en cooperativas agrícolas de trabajo forzado. Se habló de empezar desde el «año cero»." },
+      { h: "El genocidio", p: "El régimen persiguió a todo sospechoso de ser enemigo: antiguos funcionarios, intelectuales, personas que hablaban idiomas extranjeros o llevaban gafas, monjes budistas y minorías como los vietnamitas, los chinos y los cham musulmanes. En la cárcel S-21 de Tuol Sleng, en Nom Pen, miles de presos fueron torturados antes de ser ejecutados en los «campos de la muerte», como el de Choeung Ek. Con el hambre y el agotamiento, murieron entre 1,5 y 2 millones de personas." },
+      { h: "La caída", p: "Los Jemeres Rojos atacaron también a Vietnam, que a finales de 1978 invadió Camboya y el 7 de enero de 1979 tomó Nom Pen. Pol Pot huyó a la selva junto a la frontera con Tailandia y siguió la guerra durante años. Con el apoyo de China, y ante la oposición de muchos países a la ocupación vietnamita, los Jemeres Rojos conservaron el asiento de Camboya en la ONU hasta comienzos de los noventa." },
+      { h: "El final", p: "En 1997 mandó matar a uno de sus antiguos compañeros, Son Sen, junto a su familia, y sus propios seguidores lo detuvieron y lo condenaron en un juicio improvisado a arresto domiciliario. Murió el 15 de abril de 1998, oficialmente de un ataque al corazón, sin haber sido juzgado nunca por sus crímenes. Años después, un tribunal apoyado por la ONU condenó a varios dirigentes de los Jemeres Rojos, y en 2018 sentenció por genocidio a Nuon Chea y Khieu Samphan." }
+    ] },
   { nace: "1889-04-20", f: "1945-04-30", fila: "personas", bandera: "nazi", t: "Adolf Hitler", nivel: 2, corto: "Hitler", cara: "hitler",
     resumen: "Nació en Braunau am Inn (Austria) el 20 de abril de 1889 y murió en Berlín el 30 de abril de 1945. Líder del partido nazi, fue canciller de Alemania desde 1933 y gobernó como dictador desde 1934. Su régimen desencadenó la Segunda Guerra Mundial al invadir Polonia en 1939 y fue responsable del Holocausto, en el que fueron asesinados unos seis millones de judíos y millones de personas más. Se suicidó en su búnker de Berlín días antes de la rendición alemana.",
     detalle: [
@@ -1806,6 +1816,17 @@ function bandera(cx, cy, tipo){
     estrella(x0 + 5, y0 + 5, 2.8, 0);
     estrella(x0 + 9.5, y0 + 2.2, 1, .5); estrella(x0 + 11, y0 + 4.4, 1, .2);
     estrella(x0 + 11, y0 + 7.2, 1, 0); estrella(x0 + 9.5, y0 + 9.2, 1, .4);
+  }
+  if (tipo === "kampuchea"){                     // roja con la silueta amarilla de Angkor Wat
+    ctx.fillStyle = "#d21f1f"; ctx.fillRect(x0 - 2, y0 - 3, w + 4, h + 6);
+    ctx.fillStyle = "#ffd21f";
+    const bx = cx, by = cy + 3.6;
+    ctx.fillRect(bx - 8, by - 1.4, 16, 1.6);                      // base
+    ctx.beginPath(); ctx.moveTo(bx - 1.8, by - 1.4); ctx.lineTo(bx, by - 8.5); ctx.lineTo(bx + 1.8, by - 1.4); ctx.fill();   // torre central
+    for (const k of [-1, 1]){
+      ctx.beginPath(); ctx.moveTo(bx + k * 3, by - 1.4); ctx.lineTo(bx + k * 4.4, by - 6); ctx.lineTo(bx + k * 5.8, by - 1.4); ctx.fill();
+      ctx.fillRect(bx + k * 6.5 - 1, by - 3.4, 2, 2);
+    }
   }
   if (tipo === "nazi"){
     ctx.fillStyle = "#c8102e"; ctx.fillRect(x0 - 2, y0 - 3, w + 4, h + 6);
@@ -2903,6 +2924,38 @@ function cara(quien, x, y, r, s){
     ctx.beginPath(); ctx.arc(x - r * .08, y + r * .72, 2, 0, Math.PI * 2); ctx.fill();
     ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(x - r * .32, y + r * .86); ctx.quadraticCurveTo(x, y + r * .97, x + r * .32, y + r * .86); ctx.stroke();
+  }
+  if (quien === "polpot"){
+    ctx.strokeStyle = TINTA; ctx.fillStyle = TINTA; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    // Pelo corto peinado hacia atrás, con entradas
+    ctx.beginPath();
+    ctx.moveTo(x - r * .95, y - r * .1);
+    ctx.quadraticCurveTo(x - r * 1.06, y - r * .95, x, y - r * 1.08);
+    ctx.quadraticCurveTo(x + r * 1.06, y - r * .95, x + r * .95, y - r * .1);
+    ctx.quadraticCurveTo(x + r * .86, y - r * .45, x + r * .6, y - r * .55);
+    ctx.quadraticCurveTo(x + r * .3, y - r * .62, x, y - r * .7);
+    ctx.quadraticCurveTo(x - r * .3, y - r * .62, x - r * .6, y - r * .55);
+    ctx.quadraticCurveTo(x - r * .86, y - r * .45, x - r * .95, y - r * .1);
+    ctx.fillStyle = "rgba(55, 55, 55, .97)"; ctx.fill();
+    ctx.save(); ctx.strokeStyle = "rgba(255, 253, 247, .55)"; ctx.lineWidth = .9;
+    for (let k = -2; k <= 2; k++){ ctx.beginPath(); ctx.moveTo(x + k * r * .2, y - r * .66); ctx.quadraticCurveTo(x + k * r * .23, y - r * .82, x + k * r * .25, y - r * (.98 - Math.abs(k) * .1)); ctx.stroke(); }
+    ctx.restore(); ctx.fillStyle = TINTA;
+    // Ojos estrechos y cejas suaves
+    for (const k of [-1, 1]){
+      ctx.lineWidth = 1.8;
+      ctx.beginPath(); ctx.moveTo(x + k * r * .18, y - r * .04); ctx.lineTo(x + k * r * .4, y - r * .06); ctx.stroke();
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(x + k * r * .14, y - r * .24); ctx.quadraticCurveTo(x + k * r * .3, y - r * .3, x + k * r * .44, y - r * .22); ctx.stroke();
+    }
+    // Nariz ancha
+    ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(x - r * .15, y + r * .28); ctx.quadraticCurveTo(x, y + r * .36, x + r * .15, y + r * .28);
+    ctx.moveTo(x + r * .02, y); ctx.lineTo(x - r * .02, y + r * .2); ctx.stroke();
+    // Sonrisa leve
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x - r * .22, y + r * .5); ctx.quadraticCurveTo(x, y + r * .6, x + r * .22, y + r * .5); ctx.stroke();
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x - r * .3, y + r * .84); ctx.quadraticCurveTo(x, y + r * .94, x + r * .3, y + r * .84); ctx.stroke();
   }
   if (quien === "hitler"){
     // Pelo con el flequillo cayendo sobre la frente
@@ -4040,6 +4093,23 @@ Capilla Sixtina
 Juicio Final|El Juicio Final (Miguel Ángel)
 Galería de la Academia|Galería de la Academia de Florencia
 Piedad|La Piedad (Miguel Ángel)
+Jemeres Rojos
+Camboya
+Kampong Thom|Provincia de Kampong Thom
+Partido Comunista Francés|Partido Comunista Francés
+Partido Comunista de Kampuchea
+guerra de Vietnam|Guerra de Vietnam
+Lon Nol
+Sihanouk|Norodom Sihanouk
+Nom Pen
+Kampuchea Democrática
+Tuol Sleng|Museo del Genocidio de Tuol Sleng
+campos de la muerte|Campos de la muerte (Camboya)
+Choeung Ek
+Tailandia
+Son Sen
+Nuon Chea
+Khieu Samphan
 Shaoshan
 Hunan
 Pekín
