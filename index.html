@@ -1039,6 +1039,17 @@ const EVENTOS = [
       { h: "Su legado", p: "Su mensaje dio origen al cristianismo, que se extendió por todo el Imperio romano y hoy es la religión con más seguidores del mundo, con más de 2.000 millones de fieles." }
     ]
   },
+  { nace: "1564-02-15", f: "1642-01-08", fila: "personas", simbolo: "cientifico", t: "Galileo Galilei", nivel: 2, corto: "Galileo", cara: "galileo",
+    resumen: "Nació en Pisa el 15 de febrero de 1564 y murió en Arcetri, cerca de Florencia, el 8 de enero de 1642. Astrónomo, físico y matemático, es uno de los padres de la ciencia moderna: con el telescopio descubrió las lunas de Júpiter y las montañas de la Luna, defendió que la Tierra gira alrededor del Sol y estudió el movimiento con experimentos y matemáticas. La Inquisición lo juzgó en 1633 y pasó sus últimos años confinado en su casa.",
+    detalle: [
+      { h: "De la medicina a las matemáticas", p: "Era hijo de Vincenzo Galilei, músico y teórico de la música. Empezó a estudiar medicina en la Universidad de Pisa, pero lo dejó por las matemáticas. Según su primer biógrafo, Vincenzo Viviani, observando una lámpara que oscilaba en la catedral de Pisa descubrió que un péndulo tarda lo mismo en cada oscilación; la famosa historia de que soltó bolas desde la torre inclinada probablemente es una leyenda." },
+      { h: "Padua", p: "En 1589 fue profesor en Pisa y desde 1592 en la Universidad de Padua, en la república de Venecia, donde pasó dieciocho años que recordaría como los mejores de su vida. Allí tuvo tres hijos con Marina Gamba; su hija mayor, Virginia, se hizo monja con el nombre de sor Maria Celeste, y sus cartas con ella se conservan." },
+      { h: "El telescopio", p: "En 1609 supo que en Holanda se había inventado un anteojo que acercaba los objetos y construyó los suyos, hasta llegar a unos veinte aumentos. Al apuntarlo al cielo vio que la Luna tenía montañas y cráteres, que la Vía Láctea estaba formada por innumerables estrellas y que Júpiter tenía cuatro lunas, hoy llamadas lunas galileanas. Lo contó en marzo de 1610 en El mensajero sideral, y después observó las fases de Venus y las manchas del Sol. Cosme II de Médici lo nombró ese año matemático de la corte de Florencia." },
+      { h: "Copérnico y la Iglesia", p: "Sus descubrimientos apoyaban la teoría de Copérnico, según la cual la Tierra y los planetas giran alrededor del Sol. En 1616 la Iglesia declaró esa idea contraria a las Escrituras y el cardenal Belarmino le advirtió que no la defendiera. En 1632, con su amigo Maffeo Barberini ya como papa Urbano VIII, publicó el Diálogo sobre los dos máximos sistemas del mundo, en el que el defensor de la Tierra inmóvil, Simplicio, quedaba en ridículo." },
+      { h: "El juicio", p: "En 1633 la Inquisición lo juzgó en Roma por sospecha de herejía. El 22 de junio, con 69 años, tuvo que abjurar de rodillas de la idea de que la Tierra se mueve. Lo condenaron a prisión, que se cambió por arresto domiciliario en su villa de Arcetri. La frase «y sin embargo se mueve» que se le atribuye no aparece en las fuentes de la época y probablemente es una leyenda." },
+      { h: "La nueva física", p: "Confinado y quedándose ciego, escribió su obra más importante para la física, los Discursos sobre dos nuevas ciencias, publicados en Leiden en 1638. Allí estudió la caída de los cuerpos, demostró que, sin el aire, todos caen igual de deprisa, y describió la trayectoria de los proyectiles. Defendió que el libro de la naturaleza «está escrito en lengua matemática», y su forma de combinar experimentos y matemáticas es la base de la ciencia moderna." },
+      { h: "El final y el legado", p: "Murió en Arcetri el 8 de enero de 1642, con 77 años; ese mismo año nació Isaac Newton, que continuaría su obra. Está enterrado en la basílica de la Santa Cruz de Florencia, cerca de Miguel Ángel. En 1992 el papa Juan Pablo II reconoció públicamente que la Iglesia se había equivocado al condenarlo." }
+    ] },
   { nace: "1451", f: "1506-05-20", aproxNace: true, vivio: "c. 54 años", fila: "personas", t: "Cristóbal Colón", nivel: 2, corto: "Colón", cara: "colon",
     resumen: "Navegante nacido probablemente en Génova en 1451 y muerto en Valladolid el 20 de mayo de 1506. Convencido de que se podía llegar a Asia navegando hacia el oeste, convenció a los Reyes Católicos para que financiaran el viaje, y el 12 de octubre de 1492 llegó a una isla de las Bahamas. Hizo cuatro viajes y murió creyendo que había llegado a Asia, sin saber que había encontrado un continente nuevo para los europeos.",
     detalle: [
@@ -2701,6 +2712,46 @@ function cara(quien, x, y, r, s){
     for (const k of [-1, 1]){ ctx.beginPath(); ctx.moveTo(x + k * r * .22, y + r * .36); ctx.quadraticCurveTo(x + k * r * .3, y + r * .52, x + k * r * .26, y + r * .66); ctx.stroke(); }
     ctx.beginPath(); ctx.moveTo(x - r * .34, y + r * .82); ctx.quadraticCurveTo(x, y + r * .96, x + r * .34, y + r * .82); ctx.stroke();
   }
+  if (quien === "galileo"){
+    ctx.strokeStyle = TINTA; ctx.fillStyle = TINTA; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    // Frente despejada y calva, con pelo canoso a los lados
+    for (const k of [-1, 1]){
+      ctx.beginPath();
+      ctx.moveTo(x + k * r * .95, y + r * .1);
+      ctx.quadraticCurveTo(x + k * r * 1.1, y - r * .45, x + k * r * .72, y - r * .8);
+      ctx.quadraticCurveTo(x + k * r * .6, y - r * .55, x + k * r * .78, y + r * .05);
+      ctx.closePath(); ctx.fillStyle = "rgba(200, 195, 185, .97)"; ctx.fill(); ctx.lineWidth = 1.4; ctx.stroke();
+    }
+    // Barba grande y poblada, gris rojiza, con bigote
+    ctx.beginPath();
+    ctx.moveTo(x - r * .9, y + r * .05);
+    ctx.quadraticCurveTo(x - r * 1.0, y + r * .9, x - r * .35, y + r * 1.35);
+    ctx.quadraticCurveTo(x, y + r * 1.55, x + r * .35, y + r * 1.35);
+    ctx.quadraticCurveTo(x + r * 1.0, y + r * .9, x + r * .9, y + r * .05);
+    ctx.quadraticCurveTo(x + r * .6, y + r * .4, x + r * .3, y + r * .34);
+    ctx.quadraticCurveTo(x, y + r * .26, x - r * .3, y + r * .34);
+    ctx.quadraticCurveTo(x - r * .6, y + r * .4, x - r * .9, y + r * .05);
+    ctx.fillStyle = "rgba(185, 150, 120, .97)"; ctx.fill(); ctx.lineWidth = 1.8; ctx.stroke();
+    ctx.lineWidth = 1;                            // mechones de la barba
+    for (let k = -3; k <= 3; k++){ ctx.beginPath(); ctx.moveTo(x + k * r * .18, y + r * (.6 + Math.abs(k) * .02)); ctx.quadraticCurveTo(x + k * r * .2, y + r * .95, x + k * r * .14, y + r * (1.25 - Math.abs(k) * .08)); ctx.stroke(); }
+    // Ojos atentos y cejas
+    for (const k of [-1, 1]){
+      ctx.fillStyle = TINTA; ctx.beginPath(); ctx.arc(x + k * r * .3, y - r * .12, 1.9, 0, Math.PI * 2); ctx.fill();
+      ctx.lineWidth = 1.7;
+      ctx.beginPath(); ctx.moveTo(x + k * r * .13, y - r * .3); ctx.quadraticCurveTo(x + k * r * .3, y - r * .38, x + k * r * .47, y - r * .28); ctx.stroke();
+    }
+    ctx.lineWidth = 1;                            // arrugas de la frente
+    ctx.beginPath(); ctx.moveTo(x - r * .3, y - r * .55); ctx.quadraticCurveTo(x, y - r * .6, x + r * .3, y - r * .55);
+    ctx.moveTo(x - r * .22, y - r * .68); ctx.quadraticCurveTo(x, y - r * .72, x + r * .22, y - r * .68); ctx.stroke();
+    // Nariz
+    raya(x + r * .02, y - r * .1, x - r * .06, y + r * .2, s + 6, 1.4);
+    // Bigote y boca
+    ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(x - r * .3, y + r * .42); ctx.quadraticCurveTo(x - r * .12, y + r * .28, x, y + r * .32);
+    ctx.quadraticCurveTo(x + r * .12, y + r * .28, x + r * .3, y + r * .42); ctx.stroke();
+    ctx.save(); ctx.strokeStyle = "#fffdf7"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x - r * .1, y + r * .5); ctx.lineTo(x + r * .1, y + r * .5); ctx.stroke(); ctx.restore();
+  }
   if (quien === "hitler"){
     // Pelo con el flequillo cayendo sobre la frente
     ctx.beginPath();
@@ -3837,6 +3888,31 @@ Capilla Sixtina
 Juicio Final|El Juicio Final (Miguel Ángel)
 Galería de la Academia|Galería de la Academia de Florencia
 Piedad|La Piedad (Miguel Ángel)
+Pisa
+Vincenzo Galilei
+Universidad de Pisa
+Vincenzo Viviani
+catedral de Pisa|Catedral de Pisa
+torre inclinada|Torre de Pisa
+Universidad de Padua
+Padua
+república de Venecia|República de Venecia
+Marina Gamba
+Maria Celeste|Maria Celeste Galilei
+lunas galileanas|Satélites galileanos
+El mensajero sideral|Sidereus nuncius
+Júpiter|Júpiter (planeta)
+Cosme II de Médici
+Copérnico|Nicolás Copérnico
+cardenal Belarmino|Roberto Belarmino
+Urbano VIII
+Diálogo sobre los dos máximos sistemas del mundo
+Inquisición|Inquisición romana
+Arcetri
+Discursos sobre dos nuevas ciencias
+Leiden
+Isaac Newton
+Juan Pablo II
 Ferrol
 Academia de Infantería de Toledo|Academia de Infantería
 guerra de Marruecos|Guerra del Rif
