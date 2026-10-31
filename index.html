@@ -78,6 +78,8 @@ header{position:fixed;top:0;left:0;right:0;padding:24px 16px 0;pointer-events:no
   /* Fluorescente a mano, de una sola pasada */
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40' preserveAspectRatio='none'%3E%3Cpath fill='rgba(255,220,0,.75)' d='M3,6 C30,3 70,5 110,3 C150,1 180,4 197,2 C199,12 197,26 199,37 C175,39 140,36 100,38 C60,40 30,39 5,40 C1,30 4,16 3,6Z'/%3E%3C/svg%3E") 0 55%/100% 100% no-repeat;transform:rotate(-.6deg)}
 #detalle p.t{font:500 24px/1.32 "Caveat",system-ui,sans-serif;margin:0 0 10px}
+#detalle a.wiki{color:inherit;text-decoration:underline;text-decoration-color:rgba(40,80,170,.55);text-decoration-thickness:1.5px;text-underline-offset:3px}
+#detalle a.wiki:hover{color:#1f4fa8;text-decoration-color:#1f4fa8}
 /* Foto antigua: borde crema amarillento con el canto irregular, imagen algo envejecida y con viñeta,
    sujeta con dos trozos de cinta de carrocero (arriba y en la esquina de abajo a la derecha) */
 #detalle figure.foto{position:relative;margin:16px auto 28px;width:min(300px,78%);transform:rotate(var(--giro,-3deg));filter:drop-shadow(0 5px 7px rgba(0,0,0,.3))}
@@ -3515,6 +3517,401 @@ function cerrarNota(){ nota.classList.remove("abierta"); }
 // --- Subpágina "quiero saber más" ---
 const det = document.getElementById("detalle");
 const slug = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+// Enlaces a Wikipedia de lugares, personas, obras y acontecimientos importantes.
+// "término|Artículo" (si no hay artículo, se usa el propio término). Se enlaza la primera vez que sale en cada ficha.
+const WIKI = new Map(`
+Egipto|Egipto|Antiguo Egipto
+Tebas|Tebas (Egipto)
+Roma|Roma|Antigua Roma
+África
+Europa
+Asia
+Nilo
+Nubia
+Macedonia|Macedonia (región)|Reino de Macedonia
+Alejandría
+Atenas|Atenas|Antigua Atenas
+Mediterráneo|Mar Mediterráneo
+Menfis|Menfis (Egipto)
+Amón
+Jerusalén
+Babilonia
+Amarna|Tell el-Amarna
+Ávaris
+Ilíada
+Odisea
+Eneida
+Troya
+Homero
+Virgilio
+Karnak|Templo de Karnak
+Luxor|Templo de Luxor
+Saqqara
+Guiza|Necrópolis de Guiza
+Gran Pirámide de Guiza
+Gran Esfinge|Gran Esfinge de Guiza
+Canaán
+Museo Egipcio de El Cairo|Museo Egipcio de El Cairo
+Abidos|Abidos (Egipto)
+Hieracómpolis
+Heródoto
+Manetón
+Imhotep
+Actium|Batalla de Accio
+Abu Simbel
+Asuán
+Éufrates
+Mitanni
+Atón
+Howard Carter
+Qadesh|Batalla de Qadesh
+Pueblos del Mar
+Tanis
+Kush|Reino de Kush
+Sais
+Mar Rojo
+Marco Antonio
+Reyes Católicos
+Granada|Reino nazarí de Granada
+Bahamas
+Ítaca
+Gran Dolina
+Atapuerca|Yacimientos de Atapuerca
+Sierra de Atapuerca|Yacimientos de Atapuerca
+Sima del Elefante
+Sima de los Huesos
+Denisova|Cueva Denisova
+Liang Bua
+Chicxulub|Cráter de Chicxulub
+Jebel Irhoud
+Paleta de Narmer
+Tratado de Tordesillas
+Antillas
+Monarquía Hispánica
+Gránico|Batalla del Gránico
+Issos|Batalla de Issos
+Gaugamela|Batalla de Gaugamela
+Roxana
+Seléucidas|Imperio seléucida
+Constantinopla
+Teodosio|Teodosio I el Grande
+Rómulo Augústulo
+Patroclo
+Héctor
+Aquiles
+Ulises|Odiseo
+Penélope
+Eneas
+Dido
+Mary Shelley
+San Petersburgo
+Plutarco
+Meidum|Pirámide de Meidum
+Dahshur
+Pirámide Roja de Dahshur|Pirámide Roja
+Hawara
+Sinaí|Península del Sinaí
+Nefertari
+Colosos de Memnón
+Medinet Habu
+Darío|Darío III
+Liceo|Liceo (Aristóteles)
+Rubicón
+Belén
+Galilea
+Poncio Pilato
+Judea
+Nazaret
+Caprese|Caprese Michelangelo
+Florencia
+Capilla Sixtina
+Juicio Final|El Juicio Final (Miguel Ángel)
+Galería de la Academia|Galería de la Academia de Florencia
+Piedad|La Piedad (Miguel Ángel)
+Lorenzo de Médici
+Ghirlandaio|Domenico Ghirlandaio
+Pietro Torrigiano
+Giorgio Vasari
+Julio II
+Concilio de Trento
+Daniele da Volterra
+Moisés|Moisés (Miguel Ángel)
+San Pietro in Vincoli
+Creación de Adán|La creación de Adán
+Vittoria Colonna
+Tommaso de' Cavalieri
+plaza del Capitolio|Piazza del Campidoglio
+Piedad Rondanini
+iglesia de la Santa Cruz|Basílica de la Santa Cruz (Florencia)
+Settignano
+basílica de San Pedro|Basílica de San Pedro
+plaza de la Señoría|Piazza della Signoria
+Molucas|Islas Molucas
+Mactán
+Lapulapu
+Juan Sebastián Elcano
+Getaria
+Sanlúcar de Barrameda
+Antonio Pigafetta
+Nubes de Magallanes
+Guam
+Cebú
+Malaca
+Diu|Batalla de Diu
+Francisco de Almeida
+Manuel I de Portugal
+Carlos I|Carlos I de España
+estrecho que hoy lleva su nombre|Estrecho de Magallanes
+Ajaccio
+Córcega
+Nelson|Horatio Nelson
+Código Civil|Código Napoleónico
+Prusia|Reino de Prusia
+Wellington|Arthur Wellesley
+Elba|Isla de Elba
+Waterloo|Batalla de Waterloo
+Santa Elena|Isla Santa Elena
+Toulon|Sitio de Tolón
+Josefina de Beauharnais
+Abukir|Batalla del Nilo
+piedra de Rosetta|Piedra de Rosetta
+Piedra de Rosetta
+Notre-Dame de París|Catedral de Notre Dame de París
+Pío VII
+Trafalgar|Batalla de Trafalgar
+Austerlitz|Batalla de Austerlitz
+Jena|Batalla de Jena
+bloqueo continental|Bloqueo Continental
+María Luisa de Austria|María Luisa de Austria (1791-1847)
+Bayona|Abdicaciones de Bayona
+José Bonaparte
+guerra de la Independencia|Guerra de la Independencia española
+Bailén|Batalla de Bailén
+Grande Armée
+Leipzig|Batalla de Leipzig
+Cien Días|Imperio de los Cien Días
+Blücher|Gebhard Leberecht von Blücher
+Inválidos|Los Inválidos
+Tréveris
+Friedrich Engels
+Manifiesto comunista|Manifiesto del Partido Comunista
+Gori
+Tiflis
+Lenin|Vladímir Lenin
+Trotski|León Trotski
+Holodomor
+Gran Terror|Gran Purga
+Gulag
+pacto Molotov-Ribbentrop|Pacto Ribbentrop-Mólotov
+Stalingrado|Batalla de Stalingrado
+Ejército Rojo
+Yalta|Conferencia de Yalta
+Potsdam|Conferencia de Potsdam
+Jruschov|Nikita Jrushchov
+telón de acero|Telón de acero
+Revolución de Octubre
+Roosevelt|Franklin D. Roosevelt
+Churchill|Winston Churchill
+Truman|Harry S. Truman
+Ulm
+Princeton|Universidad de Princeton
+Braunau am Inn
+Segunda Guerra Mundial
+Primera Guerra Mundial
+Holocausto
+Mein Kampf
+Leyes de Núremberg
+Tratado de Versalles|Tratado de Versalles (1919)
+Hindenburg|Paul von Hindenburg
+Eva Braun
+James Webb|Telescopio espacial James Webb
+Apolo 11
+Unión Soviética
+Michael Collins|Michael Collins (astronauta)
+Aldrin|Buzz Aldrin
+Armstrong|Neil Armstrong
+Louis Leakey
+Olduvai|Garganta de Olduvai
+Lomekwi
+Juan Luis Arsuaga
+Eudald Carbonell
+Altamira|Cueva de Altamira
+Chauvet|Cueva de Chauvet
+Neolítico
+Neander|Valle de Neander
+El Sidrón|Cueva de El Sidrón
+Laetoli
+Mary Leakey
+Donald Johanson
+Raymond Dart
+Taung|Niño de Taung
+Dmanisi
+Hombre de Java
+Hombre de Pekín
+Zhoukoudian
+Turkana|Lago Turkana
+Historia de Sinuhé
+Champollion|Jean-François Champollion
+Faro de Alejandría
+Euclides
+Eratóstenes
+Henry Kamen
+Corona de Aragón
+Hernán Cortés
+Francisco Pizarro
+Sacro Imperio|Sacro Imperio Romano Germánico
+Sacro Imperio Romano Germánico
+Potosí
+Nueva España|Virreinato de Nueva España
+Consejo de Indias
+Leyes de Burgos
+Leyes Nuevas
+Escuela de Salamanca
+Bartolomé de las Casas
+Juan Ginés de Sepúlveda
+Paz de Westfalia
+Utrecht|Tratado de Utrecht
+Simón Bolívar
+José de San Martín
+Tratado de París|Tratado de París (1898)
+Ifni
+Sáhara Occidental
+Queronea|Batalla de Queronea (338 a. C.)
+Persépolis
+Ipsos|Batalla de Ipsos
+Antigónidas|Dinastía antigónida
+Carlos Martel
+Poitiers|Batalla de Poitiers (732)
+Pipino el Breve
+Marca Hispánica
+Roncesvalles|Batalla de Roncesvalles (778)
+Cantar de Roldán
+Aquisgrán
+Eginardo
+Alcuino de York
+Luis el Piadoso
+Tratado de Verdún
+Carlomagno
+Marco Aurelio
+Trajano
+Adriano
+Edicto de Milán
+Odoacro
+Heinrich Schliemann
+Hisarlik
+Polifemo
+Poseidón
+Circe
+Calipso
+Telémaco
+Mantua
+Bucólicas
+Geórgicas
+Mecenas|Cayo Cilnio Mecenas
+Rómulo y Remo
+Cartago
+Lacio
+Divina Comedia
+Mary Wollstonecraft
+William Godwin
+Percy Bysshe Shelley
+Villa Diodati
+Ginebra
+Lord Byron
+John Polidori
+Tambora|Monte Tambora
+Ingolstadt
+Prometeo
+Dostoievski|Fiódor Dostoyevski
+Humphry Davy
+Joseph Swan
+Menlo Park
+Edison|Thomas Alva Edison
+Agujas de Cleopatra
+Tutankamón
+Akenatón
+Nefertiti
+Hatshepsut
+Ramsés II
+Keops
+Kefrén
+Micerino
+Zoser
+Narmer
+Seneferu
+Cleopatra
+Julio César
+Alejandro Magno
+Augusto
+Octavio|Augusto
+Pompeyo|Cneo Pompeyo Magno
+Cesarión
+Platón
+Aristóteles
+Sócrates
+Jenofonte
+Delfos
+Esparta
+Peloponeso|Guerra del Peloponeso
+Partenón
+Senaquerib
+Asiria
+Asurbanipal
+Asarhaddón
+Ozymandias
+Merenptah
+Seti I
+Hattusili III
+Muwatalli II
+Papiro Rhind
+Canon Real de Turín
+Auguste Mariette
+Big Bang
+Vía Láctea
+Pangea
+Triásico
+Jurásico
+Cretácico
+Pérmico
+Ordovícico
+Devónico
+Gran Mortandad|Extinción masiva del Pérmico-Triásico
+Fiódor Dostoievski|Fiódor Dostoyevski
+Américo Vespucio
+Martín Alonso Pinzón
+Palos|Palos de la Frontera
+Capitulaciones de Santa Fe
+Guanahaní
+La Española
+Felipa Moniz
+Beatriz Enríquez de Arana
+Hernando Colón
+Juan II de Portugal
+Francisco de Bobadilla
+intercambio colombino|Intercambio colombino
+taínos|Taínos
+Reino de Granada|Reino nazarí de Granada
+Santo Domingo
+catedral de Sevilla|Catedral de Sevilla
+Iósif Stalin
+Kúntsevo`.trim().split("\n").map(l => { const [t, a, antiguo] = l.split("|"); return [t, { a: a || t, antiguo }]; }));
+// "término|Artículo|Artículo para la Antigüedad": en fichas anteriores al año 500 se usa el tercero
+const WIKI_RE = new RegExp("(?<![\\p{L}\\p{N}])(" + [...WIKI.keys()].sort((a, b) => b.length - a.length)
+  .map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")(?![\\p{L}\\p{N}])", "gu");
+function textoConEnlaces(el, txt, usados, antiguo){
+  let i = 0;
+  for (const m of txt.matchAll(WIKI_RE)){
+    const w = WIKI.get(m[1]), art = antiguo && w.antiguo ? w.antiguo : w.a;
+    if (usados.has(art)) continue;               // solo la primera vez en la ficha
+    usados.add(art);
+    el.append(txt.slice(i, m.index));
+    const a = document.createElement("a"); a.className = "wiki"; a.textContent = m[1];
+    a.href = "https://es.wikipedia.org/wiki/" + encodeURIComponent(art.replace(/ /g, "_"));
+    a.target = "_blank"; a.rel = "noopener";
+    el.append(a); i = m.index + m[1].length;
+  }
+  el.append(txt.slice(i));
+}
 // Dos cintas de carrocero por foto, distintas en cada una: el tipo, el sitio y el giro salen
 // del nombre de la foto (siempre igual para la misma foto, distinto entre fotos)
 const CINTAS = [                                 // ancho en px y giro propio de la imagen
@@ -3551,9 +3948,10 @@ function abrirDetalle(ev, sinHistorial){
   document.getElementById("detT").textContent = ev.t;
   document.getElementById("detF").textContent = ev.txt + (ev.sub ? " · " + ev.sub : "");
   const cuerpo = document.getElementById("detCuerpo"); cuerpo.innerHTML = "";
+  const usadosWiki = new Set([ev.t]);            // el propio personaje o evento no se enlaza a sí mismo
   for (const sec of ev.detalle){
     const h = document.createElement("h2"); h.textContent = sec.h;
-    const p = document.createElement("p"); p.className = "t"; p.textContent = sec.p;
+    const p = document.createElement("p"); p.className = "t"; textoConEnlaces(p, sec.p, usadosWiki, (ev.añoMuere ?? ev.añoHasta ?? ev.año) < 500);
     cuerpo.append(h);
     if (sec.foto){                               // foto real, pegada como en un álbum
       const fig = document.createElement("figure"); fig.className = "foto" + (sec.foto.apaisada ? " apaisada" : "");
