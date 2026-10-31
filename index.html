@@ -404,11 +404,8 @@ const FILAS = {
 // Categorías que se ven (casillas de arriba a la derecha). Las que se quitan liberan su sitio:
 // las demás se acercan a la línea y las personas pueden apilarse más.
 const ORDEN_FILAS = { arriba: ["hitos", "personas", "libros"], abajo: ["inventos"] };
+// Al abrir la página, todas las categorías marcadas
 let filasActivas = new Set(Object.keys(FILAS));
-try {
-  const g = JSON.parse(localStorage.getItem("historia-filas"));
-  if (Array.isArray(g)) filasActivas = new Set(g.filter(f => FILAS[f]));
-} catch (err) {}
 function aplicarFilas(){
   for (const lado of ["arriba", "abajo"]){
     let n = 0;
@@ -1211,9 +1208,10 @@ function tamaño(){
   ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 }
 
+const ZOOM_INICIO = 4.22;
 function vistaInicial(){
-  ppaInicial = W / 5000;                    // de 2.500 a.C. a 2.500 d.C.
-  ppa = ppaInicial; centro = 0; despY = 0;
+  ppaInicial = W / 5000;                    // referencia del 100 %: de 2.500 a.C. a 2.500 d.C.
+  ppa = ppaInicial * ZOOM_INICIO; centro = 0; despY = 0;   // al abrir: zoom al 422 % con el año 0 en medio
 }
 
 // --- Trazo a mano alzada (al estilo Excalidraw): dos pasadas algo curvas ---
@@ -3104,7 +3102,6 @@ for (const c of document.querySelectorAll("#cats input[data-fila]")){
   c.checked = filasActivas.has(c.dataset.fila);
   c.onchange = () => {
     if (c.checked) filasActivas.add(c.dataset.fila); else filasActivas.delete(c.dataset.fila);
-    try { localStorage.setItem("historia-filas", JSON.stringify([...filasActivas])); } catch (err) {}
     aplicarFilas(); pedir();
   };
 }
