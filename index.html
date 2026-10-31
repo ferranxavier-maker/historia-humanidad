@@ -1117,6 +1117,18 @@ const EVENTOS = [
       { h: "Su legado", p: "Murió en Princeton el 18 de abril de 1955. De sus ideas salen el GPS, que tiene que corregir los efectos de la relatividad, el láser, la energía nuclear, los agujeros negros y las ondas gravitacionales, detectadas por primera vez en 2015, cien años después de su teoría. La revista Time lo eligió personaje del siglo XX." }
     ]
   },
+  { nace: "1892-12-04", f: "1975-11-20", fila: "personas", bandera: "franquista", t: "Francisco Franco", nivel: 2, corto: "Franco", cara: "franco",
+    resumen: "Nació en Ferrol el 4 de diciembre de 1892 y murió en Madrid el 20 de noviembre de 1975. Militar de carrera, fue uno de los jefes del golpe de Estado de julio de 1936 contra la Segunda República, que desembocó en la Guerra Civil. Tras ganarla en 1939, gobernó España como dictador durante casi cuarenta años, hasta su muerte. Después llegó la Transición a la democracia.",
+    detalle: [
+      { h: "Un militar africanista", p: "Hijo de una familia ligada a la Armada, quería ser marino, pero entró en la Academia de Infantería de Toledo en 1907. Hizo carrera en la guerra de Marruecos, en las tropas de Regulares y en la Legión, donde ascendió muy deprisa: en 1916 sobrevivió a una herida grave en el vientre y en 1926, con 33 años, fue nombrado general, el más joven de Europa. Participó en el desembarco de Alhucemas de 1925." },
+      { h: "La República", p: "En 1928 lo nombraron director de la Academia General Militar de Zaragoza, que el gobierno de Azaña cerró en 1931. En octubre de 1934 dirigió desde Madrid la represión de la revolución de Asturias. Con la victoria del Frente Popular en febrero de 1936, el gobierno lo apartó a las islas Canarias como comandante general." },
+      { h: "El golpe y la Guerra Civil", p: "El 17 y 18 de julio de 1936 se sumó al golpe militar contra la República. Voló desde Canarias en el avión Dragon Rapide para ponerse al frente del ejército de África, que cruzó el Estrecho con ayuda de aviones alemanes e italianos. El 1 de octubre de 1936, en Burgos, los generales sublevados lo nombraron Generalísimo y jefe del Estado. Con el apoyo de Hitler y Mussolini, entre otras cosas con la Legión Cóndor que bombardeó Guernica en 1937, ganó la guerra el 1 de abril de 1939." },
+      { h: "La dictadura y la represión", p: "Concentró todo el poder: prohibió los partidos, salvo el partido único, el Movimiento Nacional, y los sindicatos libres, impuso la censura y persiguió las lenguas y las instituciones propias de Cataluña, el País Vasco y Galicia. Cientos de miles de personas pasaron por cárceles y campos de concentración, y otras tantas se exiliaron. Los historiadores calculan entre 130.000 y 150.000 muertos por la represión franquista durante la guerra y la posguerra, aunque las cifras varían según los estudios. Los años cuarenta fueron los del hambre, la autarquía y las cartillas de racionamiento." },
+      { h: "La Segunda Guerra Mundial", p: "El 23 de octubre de 1940 se reunió con Hitler en Hendaya, pero España no entró en la guerra: se declaró no beligerante y envió la División Azul a luchar contra la Unión Soviética. Tras la derrota del Eje, la ONU recomendó en 1946 retirar los embajadores de Madrid y el régimen quedó aislado." },
+      { h: "La Guerra Fría y el desarrollismo", p: "La Guerra Fría lo salvó: en 1953 firmó un concordato con el Vaticano y los pactos de Madrid con Estados Unidos, que instaló bases militares en España, y en 1955 España entró en la ONU. Con el Plan de Estabilización de 1959, preparado por ministros tecnócratas, empezó el desarrollismo de los años sesenta: crecimiento económico, turismo masivo y emigración de cientos de miles de españoles a Europa." },
+      { h: "La sucesión y la muerte", p: "En 1969 designó como sucesor, con el título de rey, a Juan Carlos de Borbón. En 1973 nombró presidente del Gobierno a Luis Carrero Blanco, asesinado por ETA ese mismo diciembre. Murió en Madrid el 20 de noviembre de 1975, con 82 años. Dos días después Juan Carlos I fue proclamado rey y empezó la Transición, que culminó en la Constitución de 1978." },
+      { h: "Sus restos", p: "Fue enterrado en el Valle de los Caídos, el monumento que había mandado construir, en parte con trabajo de presos políticos. El 24 de octubre de 2019 sus restos se trasladaron al cementerio de Mingorrubio, en El Pardo, y con la Ley de Memoria Democrática de 2022 el lugar pasó a llamarse Valle de Cuelgamuros." }
+    ] },
   { nace: "1889-04-20", f: "1945-04-30", fila: "personas", bandera: "nazi", t: "Adolf Hitler", nivel: 2, corto: "Hitler", cara: "hitler",
     resumen: "Nació en Braunau am Inn (Austria) el 20 de abril de 1889 y murió en Berlín el 30 de abril de 1945. Líder del partido nazi, fue canciller de Alemania desde 1933 y gobernó como dictador desde 1934. Su régimen desencadenó la Segunda Guerra Mundial al invadir Polonia en 1939 y fue responsable del Holocausto, en el que fueron asesinados unos seis millones de judíos y millones de personas más. Se suicidó en su búnker de Berlín días antes de la rendición alemana.",
     detalle: [
@@ -1722,6 +1734,18 @@ function bandera(cx, cy, tipo){
     ctx.beginPath();                              // estrella
     for (let i = 0; i < 10; i++){ const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? .7 : 1.6; ctx.lineTo(sx + Math.cos(a) * rr, y0 + 2.6 + Math.sin(a) * rr); }
     ctx.fill();
+  }
+  if (tipo === "franquista"){                    // rojigualda con el águila de San Juan
+    ctx.fillStyle = "#c8102e"; ctx.fillRect(x0 - 2, y0 - 3, w + 4, h + 6);
+    ctx.fillStyle = "#f6c400"; ctx.fillRect(x0 - 2, y0 + h / 4, w + 4, h / 2);
+    ctx.fillStyle = "#1a1a1a";
+    const ex = x0 + 8.5, ey = cy;
+    ctx.beginPath();                              // águila de frente, con las alas abiertas
+    ctx.moveTo(ex, ey - 3.6); ctx.lineTo(ex + 1, ey - 2.2); ctx.lineTo(ex + 4, ey - 3.8); ctx.lineTo(ex + 3.4, ey);
+    ctx.lineTo(ex + 1.2, ey + .6); ctx.lineTo(ex + 1.6, ey + 3.6); ctx.lineTo(ex, ey + 2.6); ctx.lineTo(ex - 1.6, ey + 3.6);
+    ctx.lineTo(ex - 1.2, ey + .6); ctx.lineTo(ex - 3.4, ey); ctx.lineTo(ex - 4, ey - 3.8); ctx.lineTo(ex - 1, ey - 2.2);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = "#c8102e"; ctx.fillRect(ex - 1.2, ey - 1.2, 2.4, 2.6);   // escudo en el pecho
   }
   if (tipo === "nazi"){
     ctx.fillStyle = "#c8102e"; ctx.fillRect(x0 - 2, y0 - 3, w + 4, h + 6);
@@ -2629,6 +2653,41 @@ function cara(quien, x, y, r, s){
     ctx.save(); ctx.strokeStyle = "#fffdf7"; ctx.lineWidth = 1.6;
     ctx.beginPath(); ctx.moveTo(x - r * .14, y + r * .58); ctx.lineTo(x + r * .14, y + r * .58); ctx.stroke();
     ctx.restore();
+  }
+  if (quien === "franco"){
+    ctx.strokeStyle = TINTA; ctx.fillStyle = TINTA; ctx.lineCap = "round"; ctx.lineJoin = "round";
+    // Calvo por arriba, con pelo oscuro en las sienes y algo en la coronilla
+    for (const k of [-1, 1]){
+      ctx.beginPath();
+      ctx.moveTo(x + k * r * .95, y + r * .18);
+      ctx.quadraticCurveTo(x + k * r * 1.03, y - r * .5, x + k * r * .78, y - r * .78);
+      ctx.lineTo(x + k * r * .64, y - r * .6);
+      ctx.quadraticCurveTo(x + k * r * .84, y - r * .3, x + k * r * .95, y + r * .18);
+      ctx.fill();
+    }
+    ctx.lineWidth = 1.3;
+    for (let k = -2; k <= 2; k++){ ctx.beginPath(); ctx.moveTo(x + k * r * .12, y - r * .98); ctx.lineTo(x + k * r * .14, y - r * .86); ctx.stroke(); }
+    // Frente amplia con una arruga
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x - r * .25, y - r * .48); ctx.quadraticCurveTo(x, y - r * .52, x + r * .25, y - r * .48); ctx.stroke();
+    // Ojos y cejas arqueadas
+    for (const k of [-1, 1]){
+      ctx.beginPath(); ctx.arc(x + k * r * .3, y - r * .08, 1.9, 0, Math.PI * 2); ctx.fill();
+      ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(x + k * r * .14, y - r * .24); ctx.quadraticCurveTo(x + k * r * .3, y - r * .33, x + k * r * .46, y - r * .25); ctx.stroke();
+    }
+    // Nariz
+    raya(x + r * .02, y - r * .05, x - r * .05, y + r * .25, s + 6, 1.4);
+    // Bigote fino recortado
+    ctx.beginPath();
+    ctx.moveTo(x - r * .24, y + r * .4); ctx.quadraticCurveTo(x, y + r * .3, x + r * .24, y + r * .4);
+    ctx.quadraticCurveTo(x, y + r * .38, x - r * .24, y + r * .4); ctx.fill();
+    ctx.lineWidth = 1.8; ctx.beginPath(); ctx.moveTo(x - r * .22, y + r * .38); ctx.quadraticCurveTo(x, y + r * .31, x + r * .22, y + r * .38); ctx.stroke();
+    // Boca y papada
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x - r * .15, y + r * .56); ctx.lineTo(x + r * .15, y + r * .56); ctx.stroke();
+    ctx.lineWidth = 1.1;
+    ctx.beginPath(); ctx.moveTo(x - r * .32, y + r * .8); ctx.quadraticCurveTo(x, y + r * .95, x + r * .32, y + r * .8); ctx.stroke();
   }
   if (quien === "hitler"){
     // Pelo con el flequillo cayendo sobre la frente
@@ -3766,6 +3825,38 @@ Capilla Sixtina
 Juicio Final|El Juicio Final (Miguel Ángel)
 Galería de la Academia|Galería de la Academia de Florencia
 Piedad|La Piedad (Miguel Ángel)
+Ferrol
+Academia de Infantería de Toledo|Academia de Infantería
+guerra de Marruecos|Guerra del Rif
+Regulares|Fuerzas Regulares Indígenas
+Legión|Legión Española
+desembarco de Alhucemas|Desembarco de Alhucemas
+Academia General Militar
+Azaña|Manuel Azaña
+revolución de Asturias|Revolución de Asturias de 1934
+Frente Popular|Frente Popular (España)
+Segunda República|Segunda República española
+Guerra Civil|Guerra civil española
+Dragon Rapide
+Legión Cóndor
+Guernica|Bombardeo de Guernica
+Mussolini|Benito Mussolini
+Movimiento Nacional
+División Azul
+Hendaya|Entrevista de Hendaya
+pactos de Madrid|Pactos de Madrid
+Plan de Estabilización|Plan Nacional de Estabilización Económica
+desarrollismo|Desarrollismo
+Juan Carlos de Borbón|Juan Carlos I
+Juan Carlos I
+Luis Carrero Blanco
+ETA|Euskadi Ta Askatasuna
+Transición|Transición española
+Constitución de 1978|Constitución española de 1978
+Valle de los Caídos|Valle de Cuelgamuros
+Mingorrubio|Cementerio de Mingorrubio
+El Pardo
+Ley de Memoria Democrática
 Sutra del Diamante
 xilografía|Xilografía
 Dunhuang
