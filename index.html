@@ -969,6 +969,18 @@ const EVENTOS = [
       { h: "Su legado", p: "Su mensaje dio origen al cristianismo, que se extendió por todo el Imperio romano y hoy es la religión con más seguidores del mundo, con más de 2.000 millones de fieles." }
     ]
   },
+  { nace: "1769-08-15", f: "1821-05-05", fila: "personas", t: "Napoleón Bonaparte", nivel: 2, corto: "Napoleón", cara: "napoleon",
+    resumen: "Nació en Ajaccio (Córcega) el 15 de agosto de 1769 y murió desterrado en la isla de Santa Elena el 5 de mayo de 1821. Militar salido de la Revolución francesa, tomó el poder en 1799 y en 1804 se coronó emperador de los franceses. Llegó a dominar casi toda Europa, impuso un código de leyes que todavía influye en medio mundo y acabó derrotado en Waterloo en 1815.",
+    detalle: [
+      { h: "Un corso en Francia", p: "Nació en Ajaccio, en Córcega, solo un año después de que la isla pasara de Génova a Francia, en una familia de la pequeña nobleza. Su lengua materna era el corso, y hablaba francés con acento. Con nueve años lo enviaron a estudiar al continente, y en 1785 salió de la Escuela Militar de París como teniente de artillería, con 16 años." },
+      { h: "La Revolución le abre paso", p: "La Revolución de 1789 permitió ascender a los militares por méritos y no por cuna. En 1793 se hizo notar en el asedio de Toulon, donde con 24 años lo nombraron general de brigada. En 1796 se casó con Josefina de Beauharnais y recibió el mando del ejército de Italia, donde derrotó una y otra vez a los austriacos. En 1798 dirigió la expedición a Egipto, en la que se halló la piedra de Rosetta, aunque la flota británica de Nelson destruyó sus barcos en Abukir." },
+      { h: "Cónsul y emperador", p: "El 9 de noviembre de 1799 (18 de brumario) dio un golpe de Estado y se convirtió en primer cónsul, el verdadero dueño de Francia. En 1804 aprobó el Código Civil, el «Código Napoleón», y el 2 de diciembre de ese año se coronó emperador en Notre-Dame de París: tomó la corona de manos del papa Pío VII y se la puso él mismo." },
+      { h: "El dueño de Europa", p: "En 1805 perdió su flota en Trafalgar frente a Nelson, pero en tierra parecía imbatible: venció en Austerlitz (1805) a Austria y Rusia, y en Jena (1806) a Prusia. Repartió tronos entre sus hermanos y decretó el bloqueo continental para ahogar el comercio británico. En 1810 se divorció de Josefina, que no le había dado hijos, y se casó con María Luisa de Austria, con quien tuvo un hijo en 1811." },
+      { h: "España", p: "En 1808 forzó a Carlos IV y a Fernando VII a renunciar a la corona en Bayona y puso en el trono de España a su hermano José. El levantamiento del 2 de mayo en Madrid inició la guerra de la Independencia (1808-1814), en la que guerrilleros, el ejército español y los británicos de Wellington desgastaron a sus tropas; en Bailén (1808) un ejército francés se rindió por primera vez en campo abierto. Mientras, en Cádiz se aprobó en 1812 la primera Constitución española." },
+      { h: "Rusia y la caída", p: "En 1812 invadió Rusia con la Grande Armée, unos 600.000 hombres. Llegó a Moscú, pero la encontró incendiada y tuvo que retirarse en pleno invierno: volvió solo una pequeña parte de su ejército. En 1813 lo derrotaron en Leipzig, en abril de 1814 abdicó y fue desterrado a la isla de Elba." },
+      { h: "Los Cien Días y Santa Elena", p: "En marzo de 1815 escapó de Elba y volvió a gobernar Francia durante unos cien días, hasta que el 18 de junio de 1815 fue derrotado definitivamente en Waterloo por los británicos de Wellington y los prusianos de Blücher. Los británicos lo desterraron a Santa Elena, una isla perdida en el Atlántico sur, donde murió en 1821 con 51 años. En 1840 sus restos se llevaron a París y hoy reposan en los Inválidos." },
+      { h: "Su legado", p: "Sus guerras costaron millones de muertos, pero también extendieron por Europa ideas de la Revolución: la igualdad ante la ley, el fin de los privilegios feudales y un Estado organizado y centralizado. El Código Napoleón sirvió de modelo a los códigos civiles de muchos países, entre ellos el español de 1889. Y su invasión de España desencadenó las independencias de la América española." }
+    ] },
   { nace: "1818-05-05", f: "1883-03-14", fila: "personas", t: "Karl Marx", nivel: 2, corto: "Marx", cara: "marx",
     resumen: "Nació en Tréveris (Prusia) el 5 de mayo de 1818 y murió en Londres el 14 de marzo de 1883. Filósofo, economista y periodista alemán, analizó el capitalismo como un sistema basado en la explotación del trabajo y defendió que la historia avanza por la lucha entre clases sociales. Con Friedrich Engels escribió el Manifiesto comunista, y su gran obra fue El capital. Sus ideas inspiraron el socialismo y el comunismo, y muchos de los movimientos y revoluciones del siglo XX.",
     detalle: [
@@ -2058,6 +2070,59 @@ function cara(quien, x, y, r, s){
     // Boca con media sonrisa
     ctx.lineWidth = 1.5;
     ctx.beginPath(); ctx.moveTo(x - r * .18, y + r * .7); ctx.quadraticCurveTo(x, y + r * .78, x + r * .2, y + r * .68); ctx.stroke();
+  }
+  if (quien === "napoleon"){
+    ctx.strokeStyle = TINTA; ctx.fillStyle = TINTA; ctx.lineCap = "round";
+    // Pelo oscuro en las sienes
+    for (const k of [-1, 1]){
+      ctx.beginPath();
+      ctx.moveTo(x + k * r * .98, y - r * .2);
+      ctx.quadraticCurveTo(x + k * r * 1.02, y - r * .6, x + k * r * .8, y - r * .72);
+      ctx.lineTo(x + k * r * .72, y - r * .55);
+      ctx.quadraticCurveTo(x + k * r * .86, y - r * .4, x + k * r * .98, y - r * .2);
+      ctx.fill();
+    }
+    // Bicornio negro puesto de lado, con las puntas hacia los hombros
+    ctx.beginPath();
+    ctx.moveTo(x - r * 1.55, y - r * .5);
+    ctx.bezierCurveTo(x - r * 1.05, y - r * .95, x - r * .65, y - r * 1.7, x, y - r * 1.7);
+    ctx.bezierCurveTo(x + r * .65, y - r * 1.7, x + r * 1.05, y - r * .95, x + r * 1.55, y - r * .5);
+    ctx.quadraticCurveTo(x, y - r * .9, x - r * 1.55, y - r * .5);
+    ctx.closePath();
+    ctx.fill(); ctx.lineWidth = 2; ctx.lineJoin = "round"; ctx.stroke();
+    // Ribete dorado del ala
+    ctx.save(); ctx.strokeStyle = "rgba(225, 175, 40, .95)"; ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    ctx.moveTo(x - r * 1.4, y - r * .6);
+    ctx.bezierCurveTo(x - r * .95, y - r * .98, x - r * .6, y - r * 1.58, x, y - r * 1.58);
+    ctx.bezierCurveTo(x + r * .6, y - r * 1.58, x + r * .95, y - r * .98, x + r * 1.4, y - r * .6);
+    ctx.stroke(); ctx.restore();
+    // Escarapela tricolor: azul, blanco y rojo
+    const ex = x + r * .55, ey = y - r * 1.02;
+    ctx.fillStyle = "rgba(40, 70, 170, .95)"; ctx.beginPath(); ctx.arc(ex, ey, r * .22, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "#fffdf7"; ctx.beginPath(); ctx.arc(ex, ey, r * .14, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = "rgba(210, 40, 40, .95)"; ctx.beginPath(); ctx.arc(ex, ey, r * .07, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = TINTA; ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(ex, ey, r * .22, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = TINTA;
+    // Mechón sobre la frente
+    ctx.beginPath();
+    ctx.moveTo(x - r * .25, y - r * .7);
+    ctx.quadraticCurveTo(x - r * .05, y - r * .55, x - r * .18, y - r * .35);
+    ctx.quadraticCurveTo(x - r * .3, y - r * .5, x - r * .25, y - r * .7);
+    ctx.fill();
+    // Ojos y cejas rectas
+    for (const k of [-1, 1]){
+      ctx.beginPath(); ctx.arc(x + k * r * .3, y + r * .02, 1.9, 0, Math.PI * 2); ctx.fill();
+      ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.moveTo(x + k * r * .14, y - r * .17); ctx.lineTo(x + k * r * .46, y - r * .17); ctx.stroke();
+    }
+    // Nariz recta y boca seria, algo caída
+    raya(x + r * .02, y + r * .05, x - r * .04, y + r * .36, s + 6, 1.4);
+    ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(x - r * .2, y + r * .62); ctx.quadraticCurveTo(x, y + r * .56, x + r * .2, y + r * .62); ctx.stroke();
+    // Barbilla
+    ctx.lineWidth = 1.1;
+    ctx.beginPath(); ctx.moveTo(x - r * .1, y + r * .82); ctx.quadraticCurveTo(x, y + r * .87, x + r * .1, y + r * .82); ctx.stroke();
   }
   if (quien === "hitler"){
     // Pelo con el flequillo cayendo sobre la frente
