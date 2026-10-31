@@ -1480,7 +1480,7 @@ function tramoVida(it, y){
   }
   }
   cara(e.cara, x, y, r, s);
-  if (e.simbolo === "filosofo") lechuza(x + r * .8, y + r * .72);   // sello de filósofo
+  if (e.simbolo === "filosofo") lechuza(x - r * 1.1, y - r * 1.05);   // sello de filósofo, fuera de la cara arriba a la izquierda
   // Nombre (y años): se guardan para dibujarlos al final, encima de todas las caras
   const txt = etapa === 1 ? (e.corto || e.t) : etapa === 2 ? (e.etiquetaFechas || e.etiqueta) : e.etiqueta;
   nombresPendientes.push({ txt, x: x + r * 1.5 + 6, y: y - 4, a: ctx.globalAlpha });
