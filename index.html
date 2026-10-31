@@ -1005,7 +1005,7 @@ const EVENTOS = [
       { h: "Elcano y la primera vuelta al mundo", p: "Con solo dos barcos ya, los supervivientes llegaron a las Molucas en noviembre de 1521 y cargaron clavo. Juan Sebastián Elcano, de Getaria, tomó el mando de la Victoria y volvió por el océano Índico y el cabo de Buena Esperanza, evitando los puertos portugueses. El 6 de septiembre de 1522 llegó a Sanlúcar con 18 hombres: habían dado la primera vuelta al mundo. Carlos I le dio a Elcano un escudo con un globo terráqueo y el lema «Primus circumdedisti me», «fuiste el primero en rodearme»." },
       { h: "Su legado", p: "El viaje demostró que la Tierra era mucho más grande de lo que se creía, que los océanos estaban conectados y que América era un continente separado de Asia. Lo sabemos con detalle gracias al diario del italiano Antonio Pigafetta, uno de los 18 supervivientes. Además del estrecho, llevan su nombre las Nubes de Magallanes, dos pequeñas galaxias que se ven desde el hemisferio sur y que describieron sus marineros." }
     ] },
-  { nace: "1769-08-15", f: "1821-05-05", fila: "personas", t: "Napoleón Bonaparte", nivel: 2, corto: "Napoleón", cara: "napoleon",
+  { nace: "1769-08-15", f: "1821-05-05", fila: "personas", simbolo: "gobernante", t: "Napoleón Bonaparte", nivel: 2, corto: "Napoleón", cara: "napoleon",
     resumen: "Nació en Ajaccio (Córcega) el 15 de agosto de 1769 y murió desterrado en la isla de Santa Elena el 5 de mayo de 1821. Militar salido de la Revolución francesa, tomó el poder en 1799 y en 1804 se coronó emperador de los franceses. Llegó a dominar casi toda Europa, impuso un código de leyes que todavía influye en medio mundo y acabó derrotado en Waterloo en 1815.",
     detalle: [
       { h: "Un corso en Francia", p: "Nació en Ajaccio, en Córcega, solo un año después de que la isla pasara de Génova a Francia, en una familia de la pequeña nobleza. Su lengua materna era el corso, y hablaba francés con acento. Con nueve años lo enviaron a estudiar al continente, y en 1785 salió de la Escuela Militar de París como teniente de artillería, con 16 años." },
@@ -1028,7 +1028,7 @@ const EVENTOS = [
       { h: "Su legado", p: "Murió en Londres el 14 de marzo de 1883 y está enterrado en el cementerio de Highgate. En vida fue poco conocido, pero sus ideas, el marxismo, se convirtieron en una de las más influyentes de la historia: en su nombre se hicieron la Revolución rusa y los regímenes comunistas de la URSS, China o Cuba, y también influyeron en los partidos socialistas y socialdemócratas, en la sociología, la economía y la forma de estudiar la historia." }
     ]
   },
-  { nace: "1878-12-18", f: "1953-03-05", fila: "personas", t: "Iósif Stalin", nivel: 2, corto: "Stalin", cara: "stalin",
+  { nace: "1878-12-18", f: "1953-03-05", fila: "personas", simbolo: "gobernante", t: "Iósif Stalin", nivel: 2, corto: "Stalin", cara: "stalin",
     resumen: "Nació en Gori (Georgia) el 18 de diciembre de 1878 y murió cerca de Moscú el 5 de marzo de 1953. Revolucionario bolchevique, se hizo con el poder en la Unión Soviética tras la muerte de Lenin y la gobernó como dictador durante casi treinta años. Industrializó el país a marchas forzadas y lo llevó a la victoria contra Hitler, pero su régimen causó millones de muertos por hambrunas, ejecuciones y campos de trabajo.",
     detalle: [
       { h: "De Georgia al seminario", p: "Se llamaba Iósif Vissariónovich Dzhugashvili y nació en Gori, en Georgia, entonces parte del Imperio ruso, hijo de un zapatero. Su madre quería que fuera sacerdote y lo metió en el seminario de Tiflis, pero allí empezó a leer a Marx y en 1899 dejó los estudios. Su lengua materna era el georgiano, y habló ruso con acento toda la vida." },
@@ -1050,7 +1050,7 @@ const EVENTOS = [
       { h: "Su legado", p: "Murió en Princeton el 18 de abril de 1955. De sus ideas salen el GPS, que tiene que corregir los efectos de la relatividad, el láser, la energía nuclear, los agujeros negros y las ondas gravitacionales, detectadas por primera vez en 2015, cien años después de su teoría. La revista Time lo eligió personaje del siglo XX." }
     ]
   },
-  { nace: "1889-04-20", f: "1945-04-30", fila: "personas", t: "Adolf Hitler", nivel: 2, corto: "Hitler", cara: "hitler",
+  { nace: "1889-04-20", f: "1945-04-30", fila: "personas", simbolo: "gobernante", t: "Adolf Hitler", nivel: 2, corto: "Hitler", cara: "hitler",
     resumen: "Nació en Braunau am Inn (Austria) el 20 de abril de 1889 y murió en Berlín el 30 de abril de 1945. Líder del partido nazi, fue canciller de Alemania desde 1933 y gobernó como dictador desde 1934. Su régimen desencadenó la Segunda Guerra Mundial al invadir Polonia en 1939 y fue responsable del Holocausto, en el que fueron asesinados unos seis millones de judíos y millones de personas más. Se suicidó en su búnker de Berlín días antes de la rendición alemana.",
     detalle: [
       { h: "Primeros años", p: "Nació el 20 de abril de 1889 en Braunau am Inn, en Austria. De joven quiso ser pintor, pero la Academia de Bellas Artes de Viena lo rechazó dos veces, en 1907 y 1908. Vivió en Viena con pocos medios y en 1913 se trasladó a Múnich, en Alemania." },
@@ -1549,6 +1549,26 @@ function paleta(cx, cy){
   ctx.restore();
 }
 
+// Bastón de mando en diagonal (terciopelo azul con estrellas y remates dorados): sello de los gobernantes
+function baston(cx, cy){
+  ctx.save(); ctx.translate(cx, cy); ctx.rotate(-Math.PI / 4);
+  ctx.strokeStyle = TINTA; ctx.lineJoin = "round"; ctx.lineWidth = 1.4;
+  const L = 11, g = 2.8, tapa = 3;
+  // Cuerpo
+  ctx.fillStyle = "rgba(40, 70, 160, .97)";
+  ctx.beginPath(); ctx.rect(-L + tapa, -g, 2 * (L - tapa), 2 * g); ctx.fill(); ctx.stroke();
+  // Estrellitas doradas
+  ctx.fillStyle = "rgba(255, 205, 40, .98)";
+  for (const dx of [-4, 0, 4]){ ctx.beginPath(); ctx.arc(dx, 0, 1, 0, Math.PI * 2); ctx.fill(); }
+  // Remates dorados en los extremos
+  for (const k of [-1, 1]){
+    const x0 = k < 0 ? -L : L - tapa;
+    ctx.fillStyle = "rgba(230, 175, 40, .98)";
+    ctx.beginPath(); ctx.rect(x0, -g - .8, tapa, 2 * g + 1.6); ctx.fill(); ctx.stroke();
+  }
+  ctx.restore();
+}
+
 // Tramo de la vida de una persona: |———— (cara) ————|
 function tramoVida(it, y){
   const e = it.e, r = 23, x = it.x, s = e.id * 17 + 5;
@@ -1569,6 +1589,7 @@ function tramoVida(it, y){
   if (e.simbolo === "filosofo") lechuza(x - r * 1.45, y - r * 1.27);
   if (e.simbolo === "cientifico") probeta(x - r * 1.45, y - r * 1.27);
   if (e.simbolo === "artista") paleta(x - r * 1.45, y - r * 1.27);
+  if (e.simbolo === "gobernante") baston(x - r * 1.45, y - r * 1.27);
   // Nombre (y años): se guardan para dibujarlos al final, encima de todas las caras
   const txt = etapa === 1 ? (e.corto || e.t) : etapa === 2 ? (e.etiquetaFechas || e.etiqueta) : e.etiqueta;
   nombresPendientes.push({ txt, x: x + r * 1.5 + 6, y: y - 4, a: ctx.globalAlpha });
