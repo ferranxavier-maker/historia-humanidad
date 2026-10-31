@@ -31,6 +31,20 @@ header{position:fixed;top:0;left:0;right:0;padding:24px 16px 0;pointer-events:no
 .zoom button{border:0;background:transparent;color:#1e1e1e;font:inherit;font-size:24px;width:40px;height:38px;cursor:pointer}
 .zoom button:hover,.zoom #nivel:hover{background:rgba(0,0,0,.06)}
 .zoom #nivel{min-width:70px;text-align:center;cursor:pointer;height:38px;line-height:38px;padding:0 6px}
+/* Categorías: qué filas se ven (arriba a la derecha, en cinta de carrocero) */
+.cats{position:fixed;right:16px;top:20px;z-index:3;background:rgba(226,211,170,.85);transform:rotate(1.5deg);box-shadow:0 1px 3px rgba(0,0,0,.12);padding:8px 14px 8px 10px;font:600 20px "Caveat",system-ui,sans-serif;color:#1e1e1e;display:flex;flex-direction:column;gap:2px}
+.cats label{display:flex;align-items:center;gap:8px;cursor:pointer;line-height:1.15;user-select:none}
+.cats input{appearance:none;-webkit-appearance:none;width:17px;height:17px;margin:0;border:2px solid #1e1e1e;border-radius:3px 4px 2px 4px;background:#fffdf7;cursor:pointer;position:relative;flex:none}
+.cats input:checked::after{content:"";position:absolute;left:4px;top:0;width:5px;height:10px;border:solid #1e1e1e;border-width:0 2.5px 2.5px 0;transform:rotate(40deg)}
+.cats input:focus-visible{outline:2px solid #1e1e1e;outline-offset:2px}
+.cats label.pronto{opacity:.45;cursor:default}
+.cats label.pronto input{cursor:default}
+.cats small{font-size:15px;font-weight:400}
+.cats summary{display:none;cursor:pointer;list-style:none}
+.cats summary::-webkit-details-marker{display:none}
+.cats[open]{display:flex}
+@media (max-width:1100px){.cats{top:auto;bottom:16px;transform:rotate(-1deg)}}
+@media (max-width:600px){.cats{padding:4px 12px}.cats summary{display:block}.cats[open] summary{margin-bottom:2px}}
 /* Nota con el resumen de un evento */
 #nota{position:fixed;z-index:5;max-width:min(340px,calc(100vw - 32px));background:#fffdf7;padding:22px 20px 16px;box-shadow:0 3px 12px rgba(0,0,0,.18);transform:rotate(-1.2deg);display:none}
 #nota.abierta{display:block}
@@ -96,6 +110,14 @@ header{position:fixed;top:0;left:0;right:0;padding:24px 16px 0;pointer-events:no
   <div id="nivel" title="Volver al inicio">100%</div>
   <button id="mas" aria-label="Acercar">+</button>
 </div>
+<details class="cats" id="cats" open aria-label="Qué se ve en la línea">
+  <summary>Ver ▾</summary>
+  <label><input type="checkbox" data-fila="personas"> Personas</label>
+  <label><input type="checkbox" data-fila="inventos"> Inventos</label>
+  <label><input type="checkbox" data-fila="libros"> Literatura</label>
+  <label><input type="checkbox" data-fila="hitos"> Hitos</label>
+  <label class="pronto" title="Aún no hay guerras en la línea"><input type="checkbox" disabled> Guerras <small>(pronto)</small></label>
+</details>
 <div class="ayuda">rueda: zoom · arrastrar: mover · pulsa un evento</div>
 
 <div id="nota" role="dialog" aria-live="polite">
@@ -379,6 +401,24 @@ const FILAS = {
   hitos:    { lado: -1, n: 1 },
   inventos: { lado:  1, n: 1 }
 };
+// Categorías que se ven (casillas de arriba a la derecha). Las que se quitan liberan su sitio:
+// las demás se acercan a la línea y las personas pueden apilarse más.
+const ORDEN_FILAS = { arriba: ["hitos", "personas", "libros"], abajo: ["inventos"] };
+let filasActivas = new Set(Object.keys(FILAS));
+try {
+  const g = JSON.parse(localStorage.getItem("historia-filas"));
+  if (Array.isArray(g)) filasActivas = new Set(g.filter(f => FILAS[f]));
+} catch (err) {}
+function aplicarFilas(){
+  for (const lado of ["arriba", "abajo"]){
+    let n = 0;
+    for (const f of ORDEN_FILAS[lado]){
+      FILAS[f].off = !filasActivas.has(f);
+      if (!FILAS[f].off) FILAS[f].n = ++n;
+    }
+  }
+}
+aplicarFilas();
 
 const EVENTOS = [
   { desde: "-2400000", f: "-1400000", fila: "periodos", t: "Homo habilis", fechas: "hace c. 2,4 – 1,4 millones de años",
@@ -1919,15 +1959,25 @@ function libro(cx, cy, e){
   ctx.fillStyle = TINTA; ctx.textAlign = "center"; ctx.textBaseline = "middle";
   // Escribe el texto encogiéndolo si no cabe en la tapa
   const cabeEn = w - lomo - 10;
-  const escribir = (txt, tam, fuente, y) => {
+  const tamQueCabe = (txt, tam, fuente) => {
     ctx.font = `${tam}px ${fuente}`;
     const m = ctx.measureText(txt).width;
-    if (m > cabeEn) ctx.font = `${Math.floor(tam * cabeEn / m)}px ${fuente}`;
+    return m > cabeEn ? Math.floor(tam * cabeEn / m) : tam;
+  };
+  const escribir = (txt, tam, fuente, y) => {
+    ctx.font = `${tamQueCabe(txt, tam, fuente)}px ${fuente}`;
     ctx.fillText(txt, cxT, y);
   };
   const [l1, l2 = ""] = e.portada || [e.t.toUpperCase()];
-  escribir(l1, 17, MARCADOR, y0 + 29);
-  if (l2) escribir(l2, l2.length > 6 ? 14 : 17, MARCADOR, y0 + 49);
+  if (l2 && l2.length <= 6){
+    // Título partido en dos (FRANKEN- / STEIN): las dos líneas con la misma letra
+    const tam = Math.min(tamQueCabe(l1, 17, MARCADOR), tamQueCabe(l2, 17, MARCADOR));
+    escribir(l1, tam, MARCADOR, y0 + 29);
+    escribir(l2, tam, MARCADOR, y0 + 49);
+  } else {
+    escribir(l1, 17, MARCADOR, y0 + 29);
+    if (l2) escribir(l2, 14, MARCADOR, y0 + 49);   // subtítulo más pequeño (Y CASTIGO)
+  }
   ctx.fillStyle = "#555";
   escribir(e.sub || "", 19, FUENTE, y0 + h - 18);
   ctx.restore();
@@ -2417,8 +2467,18 @@ function umbralHistoria(e){
   const peso = Math.max(dur, (AÑO_HOY - inicio) / 5, 1) * factorNivel;
   return e._umbral = 6000 * Math.pow(peso / 11, .52);
 }
-function visiblePorPeso(e, span){
-  const T = umbralHistoria(e);
+// Eventos (no periodos): el zoom al que aparecen depende solo de su nivel, no de su antigüedad,
+// para que con un mismo zoom la regla sea igual en toda la línea. Lo demás lo decide el sitio.
+function umbralEvento(e){
+  if (!umbralHistoria(e)) return 0;
+  return { 1: 60000, 2: 45000, 3: 15000 }[e.nivel || 2];
+}
+function prioridadEvento(e){
+  const dur = e.añoDesde !== undefined ? e.añoHasta - e.añoDesde
+            : e.añoNace !== undefined ? e.añoMuere - e.añoNace : 0;
+  return (4 - (e.nivel || 2)) * 1e7 + Math.max(dur, 0);
+}
+function visiblePorPeso(e, span, T = umbralHistoria(e)){
   return Math.min(1, Math.max(0, (T - span) / (T * .25)));
 }
 function dibujarEventos(yL){
@@ -2428,7 +2488,7 @@ function dibujarEventos(yL){
   const span = W / ppa;
   visib = e => e.verDesde ? Math.min(1, Math.max(0, (e.verDesde - span) / (e.verDesde * .25)))
               : e.siempre ? 1
-              : umbralHistoria(e) ? visiblePorPeso(e, span) : visibleLejos;
+              : umbralEvento(e) ? visiblePorPeso(e, span, umbralEvento(e)) : visibleLejos;
   // 1) Colocar: decidir qué tarjetas caben en cada fila.
   //    La fila de personas tiene varios carriles, porque unas vidas se solapan con otras
   //    (Sócrates, Platón y Aristóteles, por ejemplo): se apilan hacia arriba.
@@ -2439,14 +2499,15 @@ function dibujarEventos(yL){
   // El reparto solo depende del zoom, no de dónde esté la vista (ni horizontal ni verticalmente):
   // así, al desplazarse, lo que se ve no cambia.
   const yBase = yL - despY;
-  const hueco = yFila("libros", yBase) - 34 - finTitulo;
+  const hueco = FILAS.libros.off ? 0 : yFila("libros", yBase) - 34 - finTitulo;
   // Libros: una fila extra encima (con libros algo más pequeños) si cabe bajo el título
-  const ALTO_LIBRO = 76, ESC_LIBRO = .76;
+  const ALTO_LIBRO = 110, ESC_LIBRO = 1;   // la fila de arriba, mismo tamaño que la de abajo
   const cabeFilaLibros = yF => yF - despY - ALTO_LIBRO + 12 - 50 * ESC_LIBRO > finTitulo + 6;
   const CARRILES = {};
   const carrilesPersonas = hu => Math.min(4, 1 + Math.max(0, Math.floor(hu / ALTO_CARRIL)));
   const altoCarril = f => f === "libros" ? ALTO_LIBRO : ALTO_CARRIL;
   function colocar(fila, yF, forzarMax){
+    if (FILAS[fila].off) return { its: [], usados: 1, puestos: 0 };
     const arriba = FILAS[fila].lado < 0;
     const max = forzarMax || (fila === "libros" ? (cabeFilaLibros(yF) ? 2 : 1) : CARRILES[fila] || 1);
     const cands = [];
@@ -2519,17 +2580,15 @@ function dibujarEventos(yL){
     // Se coloca todo el timeline (no solo lo que se ve), por orden de aparición: lo de más peso
     // primero, así conserva su sitio al acercarse y lo que ya se veía no desaparece.
     const its = [], puestos = new Map();
-    const prioBase = e => umbralHistoria(e) || e.verDesde || 1e15;
+    const prioBase = e => e.siempre ? 1e15 : e.verDesde ? 1e8 + e.verDesde : prioridadEvento(e);
     cands.forEach(c => c.p = prioBase(c.e));
     const orden = cands.slice().sort((p, q) => q.p - p.p || p.cx - q.cx);
     const tmp = [];
     for (const c of orden){
       // Si cerca hay algo más antiguo (de más peso) que no ha cabido, este espera su turno
       // y no ocupa sitio: así nunca sale algo antes que lo anterior, y lo que sale ya no se va.
-      if (bloqueado(fila, c.e.año, c.p)){ marcarNoCabe(fila, c.e.año, c.p); continue; }   // también bloquea lo más reciente a su alrededor
       const r = intentar(c, tmp);
       if (r){ puestos.set(c, r); ocup[r.k].push({ k: r.k, a: c.cx + r.d, b: c.cx + r.d + c.w, zp: c.zp }); }
-      else marcarNoCabe(fila, c.e.año, c.p);
     }
     for (const c of cands){
       const r = puestos.get(c), cabe = !!r, carril = cabe ? r.k : 0, d = cabe ? r.d : 0;
@@ -2548,7 +2607,10 @@ function dibujarEventos(yL){
   // Si hay más de un libro a la vista, se reserva siempre el sitio de la fila de libros de arriba,
   // para que un libro que ya se veía no desaparezca cuando se apilan más personas.
   const librosVisibles = EVENTOS.filter(e => e.fila === "libros" && visib(e) && xDe(e.año) > -300 && xDe(e.año) < W + 300).length;
-  CARRILES.personas = carrilesPersonas(hueco - ALTO_LIBRO);   // siempre se reserva la fila de libros de arriba (estable al hacer zoom)
+  CARRILES.personas = FILAS.libros.off
+    // Sin libros: las personas se apilan hasta el título
+    ? Math.min(7, 1 + Math.max(0, Math.floor((yFila("personas", yBase) - 10 - finTitulo) / ALTO_CARRIL)))
+    : carrilesPersonas(hueco - ALTO_LIBRO);   // siempre se reserva la fila de libros de arriba (estable al hacer zoom)
   const items = [];
   // Zonas de tiempo fijas para cada zoom (tamaño potencia de 2): al acercarse, cada zona se parte
   // en dos y la zona afectada por algo que no cabe solo se encoge.
@@ -2568,7 +2630,26 @@ function dibujarEventos(yL){
   }
   // Orden común a todas las filas: lo que no cabe en una fila bloquea, cerca de él, lo más reciente
   // de todas las filas (las personas se colocan primero; para las demás se repasa al final).
-  for (const it of items) if (it.cabe && bloqueado(it.fila, it.e.año, it.p)) it.cabe = false;
+  // Solo se oculta lo que de verdad no cabe en su sitio (sin arrastrar a los vecinos).
+  // Libros que no caben en su fila: bajan al primer hueco libre entre las alturas de personas
+  // de su tramo, empezando por arriba y siempre por encima de las personas que haya allí.
+  // Solo depende del zoom (se mira toda la línea), así que al desplazarse no cambia.
+  const cajaY = it => it.e.icono === "libro" ? [it.yF - 38, it.yF + 66]
+                    : it.e.cara ? [it.yF - 4, it.yF + 50]
+                    : [it.yF - 10, it.yF + ALTO_TARJETA + 10];
+  const sinSitio = items.filter(it => !it.cabe && it.e.icono === "libro" && visib(it.e)).sort((p, q) => q.p - p.p);
+  for (const it of sinSitio){
+    const xa = it.cx - 8, xb = it.cx + it.w + 8;
+    const cerca = items.filter(o => o.cabe && o !== it && o.cx < xb && o.cx + o.w > xa);
+    // Por encima de las personas de su tramo (y de la línea)
+    let tope = yL - 14;
+    for (const o of cerca) if (o.e.cara) tope = Math.min(tope, cajaY(o)[0] - 6);
+    for (let y = it.yF; y + 66 <= tope; y += 4){
+      if (cerca.some(o => { const [a1, b1] = cajaY(o); return y - 38 < b1 + 4 && y + 66 > a1 - 4; })) continue;
+      it.cabe = true; it.yF = y; it.escala = 1; it.carril = 1;
+      break;
+    }
+  }
   // Lo que no cabe no se dibuja (ni puntos): aparecerá al acercarse
   for (let i = items.length - 1; i >= 0; i--) if (!items[i].cabe) items.splice(i, 1);
   const h = ALTO_TARJETA;
@@ -2800,6 +2881,15 @@ window.addEventListener("keydown", e => {
 
 // Botones
 document.getElementById("mas").onclick = () => zoomEn(W / 2, 1.6);
+if (window.innerWidth <= 600) document.getElementById("cats").open = false;   // en el móvil, plegado
+for (const c of document.querySelectorAll("#cats input[data-fila]")){
+  c.checked = filasActivas.has(c.dataset.fila);
+  c.onchange = () => {
+    if (c.checked) filasActivas.add(c.dataset.fila); else filasActivas.delete(c.dataset.fila);
+    try { localStorage.setItem("historia-filas", JSON.stringify([...filasActivas])); } catch (err) {}
+    aplicarFilas(); pedir();
+  };
+}
 document.getElementById("menos").onclick = () => zoomEn(W / 2, 1 / 1.6);
 document.getElementById("nivel").onclick = () => { vistaInicial(); pedir(); };
 
