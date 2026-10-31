@@ -1566,9 +1566,9 @@ function tramoVida(it, y){
   }
   cara(e.cara, x, y, r, s);
   // Icono de su oficio, fuera de la cara arriba a la izquierda, con hueco para que no la toque
-  if (e.simbolo === "filosofo") lechuza(x - r * 1.55, y - r * 1.35);
-  if (e.simbolo === "cientifico") probeta(x - r * 1.55, y - r * 1.35);
-  if (e.simbolo === "artista") paleta(x - r * 1.55, y - r * 1.35);
+  if (e.simbolo === "filosofo") lechuza(x - r * 1.45, y - r * 1.27);
+  if (e.simbolo === "cientifico") probeta(x - r * 1.45, y - r * 1.27);
+  if (e.simbolo === "artista") paleta(x - r * 1.45, y - r * 1.27);
   // Nombre (y años): se guardan para dibujarlos al final, encima de todas las caras
   const txt = etapa === 1 ? (e.corto || e.t) : etapa === 2 ? (e.etiquetaFechas || e.etiqueta) : e.etiqueta;
   nombresPendientes.push({ txt, x: x + r * 1.5 + 6, y: y - 4, a: ctx.globalAlpha });
