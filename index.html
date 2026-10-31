@@ -992,6 +992,17 @@ const EVENTOS = [
       { h: "Su legado", p: "Murió en Londres el 14 de marzo de 1883 y está enterrado en el cementerio de Highgate. En vida fue poco conocido, pero sus ideas, el marxismo, se convirtieron en una de las más influyentes de la historia: en su nombre se hicieron la Revolución rusa y los regímenes comunistas de la URSS, China o Cuba, y también influyeron en los partidos socialistas y socialdemócratas, en la sociología, la economía y la forma de estudiar la historia." }
     ]
   },
+  { nace: "1878-12-18", f: "1953-03-05", fila: "personas", t: "Iósif Stalin", nivel: 2, corto: "Stalin", cara: "stalin",
+    resumen: "Nació en Gori (Georgia) el 18 de diciembre de 1878 y murió cerca de Moscú el 5 de marzo de 1953. Revolucionario bolchevique, se hizo con el poder en la Unión Soviética tras la muerte de Lenin y la gobernó como dictador durante casi treinta años. Industrializó el país a marchas forzadas y lo llevó a la victoria contra Hitler, pero su régimen causó millones de muertos por hambrunas, ejecuciones y campos de trabajo.",
+    detalle: [
+      { h: "De Georgia al seminario", p: "Se llamaba Iósif Vissariónovich Dzhugashvili y nació en Gori, en Georgia, entonces parte del Imperio ruso, hijo de un zapatero. Su madre quería que fuera sacerdote y lo metió en el seminario de Tiflis, pero allí empezó a leer a Marx y en 1899 dejó los estudios. Su lengua materna era el georgiano, y habló ruso con acento toda la vida." },
+      { h: "El revolucionario", p: "Se unió a los bolcheviques de Lenin y organizó huelgas y atracos para financiar al partido, como el gran asalto a un furgón de dinero en Tiflis en 1907. La policía del zar lo detuvo y lo desterró varias veces a Siberia. Hacia 1912 adoptó el apodo de Stalin, que viene de stal, «acero»." },
+      { h: "La conquista del poder", p: "Tras la Revolución de Octubre de 1917 fue comisario de las Nacionalidades, y en 1922 lo nombraron secretario general del Partido Comunista, un cargo que parecía administrativo y que él convirtió en el centro del poder. Lenin, poco antes de morir en 1924, advirtió en su testamento de que era demasiado brusco y propuso apartarlo. Stalin fue eliminando a sus rivales uno tras otro: Trotski fue expulsado del país en 1929 y asesinado en México en 1940 por un agente soviético." },
+      { h: "Planes quinquenales y hambruna", p: "A partir de 1928 lanzó los planes quinquenales para convertir un país campesino en una potencia industrial, y obligó a los campesinos a entrar en granjas colectivas. Quienes se resistían, los llamados kulaks, fueron deportados o fusilados. La colectivización provocó la hambruna de 1932-1933, que mató a millones de personas, sobre todo en Ucrania (el Holodomor) y Kazajistán." },
+      { h: "El Gran Terror", p: "Entre 1936 y 1938 desató el Gran Terror: juicios espectáculo en Moscú contra viejos bolcheviques que confesaban crímenes inventados, purgas en el ejército y detenciones masivas. Solo en 1937 y 1938 la policía política fusiló a unas 680.000 personas, y millones pasaron por el Gulag, la red de campos de trabajo forzado. En la Guerra Civil española la URSS apoyó a la República con armas, a cambio de buena parte de las reservas de oro del Banco de España." },
+      { h: "La Segunda Guerra Mundial", p: "En agosto de 1939 firmó con Hitler el pacto Molotov-Ribbentrop y se repartió con él Polonia. El 22 de junio de 1941 Alemania invadió la URSS por sorpresa y llegó a las puertas de Moscú. La victoria en Stalingrado (1942-1943) cambió el rumbo de la guerra, y en 1945 el Ejército Rojo tomó Berlín. La URSS pagó el precio más alto: unos 27 millones de muertos. En Yalta y Potsdam, Stalin se repartió con Roosevelt, Churchill y Truman el mapa de la posguerra." },
+      { h: "Guerra Fría y muerte", p: "Tras la guerra impuso regímenes comunistas en Europa del Este, tras lo que Churchill llamó el «telón de acero», y en 1949 la URSS probó su primera bomba atómica. Sufrió un derrame cerebral en su dacha de Kúntsevo y murió el 5 de marzo de 1953, con 74 años. En 1956 su sucesor, Jruschov, denunció sus crímenes y el culto a su persona en un famoso discurso secreto." }
+    ] },
   { nace: "1879-03-14", f: "1955-04-18", fila: "personas", t: "Albert Einstein", nivel: 2, corto: "Einstein", cara: "einstein",
     resumen: "Nació en Ulm (Alemania) el 14 de marzo de 1879 y murió en Princeton (Estados Unidos) el 18 de abril de 1955. Físico, autor de la teoría de la relatividad, que cambió nuestra forma de entender el espacio, el tiempo y la gravedad. Su fórmula E = mc² muestra que la masa y la energía son dos formas de lo mismo. Recibió el Nobel de Física de 1921 por explicar el efecto fotoeléctrico, una de las bases de la física cuántica, y se convirtió en el símbolo mismo del genio.",
     detalle: [
@@ -2123,6 +2134,49 @@ function cara(quien, x, y, r, s){
     // Barbilla
     ctx.lineWidth = 1.1;
     ctx.beginPath(); ctx.moveTo(x - r * .1, y + r * .82); ctx.quadraticCurveTo(x, y + r * .87, x + r * .1, y + r * .82); ctx.stroke();
+  }
+  if (quien === "stalin"){
+    ctx.strokeStyle = TINTA; ctx.fillStyle = TINTA; ctx.lineCap = "round";
+    // Pelo abundante y peinado hacia atrás, con volumen arriba
+    ctx.beginPath();
+    ctx.moveTo(x - r * .96, y - r * .2);
+    ctx.quadraticCurveTo(x - r * 1.12, y - r * .95, x - r * .4, y - r * 1.18);
+    ctx.quadraticCurveTo(x, y - r * 1.3, x + r * .45, y - r * 1.16);
+    ctx.quadraticCurveTo(x + r * 1.12, y - r * .95, x + r * .96, y - r * .2);
+    ctx.quadraticCurveTo(x + r * .8, y - r * .55, x + r * .5, y - r * .62);
+    ctx.quadraticCurveTo(x, y - r * .5, x - r * .5, y - r * .62);
+    ctx.quadraticCurveTo(x - r * .8, y - r * .55, x - r * .96, y - r * .2);
+    ctx.fill();
+    // Rayas del peinado hacia atrás
+    ctx.save(); ctx.strokeStyle = "#fffdf7"; ctx.lineWidth = 1;
+    for (let k = -2; k <= 2; k++){
+      ctx.beginPath(); ctx.moveTo(x + k * r * .2, y - r * .62); ctx.quadraticCurveTo(x + k * r * .24, y - r * .9, x + k * r * .3, y - r * 1.1); ctx.stroke();
+    }
+    ctx.restore();
+    // Cejas pobladas y ojos
+    for (const k of [-1, 1]){
+      ctx.beginPath(); ctx.arc(x + k * r * .3, y - r * .05, 1.9, 0, Math.PI * 2); ctx.fill();
+      ctx.lineWidth = 2.6;
+      ctx.beginPath(); ctx.moveTo(x + k * r * .12, y - r * .24); ctx.lineTo(x + k * r * .48, y - r * .28); ctx.stroke();
+    }
+    // Nariz ancha
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(x, y - r * .08); ctx.lineTo(x - r * .06, y + r * .28); ctx.quadraticCurveTo(x + r * .02, y + r * .34, x + r * .1, y + r * .28); ctx.stroke();
+    // Bigote grande y espeso, con las puntas hacia abajo
+    ctx.beginPath();
+    ctx.moveTo(x - r * .5, y + r * .55);
+    ctx.quadraticCurveTo(x - r * .4, y + r * .3, x, y + r * .36);
+    ctx.quadraticCurveTo(x + r * .4, y + r * .3, x + r * .5, y + r * .55);
+    ctx.quadraticCurveTo(x + r * .25, y + r * .48, x, y + r * .52);
+    ctx.quadraticCurveTo(x - r * .25, y + r * .48, x - r * .5, y + r * .55);
+    ctx.fill();
+    // Boca bajo el bigote
+    ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(x - r * .12, y + r * .68); ctx.lineTo(x + r * .12, y + r * .68); ctx.stroke();
+    // Marcas de viruela en las mejillas
+    for (const [dx, dy] of [[-.55, .25], [-.48, .38], [.52, .22], [.58, .36], [.46, .44]]){
+      ctx.beginPath(); ctx.arc(x + dx * r, y + dy * r, .8, 0, Math.PI * 2); ctx.fill();
+    }
   }
   if (quien === "hitler"){
     // Pelo con el flequillo cayendo sobre la frente
