@@ -2,7 +2,7 @@
 
 Guardado el 1 de noviembre de 2026, antes de empezar la web de cero.
 
-- **Web completa tal cual estaba:** etiqueta `antes-de-empezar-de-0` (y la rama `main` hasta el commit `ccdea34`). Con `git checkout antes-de-empezar-de-0` se recupera entera: index.html, sw.js, manifest e iconos.
+- **Web completa tal cual estaba:** en esta misma rama `archivo` (index.html, sw.js, manifest e iconos en la raíz) y en el commit `ccdea34`.
 - **Esta carpeta** tiene lo aprovechable sacado del index.html en archivos sueltos.
 
 ## Contenido
@@ -14,7 +14,7 @@ Guardado el 1 de noviembre de 2026, antes de empezar la web de cero.
   - `cinta1.webp` … `cinta6.webp` – seis cintas de carrocero reales (PNG de Ferran pasados a webp).
   - `foto-la-piedad.webp`, `foto-el-david.webp`, `foto-capilla-sixtina.webp`, `foto-capilla-sixtina-2.webp`, `foto-juicio-final.webp` – fotos de Wikimedia Commons de la ficha de Miguel Ángel.
 - `datos/eventos.js` – el array `EVENTOS` completo (90 entradas): periodos, personajes, inventos, pirámides, libros, guerras, hitos… con resumen y apartados de cada ficha. Las fotos apuntan a `imagenes/…`.
-- Las caras de los personajes, los iconos dibujados a mano (pirámide, pirámide escalonada, túmulo, bombilla, imprenta, cohete, libros…) y las banderas están como código canvas dentro del index.html de la etiqueta.
+- Las caras de los personajes, los iconos dibujados a mano (pirámide, pirámide escalonada, túmulo, bombilla, imprenta, cohete, libros…) y las banderas están como código canvas dentro del index.html de esta rama.
 
 ## Reglas de contenido que pidió Ferran
 
