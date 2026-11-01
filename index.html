@@ -692,7 +692,7 @@ const EVENTOS = [
       { h: "La India y el Himalaya", p: "La India se separó de África y viajó hacia el norte hasta chocar con Asia, hace unos 50 millones de años. El choque levantó el Himalaya, que todavía crece." },
       { h: "El mapa de hoy", p: "Hace unos 3 millones de años se cerró el istmo de Panamá y se unieron las dos Américas. Desde entonces el mapa es prácticamente el actual, aunque los continentes no han dejado de moverse." }
     ] },
-  { desde: "-230000000", f: "-66000000", fila: "periodos", conImperios: true, paso: 21, t: "Dinosaurios", fechas: "hace c. 230 – 66 millones de años",
+  { desde: "-230000000", f: "-66000000", fila: "periodos", conImperios: true, paso: 19, t: "Dinosaurios", fechas: "hace c. 230 – 66 millones de años",
     color: "rgba(90, 170, 60, .42)", dibujo: "dino",
     resumen: "Grupo de reptiles que apareció hace unos 230 millones de años, en el Triásico, y dominó los ecosistemas terrestres durante el Jurásico y el Cretácico. Los dinosaurios no voladores se extinguieron hace 66 millones de años, tras el impacto de un gran asteroide. Pero no desaparecieron todos: las aves son dinosaurios.",
     detalle: [
@@ -1063,7 +1063,7 @@ const EVENTOS = [
       { h: "El huevo con cáscara", p: "El huevo amniota tiene membranas y una cáscara que protegen al embrión y evitan que se seque. Con él, los vertebrados pudieron colonizar del todo la tierra firme." },
       { h: "Sus descendientes", p: "De los primeros reptiles salieron los dinosaurios, las aves, los cocodrilos, las tortugas, los lagartos y las serpientes. De un grupo cercano salieron los antepasados de los mamíferos." }
     ] },
-  { f: "-205000000", fila: "hitos", t: "Primeros mamíferos", icono: "mamifero", nivel: 1, paso: 15,
+  { f: "-205000000", fila: "hitos", t: "Primeros mamíferos", icono: "mamifero", nivel: 1, paso: 20,
     fechaTxt: "hace c. 205 millones de años",
     resumen: "Los primeros mamíferos, o sus parientes más cercanos, aparecieron a finales del Triásico, más o menos a la vez que los primeros dinosaurios. Eran pequeños, del tamaño de una musaraña, y probablemente nocturnos. Morganucodon, de hace unos 205 millones de años, es uno de los más conocidos. Las fechas son aproximadas.",
     detalle: [
@@ -1137,7 +1137,7 @@ const EVENTOS = [
       { h: "La Gran Mortandad", p: "Es la única extinción masiva que afectó gravemente incluso a los insectos. Desaparecieron los últimos trilobites, que habían vivido casi 300 millones de años. La vida tardó millones de años en recuperarse." },
       { h: "Lo que vino después", p: "De los supervivientes salieron los grupos que dominarían el Mesozoico: en el Triásico aparecieron los primeros dinosaurios y los primeros mamíferos. Con esta extinción termina la era Paleozoica y empieza la Mesozoica." }
     ] },
-  { f: "-201400000", fila: "personas", t: "Extinción del Triásico", icono: "calavera", nivel: 1, paso: 15,
+  { f: "-201400000", fila: "personas", t: "Extinción del Triásico", icono: "calavera", nivel: 1, paso: 20,
     fechaTxt: "hace c. 201 millones de años",
     resumen: "La cuarta gran extinción, al final del Triásico, hace unos 201 millones de años. Coincidió con grandes erupciones volcánicas cuando Pangea empezaba a partirse y nacía el océano Atlántico. Desapareció en torno al 75 % de las especies, y los dinosaurios, que sobrevivieron, se quedaron sin muchos de sus competidores.",
     detalle: [
@@ -4237,18 +4237,16 @@ function dibujarPeriodos(yL){
     }
     ctx.globalCompositeOperation = "source-over";
     // Dibujo sobre la franja (dinosaurio), si hay sitio de sobra
-    if (e.dibujo === "dino" && W / ppa < 6e8 && x2 - x1 > 90){
-      // Los animales van arriba, a la altura de las calaveras de las extinciones.
-      // Con sitio de sobra salen todos: uno pequeño al principio, velociraptor, triceratops,
-      // el de cuello largo y un T. rex detrás; con poco sitio, solo el de cuello largo.
+    if (e.dibujo === "dino"){
+      // Los animales van arriba, a la altura de las calaveras de las extinciones, y salen de uno en uno al acercarse:
+      // el pequeño con la franja (paso 19); en el 20, la extinción del Triásico y los primeros mamíferos;
+      // luego velociraptor (21), triceratops (22), el de cuello largo (23) y el T. rex (24).
       const yD = yFila("hitos", yL) + 2;
-      const todos = x2 - x1 > 520;
-      const animales = todos
-        ? [[.03, dinoPequeno], [.35, velociraptor], [.54, triceratops], [.74, (x, y) => dino(x, y, e.id)], [.9, trex]]
-        : [[.78, (x, y) => dino(x, y, e.id)]];
-      for (const [fr, pintar] of animales){
+      const animales = [[.03, dinoPequeno, 19], [.35, velociraptor, 21], [.54, triceratops, 22], [.74, (x, y) => dino(x, y, e.id), 23], [.9, trex, 24]];
+      for (const [fr, pintar, n] of animales){
+        const al = alfaPaso(n); if (!al) continue;
         const xd = x1 + (x2 - x1) * fr;
-        if (xd > -40 && xd < W + 40) pintar(xd, yD);
+        if (xd > -40 && xd < W + 40){ ctx.save(); ctx.globalAlpha *= al; pintar(xd, yD); ctx.restore(); }
       }
     }
     if (x2 - x1 > 30){
@@ -4380,7 +4378,7 @@ function pasosDinamicos(lista){
   const prio = cad.slice().sort((a, b) => (a.nivel || 2) - (b.nivel || 2) || Math.abs(b.año) - Math.abs(a.año));
   const pasos = new Map(), usados = new Set();
   for (const e of prio){
-    let n = 24;
+    let n = 25;                       // después del T. rex (paso 24)
     for (; n < 400; n++){
       if (usados.has(n)) continue;
       let ok = true;
