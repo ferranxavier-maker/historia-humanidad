@@ -667,9 +667,9 @@ const EVENTOS = [
       { h: "Células con núcleo", p: "Hace unos 2.000 a 1.800 millones de años aparecieron las células eucariotas, las que tienen núcleo, como las nuestras. Probablemente surgieron cuando una célula englobó a una bacteria que acabó convirtiéndose en la mitocondria." },
       { h: "El final de la vida solo unicelular", p: "Hacia el final del Proterozoico, hace unos 600 millones de años, aparecen los primeros seres pluricelulares grandes, la fauna de Ediacara, y poco después, en el Cámbrico, la explosión de animales." }
     ] },
-  { desde: "-335000000", f: "-175000000", fila: "periodos", conImperios: true, geografia: true, paso: 15, t: "Pangea", fechas: "hace c. 335 – 175 millones de años",
+  { desde: "-335000000", solidoDesde: "-300000000", f: "-200000000", desvanece: "-175000000", fila: "periodos", conImperios: true, geografia: true, paso: 15, t: "Pangea", fechas: "hace c. 335 – 175 millones de años (se formó y se rompió poco a poco)",
     color: "rgba(170, 120, 70, .42)",
-    resumen: "El último supercontinente: casi todas las tierras emergidas unidas en un solo bloque, rodeado por un océano global, Panthalassa. Se formó hacia el final del Carbonífero y empezó a romperse a principios del Jurásico. Las fechas son aproximadas.",
+    resumen: "El último supercontinente: casi todas las tierras emergidas unidas en un solo bloque, rodeado por un océano global, Panthalassa. Se formó poco a poco hacia el final del Carbonífero y se fue rompiendo, también poco a poco, desde principios del Jurásico: por eso la franja se difumina por los dos lados. Las fechas son aproximadas.",
     detalle: [
       { h: "Un solo continente", p: "Los continentes se fueron juntando durante el Paleozoico hasta formar Pangea, que significa «toda la tierra». Iba casi de polo a polo, con un interior enorme y muy seco, lejos del mar." },
       { h: "La época de los primeros dinosaurios", p: "Los dinosaurios aparecieron hace unos 230 millones de años en una Pangea todavía unida. Por eso se encuentran fósiles de los mismos grupos en continentes hoy muy alejados." },
@@ -3866,7 +3866,11 @@ function dibujarPeriodos(yL){
     if (e.añoSolido !== undefined){              // inicio difuso: de transparente a sólido
       const xS = xDe(e.añoSolido), g = ctx.createLinearGradient(x1, 0, xFin, 0);
       const c = Math.max(0, Math.min(1, (xS - x1) / (xFin - x1)));
-      g.addColorStop(0, transp); g.addColorStop(c, e.color); g.addColorStop(1, e.color);
+      g.addColorStop(0, transp); g.addColorStop(c, e.color);
+      if (xFin > x2 + 1){                        // y además final difuso
+        const corte = Math.max(c, Math.min(1, (x2 - x1) / (xFin - x1)));
+        g.addColorStop(corte, e.color); g.addColorStop(1, transp);
+      } else g.addColorStop(1, e.color);
       pintura = g;
     }
     else if (xFin > x2 + 1){
