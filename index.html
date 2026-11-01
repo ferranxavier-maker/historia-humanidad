@@ -650,9 +650,9 @@ const EVENTOS = [
       { h: "Mucho más antiguos de lo que parecía", p: "Al principio se pensó que habían vivido hasta hace solo 12.000 años, pero nuevas dataciones de 2016 situaron sus restos entre hace 100.000 y 60.000 años. En Mata Menge, en la misma isla, hay fósiles de una población parecida, aún más pequeña, de hace unos 700.000 años." },
       { h: "Cuando llegamos nosotros", p: "Desaparecieron más o menos cuando Homo sapiens llegaba a la región, hace unos 50.000 años, aunque no se sabe si tuvo relación. En la isla filipina de Luzón se descubrió en 2019 otra especie pequeña, Homo luzonensis." }
     ] },
-  { desde: "-4400000000", f: "-3500000000", fila: "periodos", conImperios: true, geografia: true, paso: 5, t: "Primeros océanos", fechas: "hace c. 4.400 – 3.500 millones de años",
+  { desde: "-4400000000", f: "-1000000000", desvanece: "-335000000", fila: "periodos", conImperios: true, geografia: true, paso: 5, t: "Primeros océanos", fechas: "hace c. 4.400 millones de años – (siguen hoy)",
     color: "rgba(40, 110, 200, .40)",
-    resumen: "Hace unos 4.400 millones de años, solo unos 150 millones de años después de formarse la Tierra, ya había agua líquida en la superficie: los primeros océanos (fecha aproximada). La franja llega hasta las primeras pruebas aceptadas de vida, hace unos 3.500 millones de años; los océanos, claro, siguen ahí.",
+    resumen: "Hace unos 4.400 millones de años, solo unos 150 millones de años después de formarse la Tierra, ya había agua líquida en la superficie: los primeros océanos (fecha aproximada). Los océanos no desaparecieron: la franja se difumina hasta que los continentes se juntan en Pangea, que es lo siguiente en esta fila. Antes de Pangea hubo otros supercontinentes, como Rodinia, que se formaron y se rompieron sin que el océano dejara de existir.",
     detalle: [
       { h: "La pista de los circones", p: "Unos cristales diminutos de circón de Jack Hills (Australia), de hasta unos 4.400 millones de años, tienen una química que indica que se formaron en contacto con agua líquida en la superficie. Es la prueba más antigua de que existían océanos, o al menos mucha agua líquida." },
       { h: "Cómo se formaron", p: "Al principio la superficie era un océano de magma y el agua estaba como vapor en la atmósfera. Al enfriarse la corteza, el vapor se condensó y llovió durante muchísimo tiempo, llenando las zonas bajas." },
@@ -3830,7 +3830,8 @@ function asignarCarriles(){
   // Historia de la Tierra y de la vida (océanos, vida, Pangea, dinosaurios…), en la fila de los imperios
   const zonaTierra = [];
   // primero los seres vivos (y los océanos), más cerca de la línea; debajo, los continentes
-  colocar(libres.filter(e => e.conImperios && !e.geografia), 0, zonaTierra);
+  colocar(libres.filter(e => e.conImperios && !e.geografia && !e.funde), 0, zonaTierra);   // dinosaurios, arriba
+  colocar(libres.filter(e => e.conImperios && e.funde), 1, zonaTierra);                    // vida unicelular → pluricelular
   const kGeo = 1 + Math.max(0, ...zonaTierra.map(e => e.carril));     // el planeta, debajo de todas las filas de la vida
   colocar(libres.filter(e => e.conImperios && e.geografia), kGeo, zonaTierra);
   // Debajo de la línea: primero los imperios (más cerca de la línea) y, por debajo, las etapas de Egipto
