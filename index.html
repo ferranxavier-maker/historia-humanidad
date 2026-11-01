@@ -114,8 +114,9 @@ header{position:fixed;top:0;left:0;right:0;padding:24px 16px 0;pointer-events:no
 #nota button{position:absolute;top:6px;right:8px;border:0;background:none;font:700 22px "Caveat",sans-serif;cursor:pointer;color:#555}
 .ayuda{position:fixed;right:16px;bottom:18px;z-index:3;color:#7d776b;font-size:19px;pointer-events:none;transform:rotate(-2deg)}
 @media (max-width:600px){.ayuda{display:none}}
-/* Globo y contador de visitas (como en theironcapi), arriba a la izquierda */
-#visitas{position:fixed;top:10px;left:12px;z-index:3;display:flex;flex-direction:column;align-items:center}
+/* Globo y contador de visitas (como en theironcapi), abajo del todo y centrados */
+#visitas{position:fixed;bottom:6px;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:row;align-items:center;gap:10px}
+#visitas .globo{margin:0}
 #visitas .vc-wrap{margin:0}
 @media (max-width:700px){#visitas{display:none}}
 .vc-wrap{display:flex;justify-content:center;margin:2px 0 16px;position:relative}
@@ -129,7 +130,7 @@ header{position:fixed;top:0;left:0;right:0;padding:24px 16px 0;pointer-events:no
 .vc-d::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;margin-top:-1px;background:#0e0d0b}
 .vc-d.vc-flip{animation:vcflip .18s ease-in}
 @keyframes vcflip{0%{transform:rotateX(0)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
-.globo{width:120px;height:120px;max-width:100%;margin:0 auto 6px;cursor:grab;position:relative}
+.globo{width:64px;height:64px;max-width:100%;margin:0 auto 6px;cursor:grab;position:relative}
 .globo::after{content:"";position:absolute;left:22%;right:22%;bottom:-8px;height:12px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.45) 0%,rgba(0,0,0,.18) 45%,rgba(0,0,0,0) 72%);pointer-events:none}
 .globo:active{cursor:grabbing}
 </style>
@@ -1210,7 +1211,7 @@ function limitarVista(){
 function dibujar(){
   limitarVista();
   ctx.clearRect(0, 0, W, H);
-  const yL = Math.max(360, Math.min(H * 0.73, H - 415)) + despY; // altura de la línea (deja sitio debajo para las edades)
+  const yL = Math.max(360, Math.min(H * 0.73, H - 490)) + despY; // altura de la línea (deja sitio debajo para las edades)
   const { paso, sub } = intervalo();
   const desde = añoDe(-60), hasta = añoDe(W + 60);
 
@@ -5302,7 +5303,7 @@ if ("serviceWorker" in navigator && location.protocol === "https:"){
   var LIB="https://cdn.jsdelivr.net/npm/globe.gl@2.46.2/dist/globe.gl.min.js";
   var TOPOLIB="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js";
   var MAPA="https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json";
-  var ROJO="#e0182a", AMARILLO="#ffd400", TAM=120;
+  var ROJO="#e0182a", AMARILLO="#ffd400", TAM=64;
   var el=document.getElementById("globo-visitas");
   if(!el)return;
   function sget(k){try{return sessionStorage.getItem(k);}catch(e){return null;}}
