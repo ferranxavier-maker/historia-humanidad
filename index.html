@@ -995,7 +995,7 @@ const EVENTOS = [
     fechaTxt: "hace c. 400.000 años" },
   { f: "-300000", fila: "hitos", t: "Homo sapiens", icono: "sapiens", nivel: 1, paso: 31, ficha: "Homo sapiens",
     fechaTxt: "hace c. 300.000 años" },
-  { f: "-12500", fila: "hitos", t: "Natufienses", icono: "choza", nivel: 1, paso: 33,
+  { f: "-12500", fila: "inventos", t: "Natufienses", icono: "poblado", nivel: 1, paso: 33,
     fechaTxt: "c. 12.500 a.C.",
     resumen: "La cultura natufiense, en el Levante (actuales Israel, Palestina, Jordania, Siria y Líbano), entre el 12.500 y el 9.500 a.C. aproximadamente, levantó algunos de los primeros poblados estables. Vivían todo el año en aldeas, pero aún no cultivaban: recogían cereales silvestres. Fueron la transición entre los cazadores-recolectores nómadas y los primeros agricultores.",
     detalle: [
@@ -3112,7 +3112,7 @@ function solRojo(cx, cy, semilla){
 
 const COSMICOS = ["sol", "tierra", "tierraAzul", "bigbang", "estrellas", "galaxia", "solJoven"];
 // Calaveras y animales: nombre y fecha debajo, en líneas cortas y centradas
-const TEXTO_DEBAJO = ["calavera", "asteroide", "tierraHoy", "trilobites", "anfibio", "reptil", "mamifero", "primate", "mono", "mamut", "choza", "australopiteco", "erectus", "neandertal", "sapiens"];
+const TEXTO_DEBAJO = ["calavera", "asteroide", "tierraHoy", "trilobites", "anfibio", "reptil", "mamifero", "primate", "mono", "mamut", "australopiteco", "erectus", "neandertal", "sapiens"];
 const HUMANOS = ["australopiteco", "erectus", "neandertal", "sapiens"];   // figuras estrechas
 function lineasCalavera(e){
   const p = e.t.split(" ");
@@ -4055,7 +4055,12 @@ function dibujarEventos(yL){
         ];
         cx = cajas[0][0]; w = cajas[0][1] - cx;
       } else {
-        if (e.icono === "piramide" || e.icono === "escalonada"){   // pirámide con el año al lado
+        if (e.icono === "poblado"){                          // choza grande con nombre y año al lado, como la pirámide
+          ctx.font = `15px ${MARCADOR}`; const wT = ctx.measureText(e.t).width;
+          ctx.font = `600 18px ${FUENTE}`; const wF = ctx.measureText(e.añoTxt).width;
+          cx = x - 34; w = 34 + 40 + Math.max(wT, wF) + 6;
+        }
+        else if (e.icono === "piramide" || e.icono === "escalonada"){   // pirámide con el año al lado
           ctx.font = `600 18px ${FUENTE}`;
           cx = x - 72; w = 72 + 70 + ctx.measureText(e.añoTxt).width + 6;
         }
@@ -4131,9 +4136,9 @@ function dibujarEventos(yL){
     const tmp = [];
     // Cadena del meteorito a los humanos: se colocan en orden cronológico y, si uno no cabe todavía,
     // los posteriores esperan (así salen siempre de uno en uno, en orden, al acercarse)
-    const enCadena = c => TEXTO_DEBAJO.includes(c.e.icono) && (c.e.paso || 0) >= 24;
+    const enCadena = c => (TEXTO_DEBAJO.includes(c.e.icono) || c.e.icono === "poblado") && (c.e.paso || 0) >= 24;
     const cadena = orden.filter(enCadena);
-    const todaCadena = EVENTOS.filter(e => e.fila === fila && TEXTO_DEBAJO.includes(e.icono) && (e.paso || 0) >= 24).sort((p, q) => p.año - q.año);
+    const todaCadena = EVENTOS.filter(e => (e.fila === fila || (FILAS[e.fila] || {}).junto === fila) && (TEXTO_DEBAJO.includes(e.icono) || e.icono === "poblado") && (e.paso || 0) >= 24).sort((p, q) => p.año - q.año);
     // Paso en que cada uno cabe en su fecha junto al anterior; nunca dos en el mismo paso
     const pasoActual = Math.log(ZOOM_BASE_AÑOS / (W / ppa)) / Math.log(PASO_RUEDA);
     let pasoPrev = -1, ePrev = null;
@@ -4141,7 +4146,7 @@ function dibujarEventos(yL){
     for (const e of todaCadena){
       let n = e.paso || 0;
       if (ePrev){
-        const wDib = x => HUMANOS.includes(x.icono) ? 26 : x.icono === "tierraHoy" ? 46 : 44;   // solo el dibujo (el texto sale cuando cabe)
+        const wDib = x => HUMANOS.includes(x.icono) ? 26 : x.icono === "tierraHoy" ? 46 : x.icono === "poblado" ? 64 : 44;   // solo el dibujo (el texto sale cuando cabe)
         const necesita = (wDib(ePrev) + wDib(e)) / 2 + 14;   // px entre los dos
         const spanMax = W * Math.abs(e.año - ePrev.año) / necesita;
         n = Math.max(n, Math.ceil(Math.log(ZOOM_BASE_AÑOS / spanMax) / Math.log(PASO_RUEDA) - 1e-9), pasoPrev + 1);
@@ -4348,6 +4353,7 @@ function dibujarEventos(yL){
       if (it.e.icono === "librito")  librito(it.x, it.yF + 20, it.e.id);
       if (it.e.icono === "prensa")   prensa(it.x, it.yF + 20, it.e.id);
       if (it.e.icono === "piramide") piramide(it.x, it.yF + 62, it.e.id);
+      if (it.e.icono === "poblado"){ ctx.save(); ctx.translate(it.x, it.yF + 62); ctx.scale(1.6, 1.6); choza(0, 0); ctx.restore(); }
       if (it.e.icono === "escalonada") escalonada(it.x, it.yF + 62, it.e.id, it.e.escalonada);
       if (it.e.icono === "coronas")  coronas(it.x, it.yF + 26, it.e.id);
       if (it.e.icono === "cohete")   cohete(it.x, it.yF + 18, it.e.id);
@@ -4377,6 +4383,10 @@ function dibujarEventos(yL){
       ctx.font = `600 18px ${FUENTE}`;
       if (it.e.icono === "libro"){ ctx.textAlign = "left"; ctx.fillText(it.e.añoTxt, it.x + 52, it.yF + 42); }
       else if (it.e.icono === "coronas"){ ctx.textAlign = "left"; ctx.fillText(it.e.añoTxt, it.x + 30, it.yF + 10); }
+      else if (it.e.icono === "poblado"){
+        ctx.textAlign = "left"; ctx.fillStyle = TINTA; ctx.font = `15px ${MARCADOR}`; ctx.fillText(it.e.t, it.x + 40, it.yF + 18);
+        ctx.fillStyle = "#555"; ctx.font = `600 18px ${FUENTE}`; ctx.fillText(it.e.añoTxt, it.x + 40, it.yF + 36);
+      }
       else if (it.e.icono === "piramide" || it.e.icono === "escalonada"){ ctx.textAlign = "left"; ctx.fillText(it.e.añoTxt, it.x + 70, it.yF + 34); }
       else if (it.e.icono === "cohete"){ ctx.textAlign = "left"; ctx.fillText(it.e.añoTxt, it.x + 34, it.yF + 32); }
       else if (TEXTO_DEBAJO.includes(it.e.icono)){
