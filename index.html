@@ -4357,12 +4357,14 @@ function visiblePorPeso(e, span, T = umbralHistoria(e)){
 // Nunca salen dos en el mismo paso. Lo de antes de los primates sigue con su paso puesto a mano.
 const ESC_MIN = .1;                 // al salir, los dibujos miden 1/10 de lo normal…
 const PASOS_CRECER = 3;             // …y crecen hasta su tamaño en estos pasos de rueda (prehistoria)
-const esHistoria = e => e.año >= -10000;
+const esHistoria = e => e.año >= -5000;
 // Historia: el tamaño de los dibujos depende solo del zoom y nunca baja al acercarse. Crecen al mismo ritmo
 // que se estira la línea (así lo que ya ha salido nunca se monta), desde 1/10 hasta su tamaño normal,
 // que alcanzan cuando en pantalla hay SPAN_TAMAÑO_NORMAL años o menos.
-const SPAN_TAMAÑO_NORMAL = 800;
+const SPAN_TAMAÑO_NORMAL = 1200;
 const escHistoria = span => Math.max(ESC_MIN, Math.min(1, SPAN_TAMAÑO_NORMAL / span));
+// Paso de rueda en que sale todo lo de la historia: cuando el tamaño empieza a crecer desde 1/10
+const PASO_HISTORIA = Math.ceil(Math.log(ZOOM_BASE_AÑOS / (SPAN_TAMAÑO_NORMAL / ESC_MIN)) / Math.log(PASO_RUEDA) + .5);
 // Lo que ocupa solo el dibujo (sin el año) a la izquierda y a la derecha de su fecha, en px
 function dibujoLR(e){
   if (e.icono === "piramide") return [65, 63];
@@ -4394,16 +4396,17 @@ function pasosDinamicos(lista){
   }
   ctx.restore();
   const prio = cad.slice().sort((a, b) => (a.nivel || 2) - (b.nivel || 2) || Math.abs(b.año) - Math.abs(a.año));
-  // En la historia (desde el 10.000 a.C.) se mira si cabe con el tamaño que toca a ese zoom (sin año)
+  // Desde el 5000 a.C. se mira si cabe con el tamaño que toca a ese zoom (sin año)
   const dib = new Map();
   for (const e of cad) dib.set(e, dibujoLR(e) || ext.get(e));
   const pasos = new Map(), usados = new Set();
   let ultP = 24, ultH = 24;           // después del T. rex (paso 24)
   for (const e of prio){
     // Prehistoria: orden estricto (como pronto, en el paso siguiente al anterior).
-    // Historia: cada una sale en cuanto cabe, por orden de prioridad y sin repetir paso.
+    // Historia (desde el 5000 a.C.): todo sale a la vez, a 1/10, cuando empieza a crecer (ver escHistoria).
     const historia = esHistoria(e);
-    let n = historia ? 25 : ultP + 1;
+    if (historia){ pasos.set(e, PASO_HISTORIA); continue; }
+    let n = ultP + 1;
     for (; n < 400; n++){
       if (usados.has(n)) continue;
       let ok = true;
@@ -4614,7 +4617,7 @@ function dibujarEventos(yL){
       if (dinamica){                                  // cada uno a su paso, sin esperar a los demás
         if (!c || pasoActual + .5 < pasoCadena.get(e)) continue;
         // Si ni encogido cabe, sale igual (se tocan un poco), salvo la choza, que no pisa «HOY»
-        const r = intentar(c, tmp) || (c.e.icono === "poblado" ? null : { k: 0, d: 0 });
+        const r = esHistoria(e) ? { k: 0, d: 0 } : intentar(c, tmp) || (c.e.icono === "poblado" ? null : { k: 0, d: 0 });
         if (r){ r.o = { k: r.k, a: c.cx + r.d, b: c.cx + r.d + c.w, zp: c.zp }; r.etapa = 1; puestos.set(c, r); ocup[r.k].push(r.o); }
         continue;
       }
