@@ -88,8 +88,8 @@ header{position:fixed;top:0;left:0;right:0;padding:24px 16px 0;pointer-events:no
   /* Fluorescente a mano, de una sola pasada */
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 50' preserveAspectRatio='none'%3E%3Cdefs%3E%3Cfilter id='r' x='-5%25' y='-20%25' width='110%25' height='140%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.04 .9' numOctaves='2' seed='3'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='5'/%3E%3C/filter%3E%3C/defs%3E%3Cg filter='url(%23r)'%3E%3Cpath fill='rgba(255,224,0,.62)' d='M6,9 Q4,25 7,42 L150,44 Q240,43 292,40 Q296,26 293,12 L150,8 Q60,7 6,9Z'/%3E%3Cpath stroke='rgba(255,250,200,.45)' stroke-width='2' fill='none' d='M12,18 L288,17 M10,30 L290,31'/%3E%3Cpath fill='rgba(255,205,0,.45)' d='M5,10 Q2,26 6,43 Q14,44 17,42 Q15,26 17,9Z'/%3E%3Cpath fill='rgba(255,205,0,.4)' d='M286,13 Q289,27 287,40 Q293,41 295,39 Q297,26 294,12Z'/%3E%3C/g%3E%3C/svg%3E") 0 55%/100% 100% no-repeat;transform:rotate(-.6deg)}
 #detalle p.t{font:500 24px/1.32 "Caveat",system-ui,sans-serif;margin:0 0 10px}
-#detalle a.wiki{color:inherit;text-decoration:underline;text-decoration-color:rgba(40,80,170,.55);text-decoration-thickness:1.5px;text-underline-offset:3px}
-#detalle a.wiki:hover{color:#1f4fa8;text-decoration-color:#1f4fa8}
+#detalle a.wiki,#nota a.wiki{color:inherit;text-decoration:underline;text-decoration-color:rgba(40,80,170,.55);text-decoration-thickness:1.5px;text-underline-offset:3px}
+#detalle a.wiki:hover,#nota a.wiki:hover{color:#1f4fa8;text-decoration-color:#1f4fa8}
 /* Foto antigua: borde crema amarillento con el canto irregular, imagen algo envejecida y con viñeta,
    sujeta con dos trozos de cinta de carrocero (arriba y en la esquina de abajo a la derecha) */
 #detalle figure.foto{position:relative;margin:16px auto 28px;width:min(300px,78%);transform:rotate(var(--giro,-3deg));filter:drop-shadow(0 5px 7px rgba(0,0,0,.3))}
@@ -5082,7 +5082,8 @@ const nota = document.getElementById("nota");
 function abrirNota(ev, x, y){
   document.getElementById("notaT").textContent = ev.t;
   document.getElementById("notaF").textContent = ev.txt + (ev.sub ? " · " + ev.sub : "");
-  document.getElementById("notaR").textContent = ev.resumen;
+  const notaR = document.getElementById("notaR"); notaR.textContent = "";
+  textoConEnlaces(notaR, ev.resumen, new Set([ev.t]), (ev.añoMuere ?? ev.añoHasta ?? ev.año) < 500);   // enlaces a Wikipedia
   const mas = document.getElementById("notaMas");
   mas.style.display = ev.detalle ? "" : "none";
   mas.onclick = () => abrirDetalle(ev);
@@ -5117,7 +5118,7 @@ Amón
 Jerusalén
 Babilonia
 Amarna|Tell el-Amarna
-Ávaris
+Ávaris|Avaris
 Ilíada
 Odisea
 Eneida
@@ -5131,7 +5132,7 @@ Guiza|Necrópolis de Guiza
 Gran Pirámide de Guiza
 Gran Esfinge|Gran Esfinge de Guiza
 Canaán
-Museo Egipcio de El Cairo|Museo Egipcio de El Cairo
+Museo Egipcio de El Cairo
 Abidos|Abidos (Egipto)
 Hieracómpolis
 Heródoto
@@ -5146,7 +5147,7 @@ Atón
 Howard Carter
 Qadesh|Batalla de Qadesh
 Pueblos del Mar
-Tanis
+Tanis|Tanis (Egipto)
 Kush|Reino de Kush
 Sais
 Mar Rojo
@@ -5156,8 +5157,8 @@ Granada|Reino nazarí de Granada
 Bahamas
 Ítaca
 Gran Dolina
-Atapuerca|Yacimientos de Atapuerca
-Sierra de Atapuerca|Yacimientos de Atapuerca
+Atapuerca|Sitio arqueológico de Atapuerca
+Sierra de Atapuerca|Sitio arqueológico de Atapuerca
 Sima del Elefante
 Sima de los Huesos
 Denisova|Cueva Denisova
@@ -5195,8 +5196,7 @@ Nefertari
 Colosos de Memnón
 Medinet Habu
 Darío|Darío III
-Liceo|Liceo (Aristóteles)
-Rubicón
+Rubicón|Rubicón (río)
 Belén
 Galilea
 Poncio Pilato
@@ -5205,7 +5205,7 @@ Nazaret
 Caprese|Caprese Michelangelo
 Florencia
 Capilla Sixtina
-Juicio Final|El Juicio Final (Miguel Ángel)
+Juicio Final|El Juicio Final (Capilla Sixtina)
 Galería de la Academia|Galería de la Academia de Florencia
 Piedad|La Piedad (Miguel Ángel)
 Génesis
@@ -5254,8 +5254,8 @@ Sarnath
 Benarés|Varanasi
 Cuatro Nobles Verdades
 Noble Óctuple Sendero
-nirvana|Nirvana
-sangha|Sangha
+nirvana|Nirvana (espiritualidad)
+sangha|Sangha (budismo)
 Kushinagar
 estupas|Estupa
 canon pali|Canon pali
@@ -5274,7 +5274,7 @@ Emilio Massera|Emilio Eduardo Massera
 Orlando Agosti|Orlando Ramón Agosti
 Proceso de Reorganización Nacional
 Escuela de Mecánica de la Armada
-vuelos de la muerte|Vuelos de la muerte
+vuelos de la muerte|Vuelos de la muerte (Argentina)
 CONADEP|Comisión Nacional sobre la Desaparición de Personas
 Madres de Plaza de Mayo
 Abuelas de Plaza de Mayo
@@ -5291,7 +5291,7 @@ guerra del Chaco|Guerra del Chaco
 Bolivia
 Federico Chaves
 Partido Colorado|Asociación Nacional Republicana
-Comisión de Verdad y Justicia|Comisión de Verdad y Justicia (Paraguay)
+Comisión de Verdad y Justicia
 Asunción
 Archivos del Terror
 aché|Aché
@@ -5304,7 +5304,7 @@ Santiago de Chile
 Salvador Allende
 Carlos Prats
 La Moneda|Palacio de La Moneda
-Junta Militar|Junta Militar de Gobierno (Chile)
+Junta Militar|Dictadura militar (Chile)
 DINA|Dirección de Inteligencia Nacional
 Estadio Nacional|Estadio Nacional de Chile
 Orlando Letelier
@@ -5339,15 +5339,14 @@ Raúl|Raúl Castro
 cementerio de Santa Ifigenia|Cementerio de Santa Ifigenia
 Jemeres Rojos
 Camboya
-Kampong Thom|Provincia de Kampong Thom
-Partido Comunista Francés|Partido Comunista Francés
+Partido Comunista Francés
 Partido Comunista de Kampuchea
 guerra de Vietnam|Guerra de Vietnam
 Lon Nol
 Sihanouk|Norodom Sihanouk
 Nom Pen
 Kampuchea Democrática
-Tuol Sleng|Museo del Genocidio de Tuol Sleng
+Tuol Sleng
 campos de la muerte|Campos de la muerte (Camboya)
 Choeung Ek
 Tailandia
@@ -5371,8 +5370,8 @@ Taiwán
 Gran Salto Adelante
 comunas populares|Comuna popular
 Revolución Cultural
-Guardias Rojos|Guardia Roja
-Libro rojo
+Guardias Rojos|Guardias rojos (China)
+Libro rojo|Libro Rojo de Mao
 Liu Shaoqi
 Deng Xiaoping
 Richard Nixon
@@ -5398,7 +5397,7 @@ Cándido|Cándido, o el optimismo
 Louis-le-Grand|Liceo Louis-le-Grand
 Bastilla
 Locke|John Locke
-Cartas filosóficas
+Cartas filosóficas|Cartas inglesas
 Cirey|Cirey-sur-Blaise
 Émilie du Châtelet
 Federico II de Prusia
@@ -5418,8 +5417,6 @@ torre inclinada|Torre de Pisa
 Universidad de Padua
 Padua
 república de Venecia|República de Venecia
-Marina Gamba
-Maria Celeste|Maria Celeste Galilei
 lunas galileanas|Satélites galileanos
 El mensajero sideral|Sidereus nuncius
 Júpiter|Júpiter (planeta)
@@ -5427,7 +5424,7 @@ Cosme II de Médici
 Copérnico|Nicolás Copérnico
 cardenal Belarmino|Roberto Belarmino
 Urbano VIII
-Diálogo sobre los dos máximos sistemas del mundo
+Diálogo sobre los dos máximos sistemas del mundo|Diálogos sobre los dos máximos sistemas del mundo
 Inquisición|Inquisición romana
 Arcetri
 Discursos sobre dos nuevas ciencias
@@ -5446,14 +5443,14 @@ revolución de Asturias|Revolución de Asturias de 1934
 Frente Popular|Frente Popular (España)
 Segunda República|Segunda República española
 Guerra Civil|Guerra civil española
-Dragon Rapide
+Dragon Rapide|De Havilland DH.89 Dragon Rapide
 Legión Cóndor
 Guernica|Bombardeo de Guernica
 Mussolini|Benito Mussolini
 Movimiento Nacional
 División Azul
 Hendaya|Entrevista de Hendaya
-pactos de Madrid|Pactos de Madrid
+pactos de Madrid|Pactos de Madrid de 1953
 Plan de Estabilización|Plan Nacional de Estabilización Económica
 desarrollismo|Desarrollismo
 Juan Carlos de Borbón|Juan Carlos I
@@ -5464,7 +5461,7 @@ Transición|Transición española
 Constitución de 1978|Constitución española de 1978
 Valle de los Caídos|Valle de Cuelgamuros
 Mingorrubio|Cementerio de Mingorrubio
-El Pardo
+El Pardo|El Pardo (Madrid)
 Ley de Memoria Democrática
 Sutra del Diamante
 xilografía|Xilografía
@@ -5480,7 +5477,6 @@ Goryeo
 Cheongju
 Jikji
 Biblioteca Nacional de Francia
-Victor Collin de Plancy
 Memoria del Mundo|Programa Memoria del Mundo
 hangul|Hangul
 Sejong|Sejong el Grande
@@ -5507,7 +5503,7 @@ Moisés|Moisés (Miguel Ángel)
 San Pietro in Vincoli
 Creación de Adán|La creación de Adán
 Vittoria Colonna
-Tommaso de' Cavalieri
+Tommaso de' Cavalieri|Tommaso Cavalieri
 plaza del Capitolio|Piazza del Campidoglio
 Piedad Rondanini
 iglesia de la Santa Cruz|Basílica de la Santa Cruz (Florencia)
@@ -5539,7 +5535,7 @@ Wellington|Arthur Wellesley
 Elba|Isla de Elba
 Waterloo|Batalla de Waterloo
 Santa Elena|Isla Santa Elena
-Toulon|Sitio de Tolón
+Toulon|Sitio de Tolón (1793)
 Josefina de Beauharnais
 Abukir|Batalla del Nilo
 piedra de Rosetta|Piedra de Rosetta
@@ -5550,7 +5546,7 @@ Trafalgar|Batalla de Trafalgar
 Austerlitz|Batalla de Austerlitz
 Jena|Batalla de Jena
 bloqueo continental|Bloqueo Continental
-María Luisa de Austria|María Luisa de Austria (1791-1847)
+María Luisa de Austria
 Bayona|Abdicaciones de Bayona
 José Bonaparte
 guerra de la Independencia|Guerra de la Independencia española
@@ -5644,7 +5640,7 @@ José de San Martín
 Tratado de París|Tratado de París (1898)
 Ifni
 Sáhara Occidental
-Queronea|Batalla de Queronea (338 a. C.)
+Queronea|Batalla de Queronea
 Persépolis
 Ipsos|Batalla de Ipsos
 Antigónidas|Dinastía antigónida
@@ -5652,7 +5648,7 @@ Carlos Martel
 Poitiers|Batalla de Poitiers (732)
 Pipino el Breve
 Marca Hispánica
-Roncesvalles|Batalla de Roncesvalles (778)
+Roncesvalles|Batalla de Roncesvalles
 Cantar de Roldán
 Aquisgrán
 Eginardo
@@ -5675,7 +5671,7 @@ Telémaco
 Mantua
 Bucólicas
 Geórgicas
-Mecenas|Cayo Cilnio Mecenas
+Mecenas|Cayo Mecenas
 Rómulo y Remo
 Cartago
 Lacio
@@ -5762,7 +5758,298 @@ Reino de Granada|Reino nazarí de Granada
 Santo Domingo
 catedral de Sevilla|Catedral de Sevilla
 Iósif Stalin
-Kúntsevo`.trim().split("\n").map(l => { const [t, a, antiguo] = l.split("|"); return [t, { a: a || t, antiguo }]; }));
+Homo sapiens
+Homo erectus
+Homo floresiensis
+Homo antecessor
+Homo heidelbergensis
+Homo neanderthalensis
+Homo luzonensis
+Homo habilis
+Homo ergaster
+Australopithecus afarensis
+Australopithecus africanus
+Australopithecus sediba
+Australopithecus anamensis
+Australopithecus
+Paranthropus
+Tierra
+Sol
+Luna
+Australia
+Indonesia
+China
+Atlántico|Océano Atlántico
+Etiopía
+Lucy
+ADN|Ácido desoxirribonucleico
+Sudáfrica
+Oriente Próximo
+Estados Unidos
+Burgos
+Carbonífero
+Panamá
+Himalaya
+Francia
+Cáucaso
+Marruecos
+Cantabria
+Imperio Antiguo|Imperio Antiguo de Egipto
+Ptolomeo|Ptolomeo I
+Ediacara|Biota del periodo Ediacárico
+Gondwana
+Antártida
+Yucatán|Península de Yucatán
+Prehistoria
+Alemania
+Gibraltar
+Fayum|Gobernación de Fayún
+Mentuhotep II
+Siberia
+Flores|Isla de Flores (Indonesia)
+Rodinia
+Panthalassa
+Norteamérica|América del Norte
+Sudamérica|América del Sur
+India
+Diplodocus
+Brachiosaurus
+Allosaurus
+Tyrannosaurus|Tyrannosaurus rex
+Stegosaurus
+Triceratops
+México
+Velociraptor
+Archaeopteryx
+Eurasia
+Rouffignac|Cueva de Rouffignac
+Wrangel|Isla de Wrangel
+Ártico
+Kenia
+Richard Leakey
+Alan Walker|Alan Walker (antropólogo)
+Georgia
+Eugène Dubois
+Java|Java (isla)
+Omo Kibish|Hombres de Kibish
+Beringia
+Nuevo México
+Maltravieso|Cueva de Maltravieso
+Cáceres
+Ardales|Cueva de Ardales
+Málaga
+Düsseldorf
+Bélgica
+Asturias
+Cueva de los Aviones
+Murcia
+Svante Pääbo
+Pääbo|Svante Pääbo
+Tanzania
+Hadar|Hadar (Etiopía)
+Beatles|The Beatles
+Ledi-Geraru
+Naqada|Cultura de Naqada
+Menes
+Primer Periodo Intermedio|Primer período intermedio de Egipto
+Pepi II
+Heracleópolis|Heracleópolis Magna
+Imperio Nuevo|Imperio Nuevo de Egipto
+Uruk
+Edad Antigua
+Jufu|Keops
+Tura|Tura (Egipto)
+Renacimiento
+Venus|Venus (planeta)
+Antonio Meucci
+Sagitario A*
+Saturno|Saturno (planeta)
+Cámbrico
+Israel
+Jordania
+Marte|Marte (planeta)
+Hádico
+Mercurio|Mercurio (planeta)
+Mar de la Tranquilidad
+Alpes
+Stegodon
+Luzón
+Groenlandia
+Gran Oxidación
+Proterozoico
+Paleozoico
+Alfred Wegener
+Eoraptor
+Herrerasaurus
+Argentina
+Argentinosaurus
+Sinosauropteryx
+Luis Álvarez|Luis Walter Álvarez
+Walter Álvarez
+La Rioja|La Rioja (España)
+Morella
+Castellón|Provincia de Castellón
+Las Hoyas
+Cuenca|Cuenca (España)
+Merimde
+Naqada III
+Tinis
+Aha
+El Cairo
+Amenemhat I
+Senusret III
+Cuento de Sinuhé|Historia de Sinuhé
+Siria
+Ahmose I|Amosis I
+Tutmosis III
+Lamentaciones de Ipuur|Papiro de Ipuur
+Imperio Medio|Imperio Medio de Egipto
+Tell el-Daba
+Seqenenre Tao|Seqenenra Taa
+Kamose
+Ramsés XI
+Sheshonq I
+Sisac|Sheshonq I
+Biblia
+Sudán
+Piye
+Taharqa
+Náucratis
+Necao II
+Cambises II
+Nectanebo II
+Edfu|Templo de Edfu
+Dendera|Templo de Dendera
+Museo de Alejandría
+Biblioteca de Alejandría
+Irak
+Epopeya de Gilgamesh|Poema de Gilgamesh
+Mesoamérica
+Lincoln|Catedral de Lincoln
+Inglaterra
+Merer|Diario de Merer
+Jafra|Kefrén
+Menkaura|Micerino
+Edad Media
+Liubliana
+Eslovenia
+Cai Lun
+Samarcanda
+Bagdad
+Xàtiva|Játiva
+Valencia
+Corea
+Sinodal de Aguilafuente
+Segovia
+Países Bajos
+Zacharias Janssen
+Robert Hooke
+Antonie van Leeuwenhoek|Anton van Leeuwenhoek
+Leeuwenhoek|Anton van Leeuwenhoek
+Hans Lippershey
+Galileo Galilei
+Galileo|Galileo Galilei
+Telescopio espacial Hubble
+Edward Jenner
+James Phipps
+Francisco Javier de Balmis|Francisco Javier Balmis
+Filipinas
+Alexander Graham Bell
+Thomas Watson|Thomas A. Watson
+Nueva York
+Guglielmo Marconi
+Marconi|Guglielmo Marconi
+Heinrich Hertz
+Samuel Morse
+Titanic|RMS Titanic
+Nikola Tesla
+John Logie Baird
+Baird|John Logie Baird
+Londres
+Philo Farnsworth
+Televisión Española
+Georges Lemaître
+Edwin Hubble
+Fred Hoyle
+Arno Penzias
+Robert Woodrow Wilson
+COBE
+WMAP|Wilkinson Microwave Anisotropy Probe
+Planck|Planck (satélite)
+Gaia|Gaia (sonda espacial)
+Agencia Espacial Europea
+Gaia-Encélado
+Reinhard Genzel
+Andrea Ghez|Andrea M. Ghez
+Event Horizon Telescope
+Brazo de Orión
+Andrómeda|Galaxia de Andrómeda
+Urano|Urano (planeta)
+Neptuno|Neptuno (planeta)
+Acanthostega
+Ichthyostega
+Nueva Escocia
+Canadá
+Madagascar
+Levante mediterráneo
+Palestina
+Líbano
+Creciente Fértil
+Dryas Reciente
+Dunkleosteus
+Mesozoico
+Gubbio
+Italia
+Paleógeno
+Trampas del Decán|Traps del Decán
+Clair Patterson|Clair Cameron Patterson
+Aldebarán
+Sirio
+NASA
+Sputnik 1
+Sputnik|Sputnik 1
+Yuri Gagarin
+Florida
+Pacífico|Océano Pacífico
+Arcaico|Arcaico (geología)
+Cenozoico
+Pirineos
+Gales
+Tiktaalik
+Revolución Industrial
+Dimetrodon
+Jura|Macizo del Jura
+Suiza
+Fanerozoico
+Holoceno
+Lascaux|Cueva de Lascaux
+Tigris
+Indo|Río Indo
+Río Amarillo
+Arabia|Península arábiga
+Reconquista
+Cristóbal Colón
+Colón|Cristóbal Colón
+Vasco da Gama
+Magallanes|Fernando de Magallanes
+España
+Portugal
+Newton|Isaac Newton
+Voltaire
+Montesquieu
+Jean-Jacques Rousseau
+Rousseau|Jean-Jacques Rousseau
+Guerra Fría
+Denísova|Hombre de Denísova
+Papúa Nueva Guinea
+Patrimonio de la Humanidad
+Premio Nobel de Medicina|Premio Nobel de Fisiología o Medicina
+Premio Nobel de Física
+Ngandong
+Pasiega|Cueva de La Pasiega
+América
+Cambises|Cambises II
+mar de la Tranquilidad|Mar de la Tranquilidad`.trim().split("\n").map(l => { const [t, a, antiguo] = l.split("|"); return [t, { a: a || t, antiguo }]; }));
 // "término|Artículo|Artículo para la Antigüedad": en fichas anteriores al año 500 se usa el tercero
 const WIKI_RE = new RegExp("(?<![\\p{L}\\p{N}])(" + [...WIKI.keys()].sort((a, b) => b.length - a.length)
   .map(t => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")(?![\\p{L}\\p{N}])", "gu");
