@@ -4358,6 +4358,11 @@ function visiblePorPeso(e, span, T = umbralHistoria(e)){
 const ESC_MIN = .1;                 // al salir, los dibujos miden 1/10 de lo normal…
 const PASOS_CRECER = 3;             // …y crecen hasta su tamaño en estos pasos de rueda (prehistoria)
 const esHistoria = e => e.año >= -10000;
+// Historia: el tamaño de los dibujos depende solo del zoom y nunca baja al acercarse. Crecen al mismo ritmo
+// que se estira la línea (así lo que ya ha salido nunca se monta), desde 1/10 hasta su tamaño normal,
+// que alcanzan cuando en pantalla hay SPAN_TAMAÑO_NORMAL años o menos.
+const SPAN_TAMAÑO_NORMAL = 800;
+const escHistoria = span => Math.max(ESC_MIN, Math.min(1, SPAN_TAMAÑO_NORMAL / span));
 // Lo que ocupa solo el dibujo (sin el año) a la izquierda y a la derecha de su fecha, en px
 function dibujoLR(e){
   if (e.icono === "piramide") return [65, 63];
@@ -4389,15 +4394,16 @@ function pasosDinamicos(lista){
   }
   ctx.restore();
   const prio = cad.slice().sort((a, b) => (a.nivel || 2) - (b.nivel || 2) || Math.abs(b.año) - Math.abs(a.año));
-  // En la historia (desde el 10.000 a.C.) se mira si cabe en pequeño (1/10, sin año): luego crecen todos juntos
-  const chico = new Map();
-  for (const e of cad){ const l = dibujoLR(e) || ext.get(e); chico.set(e, [l[0] * ESC_MIN, l[1] * ESC_MIN]); }
+  // En la historia (desde el 10.000 a.C.) se mira si cabe con el tamaño que toca a ese zoom (sin año)
+  const dib = new Map();
+  for (const e of cad) dib.set(e, dibujoLR(e) || ext.get(e));
   const pasos = new Map(), usados = new Set();
   let ultP = 24, ultH = 24;           // después del T. rex (paso 24)
   for (const e of prio){
-    // Orden estricto (como pronto, en el paso siguiente al anterior), por separado en la prehistoria y en la historia
+    // Prehistoria: orden estricto (como pronto, en el paso siguiente al anterior).
+    // Historia: cada una sale en cuanto cabe, por orden de prioridad y sin repetir paso.
     const historia = esHistoria(e);
-    let n = (historia ? ultH : ultP) + 1;
+    let n = historia ? 25 : ultP + 1;
     for (; n < 400; n++){
       if (usados.has(n)) continue;
       let ok = true;
@@ -4405,7 +4411,7 @@ function pasosDinamicos(lista){
         const [izq, der] = e.año < o.año ? [e, o] : [o, e];
         const px = W * Math.abs(e.año - o.año) / verPaso(Math.max(n, m));   // cuando ya se ven los dos
         const pequeños = historia && esHistoria(o);
-        const necesita = pequeños ? chico.get(izq)[1] + chico.get(der)[0] + 4 : ext.get(izq)[1] + ext.get(der)[0] + 14;
+        const necesita = pequeños ? (dib.get(izq)[1] + dib.get(der)[0]) * escHistoria(verPaso(Math.max(n, m))) + 6 : ext.get(izq)[1] + ext.get(der)[0] + 14;
         if (px < necesita){ ok = false; break; }
       }
       if (ok) break;
@@ -4580,27 +4586,20 @@ function dibujarEventos(yL){
     }
     // Fila de hitos e inventos.
     // Prehistoria: cada dibujo sale a 1/10 de su tamaño y crece hasta el normal en unos pasos de rueda.
-    // Historia: todos tienen el mismo tamaño, el que cabe en el par más apretado de los que ya han salido
-    // (entre 1/10 y el normal), así que crecen todos a la vez. El año sale solo a tamaño normal y si cabe.
+    // Historia: todos del mismo tamaño, que depende solo del zoom (escHistoria). El año sale a tamaño normal y si cabe.
     if (dinamica){
+      const escH = escHistoria(W / ppa);
       const visH = cadena.filter(c => dinamica.has(c.e) && esHistoria(c.e) && pasoActual + .5 >= pasoCadena.get(c.e)).sort((p, q) => p.e.año - q.e.año);
-      let esc = 1;
-      for (const c of visH) c.sinAño = false;
+      for (const c of visH) c.sinAño = escH < 1;
       for (let i = 1; i < visH.length; i++){
-        const a = visH[i - 1], b = visH[i], la = dibujoLR(a.e), lb = dibujoLR(b.e);
-        if (!la || !lb) continue;
-        const g = b.x - a.x;
-        if (g >= (a.cx + a.w - a.x) + (b.x - b.cx) + 14) continue;      // caben con su año
-        if (!TEXTO_DEBAJO.includes(a.e.icono)) a.sinAño = true;
-        esc = Math.min(esc, (g - 4) / (la[1] + lb[0]));
+        const a = visH[i - 1], b = visH[i];
+        if (b.x - a.x < (a.cx + a.w - a.x) + (b.x - b.cx) + 14 && !TEXTO_DEBAJO.includes(a.e.icono)) a.sinAño = true;
       }
-      esc = Math.max(ESC_MIN, Math.min(1, esc));
       for (const c of cadena){
         if (!dinamica.has(c.e)) continue;
         if (esHistoria(c.e)){
           const l = dibujoLR(c.e);
-          c.esc = l ? esc : 1;
-          if (esc < 1) c.sinAño = true;
+          c.esc = l ? escH : 1;
           if (c.sinAño && l){ c.cx = c.x - l[0] * c.esc; c.w = (l[0] + l[1]) * c.esc; }
         } else {
           const g = Math.min(1, Math.max(0, (pasoActual + .5 - pasoCadena.get(c.e)) / PASOS_CRECER));
