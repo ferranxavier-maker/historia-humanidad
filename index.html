@@ -860,6 +860,16 @@ const EVENTOS = [
       { h: "¿Un solo momento?", p: "Hoy se piensa que la unificación fue un proceso largo, de varias generaciones, más que una sola conquista. Antes de Narmer ya había reyes que dominaban buena parte del país, la llamada «dinastía 0». Pero desde entonces Egipto se pensó siempre como la unión de dos tierras, y la vivió como el inicio de su historia." },
       { h: "Tres mil años", p: "Con la unificación empieza la historia de los faraones, que duraría unos tres mil años, hasta la muerte de Cleopatra en el 30 a.C.: más tiempo del que nos separa a nosotros de la propia Cleopatra." }
     ] },
+  { f: "-3300", aprox: true, fila: "personas", t: "La escritura", icono: "papiro", nivel: 1, paso: 71,
+    fechaTxt: "c. 3300 a.C.",
+    resumen: "La escritura se inventó hacia el 3300-3200 a.C. (fechas aproximadas) en Mesopotamia, en la ciudad sumeria de Uruk, en el actual Irak. Empezó como contabilidad en tablillas de arcilla. En Egipto aparecieron casi a la vez los jeroglíficos, escritos también sobre papiro. Con ella termina la Prehistoria y empieza la Historia.",
+    detalle: [
+      { h: "Empezó contando", p: "Las primeras tablillas de Uruk anotan cantidades de cebada, ganado o cerveza con pictogramas, dibujos que representan cosas. Servían para llevar las cuentas de los templos y los almacenes." },
+      { h: "El cuneiforme", p: "Con el tiempo, los signos se simplificaron en marcas en forma de cuña, hechas con un cálamo sobre arcilla blanda, y pasaron a representar también sonidos. Así se pudieron escribir nombres, leyes, cartas y poemas, como la Epopeya de Gilgamesh." },
+      { h: "Jeroglíficos y papiro", p: "En Egipto, los jeroglíficos aparecieron hacia el 3200 a.C. No está claro si fue de forma independiente o por influencia de Mesopotamia. Los egipcios escribían en piedra y sobre papiro, una hoja hecha con tiras de la planta del mismo nombre, que crece a orillas del Nilo." },
+      { h: "Inventada varias veces", p: "La escritura se inventó también, por separado, en China (hacia el 1200 a.C., en huesos oraculares) y en Mesoamérica (hacia el 900-600 a.C.; el sistema maya es el más completo)." },
+      { h: "Prehistoria e Historia", p: "Por convención, la Historia empieza con la escritura: desde entonces hay textos que cuentan lo que pasó. Por eso la Edad Antigua empieza hacia el 3300 a.C." }
+    ] },
   { f: "-2560", aprox: true, fila: "inventos", t: "Gran Pirámide de Keops", nivel: 1, sub: "Guiza, Egipto", icono: "piramide",
     resumen: "La Gran Pirámide de Guiza, la tumba del faraón Keops (Jufu), de la dinastía IV de Egipto, se terminó hacia el 2560 a.C. (la fecha es aproximada). Medía unos 146 metros y fue la construcción más alta del mundo durante unos 3.800 años. Es la más antigua de las siete maravillas del mundo antiguo y la única que sigue en pie.",
     detalle: [
@@ -1049,7 +1059,7 @@ const EVENTOS = [
       { h: "Nebulosa planetaria y enana blanca", p: "Tras una fase en la que quemará helio, el Sol expulsará sus capas exteriores, que formarán una nube de gas brillante, una nebulosa planetaria, durante unas decenas de miles de años. En el centro quedará el núcleo desnudo: una enana blanca del tamaño de la Tierra pero con más de la mitad de la masa actual del Sol, tan densa que una cucharada pesaría toneladas. Sin combustible, se irá enfriando lentamente durante muchísimo tiempo." },
       { h: "No será una supernova", p: "El Sol no explotará: para acabar como supernova, una estrella necesita al menos unas ocho veces su masa. Todo esto lo sabemos estudiando otras estrellas que ya están en esas fases: gigantes rojas como Aldebarán, nebulosas planetarias como la del Anillo y enanas blancas como Sirio B." }
     ] },
-  { f: "1969-07-20", fila: "hitos",    t: "El hombre llega a la Luna", nivel: 1, sub: "Apolo 11", icono: "cohete",
+  { f: "1969-07-20", fila: "hitos",    t: "El hombre llega a la Luna", nivel: 1, sub: "Apolo 11", icono: "cohete", paso: 78,
     resumen: "El 20 de julio de 1969, la misión Apolo 11 de la NASA llevó por primera vez a seres humanos a la Luna. El módulo lunar Eagle se posó en el mar de la Tranquilidad con Neil Armstrong y Buzz Aldrin, mientras Michael Collins seguía en órbita en el módulo de mando Columbia. Unas horas después (ya 21 de julio en hora europea), Armstrong fue el primero en pisar la superficie lunar, y Aldrin le siguió. Pasaron unas dos horas y media fuera, recogieron rocas y muestras, y los tres volvieron a la Tierra el 24 de julio.",
     detalle: [
       { h: "La carrera espacial", p: "Estados Unidos y la Unión Soviética competían también en el espacio. Los soviéticos se adelantaron con el primer satélite, el Sputnik (1957), y el primer hombre en el espacio, Yuri Gagarin (1961). Ese mismo año, el presidente Kennedy se marcó el objetivo de llevar a un ser humano a la Luna antes de que acabara la década." },
@@ -3097,11 +3107,11 @@ function solRojo(cx, cy, semilla){
 
 const COSMICOS = ["sol", "tierra", "tierraAzul", "bigbang", "estrellas", "galaxia", "solJoven"];
 // Calaveras y animales: nombre y fecha debajo, en líneas cortas y centradas
-const TEXTO_DEBAJO = ["calavera", "asteroide", "tierraHoy", "trilobites", "anfibio", "reptil", "mamifero", "primate", "mono", "mamut", "australopiteco", "erectus", "neandertal", "sapiens"];
+const TEXTO_DEBAJO = ["calavera", "papiro", "asteroide", "tierraHoy", "trilobites", "anfibio", "reptil", "mamifero", "primate", "mono", "mamut", "australopiteco", "erectus", "neandertal", "sapiens"];
 const HUMANOS = ["australopiteco", "erectus", "neandertal", "sapiens"];   // figuras estrechas
 function lineasCalavera(e){
   const p = e.t.split(" ");
-  const tit = /^Extinción del /.test(e.t) ? ["Extinción del", e.t.slice(14)]
+  const tit = e.icono === "papiro" ? [e.t] : /^Extinción del /.test(e.t) ? ["Extinción del", e.t.slice(14)]
             : p.length > 1 ? [p.slice(0, -1).join(" "), p[p.length - 1]] : [e.t];
   const m = e.añoTxt.match(/^(.*?) (millones de años|años)$/);
   return { tit, fec: m ? [m[1], m[2]] : [e.añoTxt] };
@@ -3375,6 +3385,26 @@ function choza(x, y){
   for (const k of [-10, -3, 4, 11]){ ctx.beginPath(); ctx.moveTo(k * .9, -10); ctx.lineTo(k * .25, -30); ctx.stroke(); }
   for (const k of [-13, -5, 3, 11]){ ctx.beginPath(); ctx.moveTo(k, -9); ctx.lineTo(k, 0); ctx.stroke(); }
   ctx.fillStyle = TINTA; ctx.beginPath(); ctx.moveTo(-5, 0); ctx.lineTo(-5, -12); ctx.quadraticCurveTo(0, -17, 5, -12); ctx.lineTo(5, 0); ctx.closePath(); ctx.fill();   // puerta
+  ctx.restore();
+}
+// Papiro enrollado por los dos lados, con signos escritos
+function papiro(x, y){
+  ctx.save(); ctx.translate(x, y);
+  ctx.save(); ctx.globalCompositeOperation = "multiply"; ctx.fillStyle = "rgba(225, 195, 130, .85)";
+  ctx.fillRect(-18, -16, 36, 32); ctx.restore();
+  ctx.strokeStyle = TINTA; ctx.lineWidth = 2; ctx.lineJoin = "round";
+  ctx.beginPath(); ctx.moveTo(-18, -16); ctx.quadraticCurveTo(0, -19, 18, -16); ctx.moveTo(-18, 16); ctx.quadraticCurveTo(0, 19, 18, 16); ctx.stroke();
+  for (const k of [-1, 1]){                                                    // rollos de los lados
+    ctx.save(); ctx.globalCompositeOperation = "multiply"; ctx.fillStyle = "rgba(200, 160, 95, .9)";
+    ctx.beginPath(); ctx.ellipse(k * 21, 0, 5, 19, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    ctx.beginPath(); ctx.ellipse(k * 21, 0, 5, 19, 0, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(k * 21, -19, 5, 2.2, 0, 0, Math.PI * 2); ctx.stroke();
+  }
+  ctx.lineWidth = 1.3; ctx.fillStyle = TINTA;                                  // signos: ojo, ave, ondas, cuñas
+  ctx.beginPath(); ctx.ellipse(-9, -8, 4, 2.2, 0, 0, Math.PI * 2); ctx.stroke(); ctx.beginPath(); ctx.arc(-9, -8, 1, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(2, -5); ctx.quadraticCurveTo(4, -12, 9, -10); ctx.lineTo(11, -8); ctx.moveTo(4, -5); ctx.lineTo(4, -2); ctx.stroke();
+  ctx.beginPath(); for (let i = 0; i < 4; i++){ ctx.moveTo(-13 + i * 3, 4); ctx.lineTo(-11.5 + i * 3, 2); ctx.lineTo(-10 + i * 3, 4); } ctx.stroke();
+  for (const [a, b] of [[4, 2], [9, 2], [6, 8], [11, 8], [-10, 10]]){ ctx.beginPath(); ctx.moveTo(a, b); ctx.lineTo(a + 3, b + 1.5); ctx.lineTo(a, b + 3); ctx.closePath(); ctx.fill(); }
   ctx.restore();
 }
 // Trilobites visto desde arriba: escudo de la cabeza, cuerpo segmentado en tres lóbulos y cola
@@ -4188,9 +4218,10 @@ function dibujarEventos(yL){
     const tmp = [];
     // Cadena del meteorito a los humanos: se colocan en orden cronológico y, si uno no cabe todavía,
     // los posteriores esperan (así salen siempre de uno en uno, en orden, al acercarse)
-    const enCadena = c => (TEXTO_DEBAJO.includes(c.e.icono) || c.e.icono === "poblado") && (c.e.paso || 0) >= 24;
+    const GRANDES = ["poblado", "papiro", "piramide"];
+    const enCadena = c => (TEXTO_DEBAJO.includes(c.e.icono) || GRANDES.includes(c.e.icono)) && (c.e.paso || 0) >= 24;
     const cadena = orden.filter(enCadena);
-    const todaCadena = EVENTOS.filter(e => (e.fila === fila || (FILAS[e.fila] || {}).junto === fila) && (TEXTO_DEBAJO.includes(e.icono) || e.icono === "poblado") && (e.paso || 0) >= 24).sort((p, q) => p.año - q.año);
+    const todaCadena = EVENTOS.filter(e => (e.fila === fila || (FILAS[e.fila] || {}).junto === fila) && (TEXTO_DEBAJO.includes(e.icono) || GRANDES.includes(e.icono)) && (e.paso || 0) >= 24).sort((p, q) => p.año - q.año);
     // Paso en que cada uno cabe en su fecha junto al anterior; nunca dos en el mismo paso
     const pasoActual = Math.log(ZOOM_BASE_AÑOS / (W / ppa)) / Math.log(PASO_RUEDA);
     let pasoPrev = -1, ePrev = null;
@@ -4198,7 +4229,7 @@ function dibujarEventos(yL){
     for (const e of todaCadena){
       let n = e.paso || 0;
       if (ePrev){
-        const wDib = x => HUMANOS.includes(x.icono) ? 26 : x.icono === "tierraHoy" ? 46 : x.icono === "poblado" ? 64 : 44;   // solo el dibujo (el texto sale cuando cabe)
+        const wDib = x => HUMANOS.includes(x.icono) ? 26 : x.icono === "tierraHoy" ? 46 : x.icono === "poblado" || x.icono === "papiro" ? 64 : x.icono === "piramide" ? 150 : 44;   // solo el dibujo (el texto sale cuando cabe)
         const necesita = (wDib(ePrev) + wDib(e)) / 2 + 14;   // px entre los dos
         const spanMax = W * Math.abs(e.año - ePrev.año) / necesita;
         n = Math.max(n, Math.ceil(Math.log(ZOOM_BASE_AÑOS / spanMax) / Math.log(PASO_RUEDA) - 1e-9), pasoPrev + 1);
@@ -4418,8 +4449,9 @@ function dibujarEventos(yL){
       if (it.e.icono === "galaxia")  galaxia(it.x, it.yF + 10, it.e.id);
       if (it.e.icono === "solJoven") solJoven(it.x, it.yF + 10, it.e.id);
       // Los de la fila de arriba (las extinciones) suben 50 px para que su texto no pise la fila de los animales
-      const subeTD = it.e.fila === "personas" && TEXTO_DEBAJO.includes(it.e.icono) ? 50 : 0;
+      const subeTD = it.e.fila === "personas" && TEXTO_DEBAJO.includes(it.e.icono) && it.e.icono !== "papiro" ? 50 : 0;
       if (it.e.icono === "calavera") calavera(it.x, it.yF - 18 - subeTD, it.e.id);
+      if (it.e.icono === "papiro")   papiro(it.x, it.yF - 18 - subeTD);
       if (it.e.icono === "asteroide") asteroide(it.x, it.yF - 18 - subeTD, it.e.id);
       if (it.e.icono === "tierraHoy") tierraHoy(it.x, it.yF - 14 - subeTD, it.e.id);
       if (it.e.icono === "trilobites") trilobites(it.x, it.yF - 18 - subeTD);
@@ -4443,7 +4475,7 @@ function dibujarEventos(yL){
       else if (it.e.icono === "cohete"){ ctx.textAlign = "left"; ctx.fillText(it.e.añoTxt, it.x + 34, it.yF + 32); }
       else if (TEXTO_DEBAJO.includes(it.e.icono)){
         if (sinTexto.has(it)){ ctx.restore(); ctx.textAlign = "left"; continue; }
-        const L = lineasCalavera(it.e); let y = it.yF + 8 - (it.e.fila === "personas" ? 50 : 0);
+        const L = lineasCalavera(it.e); let y = it.yF + 8 - (it.e.fila === "personas" && it.e.icono !== "papiro" ? 50 : 0);
         ctx.textAlign = "center"; ctx.textBaseline = "top";
         ctx.fillStyle = TINTA; ctx.font = `15px ${MARCADOR}`;
         for (const t of L.tit){ ctx.fillText(t, it.x, y); y += 17; }
