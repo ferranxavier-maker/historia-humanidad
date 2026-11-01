@@ -685,7 +685,7 @@ const EVENTOS = [
       { h: "No fue el primero", p: "Antes hubo otros supercontinentes, como Rodinia, hace unos 1.100 a 750 millones de años. Se cree que los continentes se juntan y se separan en ciclos de cientos de millones de años." },
       { h: "Wegener", p: "En 1912, el alemán Alfred Wegener propuso que los continentes habían estado unidos, al ver cómo encajan las costas de África y Sudamérica y los fósiles iguales a ambos lados del Atlántico. No se aceptó hasta los años 60, con la tectónica de placas." }
     ] },
-  { desde: "-175000000", f: "-60000000", desvanece: "2026", fila: "periodos", conImperios: true, geografia: true, paso: 16, t: "Los continentes se separan", fechas: "hace c. 175 millones de años – hoy (siguen moviéndose)",
+  { desde: "-200000000", solidoDesde: "-175000000", f: "-60000000", desvanece: "2026", fila: "periodos", conImperios: true, geografia: true, paso: 16, t: "Los continentes se separan", fechas: "hace c. 175 millones de años – hoy (siguen moviéndose)",
     color: "rgba(60, 150, 140, .40)",
     resumen: "Desde principios del Jurásico, Pangea se fue rompiendo: se abrió el océano Atlántico y los continentes se desplazaron poco a poco hasta las posiciones actuales. Hace unos 3 millones de años, con el cierre del istmo de Panamá, el mapa ya era prácticamente el de hoy, pero los continentes no han dejado de moverse: por eso la franja se difumina hasta hoy. Las fechas son aproximadas.",
     detalle: [
@@ -3815,9 +3815,12 @@ function asignarCarriles(){
   // Primero los que tienen carril fijo (Homo sapiens va siempre en la línea)
   per.filter(e => e.carril !== undefined).forEach(e => puestos.push(e));
   // Cada zona (especies / fila de los imperios) reparte sus carriles por separado
+  // En el planeta, lo que se funde (Pangea → continentes) puede compartir fila: cuenta solo la parte sólida
+  const ini = e => e.geografia ? (e.añoSolido ?? e.añoDesde) : e.añoDesde;
+  const fin2 = e => e.geografia ? e.añoHasta : fin(e);
   const colocar = (lista, k0, zona) => lista.sort((a, b) => a.añoDesde - b.añoDesde).forEach(e => {
     let k = k0;
-    while (zona.some(o => o.carril === k && o.añoDesde < fin(e) && e.añoDesde < fin(o))) k++;
+    while (zona.some(o => o.carril === k && ini(o) < fin2(e) && ini(e) < fin2(o))) k++;
     e.carril = k; zona.push(e);
   });
   const libres = per.filter(e => e.carril === undefined);
