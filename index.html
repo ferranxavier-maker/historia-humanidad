@@ -423,7 +423,8 @@ function dibujarGeologia(yL){
   const a = 1;
   geoA = 0;
   // Debajo de la franja de las edades, como capas de roca: periodos arriba, eras en medio y eones abajo del todo
-  const yP = yEdades(yL) + ALTO_EDADES + 20, alto = 24, centros = [yP + 54, yP + 27, yP];
+  // Mientras las edades no se ven, la geología sube y ocupa su hueco; al aparecer ellas, baja poco a poco
+  const yP = yEdades(yL) + 16 + (ALTO_EDADES + 4) * alfaPaso(PASOS_ABAJO.edades), alto = 24, centros = [yP + 54, yP + 27, yP];
   ctx.save(); ctx.globalAlpha = a;
   for (const g of GEO){
     let x1 = xDe(g.añoDesde), x2 = xDe(g.añoHasta);
