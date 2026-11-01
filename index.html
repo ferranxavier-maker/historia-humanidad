@@ -995,6 +995,16 @@ const EVENTOS = [
     fechaTxt: "hace c. 400.000 años" },
   { f: "-300000", fila: "hitos", t: "Homo sapiens", icono: "sapiens", nivel: 1, paso: 31, ficha: "Homo sapiens",
     fechaTxt: "hace c. 300.000 años" },
+  { f: "-12500", fila: "hitos", t: "Natufienses", icono: "choza", nivel: 1, paso: 33,
+    fechaTxt: "c. 12.500 a.C.",
+    resumen: "La cultura natufiense, en el Levante (actuales Israel, Palestina, Jordania, Siria y Líbano), entre el 12.500 y el 9.500 a.C. aproximadamente, levantó algunos de los primeros poblados estables. Vivían todo el año en aldeas, pero aún no cultivaban: recogían cereales silvestres. Fueron la transición entre los cazadores-recolectores nómadas y los primeros agricultores.",
+    detalle: [
+      { h: "Aldeas antes de la agricultura", p: "Vivían en casas redondas semienterradas con base de piedra, agrupadas en aldeas como Ain Mallaha (Eynan), en el norte de Israel. Es uno de los primeros casos conocidos de gente que deja de ser nómada sin ser todavía agricultora." },
+      { h: "Cereales silvestres", p: "Recogían trigo y cebada salvajes con hoces de hojas de sílex y los molían con morteros y manos de piedra. Esa forma de vida preparó el paso a la agricultura del Neolítico en el Creciente Fértil." },
+      { h: "El pan más antiguo", p: "En Shubayqa 1 (Jordania) se encontraron restos carbonizados de pan de hace unos 14.400 años, de antes de que existiera la agricultura." },
+      { h: "Tumbas y perros", p: "Enterraban a sus muertos dentro de las casas o junto a ellas, a veces con adornos de conchas. En una tumba de Ain Mallaha apareció una persona enterrada con un cachorro, uno de los primeros indicios de perro doméstico." },
+      { h: "Lo que vino después", p: "Con el frío brusco del Dryas Reciente, hacia el 10.900 a.C., algunos grupos volvieron a moverse más. Sus descendientes fueron los primeros agricultores del Neolítico." }
+    ] },
   { f: "-445000000", fila: "personas", t: "Extinción del Ordovícico", icono: "calavera", nivel: 1, paso: 13,
     fechaTxt: "hace c. 445 millones de años",
     resumen: "La primera de las cinco grandes extinciones. Hace unos 445 millones de años, una glaciación enfrió el planeta, bajó el nivel del mar y secó las plataformas marinas donde vivía casi toda la vida, que entonces estaba en el mar. Desapareció en torno al 85 % de las especies.",
@@ -3102,7 +3112,7 @@ function solRojo(cx, cy, semilla){
 
 const COSMICOS = ["sol", "tierra", "tierraAzul", "bigbang", "estrellas", "galaxia", "solJoven"];
 // Calaveras y animales: nombre y fecha debajo, en líneas cortas y centradas
-const TEXTO_DEBAJO = ["calavera", "asteroide", "tierraHoy", "trilobites", "anfibio", "reptil", "mamifero", "primate", "mono", "mamut", "australopiteco", "erectus", "neandertal", "sapiens"];
+const TEXTO_DEBAJO = ["calavera", "asteroide", "tierraHoy", "trilobites", "anfibio", "reptil", "mamifero", "primate", "mono", "mamut", "choza", "australopiteco", "erectus", "neandertal", "sapiens"];
 const HUMANOS = ["australopiteco", "erectus", "neandertal", "sapiens"];   // figuras estrechas
 function lineasCalavera(e){
   const p = e.t.split(" ");
@@ -3363,6 +3373,24 @@ function mamut(x, y){
     ctx.lineWidth = 1;                                                       // mechones de pelo
     for (const [a, b] of [[-18, -10], [-12, -8], [-4, -7], [4, -8], [10, -10]]){ ctx.beginPath(); ctx.moveTo(a, b); ctx.lineTo(a + 1, b + 4); ctx.stroke(); }
   });
+}
+// Choza natufiense: casa redonda semienterrada, base de piedras y techo de ramas
+function choza(x, y){
+  ctx.save(); ctx.translate(x, y);
+  ctx.save(); ctx.globalCompositeOperation = "multiply";
+  ctx.fillStyle = "rgba(190, 150, 90, .6)";                                   // techo
+  ctx.beginPath(); ctx.moveTo(-19, -9); ctx.quadraticCurveTo(-14, -30, 0, -32); ctx.quadraticCurveTo(14, -30, 19, -9); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = "rgba(165, 160, 150, .7)";                                  // muro de piedra
+  ctx.fillRect(-20, -9, 40, 9);
+  ctx.restore();
+  ctx.strokeStyle = TINTA; ctx.lineWidth = 2; ctx.lineJoin = "round";
+  ctx.beginPath(); ctx.moveTo(-19, -9); ctx.quadraticCurveTo(-14, -30, 0, -32); ctx.quadraticCurveTo(14, -30, 19, -9); ctx.stroke();
+  ctx.strokeRect(-20, -9, 40, 9);
+  ctx.lineWidth = 1.1;                                                         // ramas del techo y piedras
+  for (const k of [-10, -3, 4, 11]){ ctx.beginPath(); ctx.moveTo(k * .9, -10); ctx.lineTo(k * .25, -30); ctx.stroke(); }
+  for (const k of [-13, -5, 3, 11]){ ctx.beginPath(); ctx.moveTo(k, -9); ctx.lineTo(k, 0); ctx.stroke(); }
+  ctx.fillStyle = TINTA; ctx.beginPath(); ctx.moveTo(-5, 0); ctx.lineTo(-5, -12); ctx.quadraticCurveTo(0, -17, 5, -12); ctx.lineTo(5, 0); ctx.closePath(); ctx.fill();   // puerta
+  ctx.restore();
 }
 // Trilobites visto desde arriba: escudo de la cabeza, cuerpo segmentado en tres lóbulos y cola
 function trilobites(x, y){
@@ -4343,6 +4371,7 @@ function dibujarEventos(yL){
       if (it.e.icono === "primate")  primate(it.x, it.yF - 4 - subeTD);
       if (it.e.icono === "mono")     mono(it.x, it.yF - 4 - subeTD);
       if (it.e.icono === "mamut")    mamut(it.x, it.yF - 4 - subeTD);
+      if (it.e.icono === "choza")    choza(it.x, it.yF - 4 - subeTD);
       if (HUMANOS.includes(it.e.icono)) ({ australopiteco, erectus, neandertal, sapiens })[it.e.icono](it.x, it.yF + 2 - subeTD);
       ctx.fillStyle = "#555"; ctx.textAlign = "center";
       ctx.font = `600 18px ${FUENTE}`;
