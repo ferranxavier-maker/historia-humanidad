@@ -4358,7 +4358,7 @@ function visiblePorPeso(e, span, T = umbralHistoria(e)){
 // Nunca salen dos en el mismo paso: si coinciden, primero la más importante (nivel más bajo) y luego la más lejana al 0.
 // Lo de antes de los primates (Big Bang, Tierra, primeros animales) sigue con su paso puesto a mano.
 const K_DISTANCIA = 2.5;            // sale cuando en pantalla caben 2,5 veces su distancia al 0
-const ESC_MIN_PX = 12;              // ancho mínimo de un dibujo encogido (1/10 de la pirámide)
+const ESC_MIN = .1;                 // tamaño mínimo de los dibujos encogidos (1/10 del normal)
 function pasosDinamicos(lista){
   const cad = lista.filter(e => !e.siempre && (e.paso === undefined || e.paso >= 24));
   const base = new Map();
@@ -4550,26 +4550,28 @@ function dibujarEventos(yL){
       }
       pasoCadena.set(e, n); pasoPrev = n; ePrev = e;
     }
-    // Fila de hitos e inventos: lo que ya ha salido se encoge si no cabe junto a su vecino (hasta 1/10 de la pirámide)
-    // y crece al acercarse hasta su tamaño normal; el año solo se pone cuando hay sitio para él.
+    // Fila de hitos e inventos: todos los dibujos tienen siempre el mismo tamaño. Es el que cabe en el par
+    // más apretado de los que ya han salido (como mucho el normal, como poco 1/10), así que crecen todos a la vez
+    // al acercarse. El año solo se pone a tamaño normal y si hay sitio para él.
     if (dinamica){
       const vis = todaCadena.map(e => cadena.find(x => x.e === e)).filter(c => c && pasoActual + .5 >= pasoCadena.get(c.e)).sort((p, q) => p.e.año - q.e.año);
-      for (const c of vis){ c.esc = 1; c.sinAño = false; }
+      let esc = 1;
+      for (const c of vis) c.sinAño = false;
       for (let i = 1; i < vis.length; i++){
         const a = vis[i - 1], b = vis[i], la = dibujoLR(a.e), lb = dibujoLR(b.e);
         if (!la || !lb) continue;
         const g = b.x - a.x;
         if (g >= (a.cx + a.w - a.x) + (b.x - b.cx) + 14) continue;      // caben con su año
         if (!TEXTO_DEBAJO.includes(a.e.icono)) a.sinAño = true;
-        const s = Math.min(1, (g - 12) / (la[1] + lb[0]));
-        a.esc = Math.min(a.esc, s); b.esc = Math.min(b.esc, s);
+        esc = Math.min(esc, (g - 12) / (la[1] + lb[0]));
       }
+      esc = Math.max(ESC_MIN, Math.min(1, esc));
       for (const c of vis){
         const l = dibujoLR(c.e);
         if (!l){ c.esc = 1; continue; }
-        c.esc = Math.max(c.esc, Math.min(1, ESC_MIN_PX / (l[0] + l[1])));
-        if (c.esc < 1) c.sinAño = true;
-        if (c.sinAño){ c.cx = c.x - l[0] * c.esc; c.w = (l[0] + l[1]) * c.esc; }
+        c.esc = esc;
+        if (esc < 1) c.sinAño = true;
+        if (c.sinAño){ c.cx = c.x - l[0] * esc; c.w = (l[0] + l[1]) * esc; }
       }
     }
     let cadenaRota = false;
