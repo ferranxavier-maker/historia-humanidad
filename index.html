@@ -703,6 +703,15 @@ const EVENTOS = [
       { h: "El asteroide", p: "Hace 66 millones de años, un asteroide de unos 10 kilómetros chocó contra la Tierra en lo que hoy es la península de Yucatán (México), y dejó el cráter de Chicxulub, de unos 180 kilómetros. Lo propusieron en 1980 Luis y Walter Álvarez al encontrar en rocas de esa época una capa rica en iridio, un metal raro en la Tierra y abundante en los asteroides. El impacto, los incendios y años de oscuridad y frío acabaron con alrededor del 75 % de las especies, entre ellas todos los dinosaurios no voladores." },
       { h: "Siguen entre nosotros", p: "Las aves descienden de pequeños dinosaurios carnívoros con plumas, emparentados con el Velociraptor; el Archaeopteryx, de hace unos 150 millones de años, es uno de los fósiles que lo muestran. Por eso, en sentido estricto, las aves son dinosaurios: una gallina o una paloma lo son. En España hay yacimientos muy importantes, como las huellas de La Rioja, Morella (Castellón) o Las Hoyas (Cuenca)." }
     ] },
+  { desde: "-5000000", f: "-2000", aprox: true, fila: "periodos", conImperios: true, paso: 28, t: "Mamuts", fechas: "hace c. 5 millones – 4.000 años",
+    color: "rgba(150, 105, 65, .42)",
+    resumen: "Los mamuts aparecieron hace unos 5 millones de años en África (fecha aproximada) y desde allí se extendieron por Eurasia y América. El mamut lanudo, adaptado al frío de las glaciaciones, surgió hace unos 400.000 a 200.000 años. Casi todos desaparecieron hace unos 10.000 años.",
+    detalle: [
+      { h: "Parientes de los elefantes", p: "Eran proboscídeos, como los elefantes actuales, y su pariente vivo más cercano es el elefante asiático. Los primeros mamuts vivían en climas templados; con el tiempo, algunas especies se adaptaron al frío." },
+      { h: "El mamut lanudo", p: "Tenía pelo largo y espeso, orejas pequeñas, una capa de grasa bajo la piel y unos colmillos curvados que podían superar los 4 metros. Vivía en la estepa helada de Europa, Asia y Norteamérica durante las glaciaciones." },
+      { h: "Con los humanos", p: "Convivió con los neandertales y con el Homo sapiens, que los cazaban y aprovechaban su carne, su piel, sus huesos y sus colmillos. Aparecen pintados en cuevas como Rouffignac, en Francia." },
+      { h: "Los últimos", p: "Casi todos desaparecieron hace unos 10.000 años, al final de la última glaciación, probablemente por el cambio de clima y la caza. Una población aislada sobrevivió en la isla de Wrangel, en el Ártico ruso, hasta hace unos 4.000 años." }
+    ] },
   { desde: "-1900000", f: "-110000", fila: "periodos", t: "Homo erectus", fechas: "hace c. 1,9 millones – 110.000 años",
     color: "rgba(140, 90, 200, .40)",
     resumen: "Especie humana que vivió entre hace unos 1,9 millones y unos 110.000 años (las fechas son aproximadas), la que más tiempo ha existido de todas. Fue la primera con unas proporciones corporales parecidas a las nuestras y la primera en salir de África: llegó hasta el Cáucaso, China e Indonesia. Fabricaba hachas de mano de piedra y, en algún momento, aprendió a controlar el fuego.",
@@ -883,7 +892,7 @@ const EVENTOS = [
       { h: "¿Un solo momento?", p: "Hoy se piensa que la unificación fue un proceso largo, de varias generaciones, más que una sola conquista. Antes de Narmer ya había reyes que dominaban buena parte del país, la llamada «dinastía 0». Pero desde entonces Egipto se pensó siempre como la unión de dos tierras, y la vivió como el inicio de su historia." },
       { h: "Tres mil años", p: "Con la unificación empieza la historia de los faraones, que duraría unos tres mil años, hasta la muerte de Cleopatra en el 30 a.C.: más tiempo del que nos separa a nosotros de la propia Cleopatra." }
     ] },
-  { f: "-3300", aprox: true, fila: "personas", t: "La escritura", icono: "papiro", nivel: 1, paso: 71,
+  { f: "-3300", aprox: true, fila: "inventos", t: "La escritura", icono: "papiro", nivel: 1, paso: 71,
     fechaTxt: "c. 3300 a.C.",
     resumen: "La escritura se inventó hacia el 3300-3200 a.C. (fechas aproximadas) en Mesopotamia, en la ciudad sumeria de Uruk, en el actual Irak. Empezó como contabilidad en tablillas de arcilla. En Egipto aparecieron casi a la vez los jeroglíficos, escritos también sobre papiro. Con ella termina la Prehistoria y empieza la Historia.",
     detalle: [
@@ -4165,7 +4174,8 @@ function dibujarEventos(yL){
         }
         else if (e.icono === "piramide" || e.icono === "escalonada"){   // pirámide con el año al lado
           ctx.font = `600 18px ${FUENTE}`;
-          cx = x - 72; w = 72 + 70 + ctx.measureText(e.añoTxt).width + 6;
+          const izq = e.icono === "piramide" ? 65 : 72, sep = e.icono === "piramide" ? 63 : 70;
+          cx = x - izq; w = izq + sep + ctx.measureText(e.añoTxt).width + 6;
         }
         else if (e.icono === "coronas"){                    // doble corona con el año al lado
           ctx.font = `600 18px ${FUENTE}`;
@@ -4252,7 +4262,7 @@ function dibujarEventos(yL){
     for (const e of todaCadena){
       let n = e.paso || 0;
       if (ePrev){
-        const wDib = x => HUMANOS.includes(x.icono) ? 26 : x.icono === "tierraHoy" ? 46 : x.icono === "poblado" || x.icono === "papiro" ? 64 : x.icono === "piramide" ? 150 : 44;   // solo el dibujo (el texto sale cuando cabe)
+        const wDib = x => HUMANOS.includes(x.icono) ? 26 : x.icono === "tierraHoy" ? 46 : x.icono === "poblado" || x.icono === "papiro" ? 64 : x.icono === "piramide" ? 135 : 44;   // solo el dibujo (el texto sale cuando cabe)
         const necesita = (wDib(ePrev) + wDib(e)) / 2 + 14;   // px entre los dos
         const spanMax = W * Math.abs(e.año - ePrev.año) / necesita;
         n = Math.max(n, Math.ceil(Math.log(ZOOM_BASE_AÑOS / spanMax) / Math.log(PASO_RUEDA) - 1e-9), pasoPrev + 1);
@@ -4458,7 +4468,7 @@ function dibujarEventos(yL){
       if (it.e.icono === "rollo")    rolloImpreso(it.x, it.yF + 20, it.e.id);
       if (it.e.icono === "librito")  librito(it.x, it.yF + 20, it.e.id);
       if (it.e.icono === "prensa")   prensa(it.x, it.yF + 20, it.e.id);
-      if (it.e.icono === "piramide") piramide(it.x, it.yF + 62, it.e.id);
+      if (it.e.icono === "piramide"){ ctx.save(); ctx.translate(it.x, it.yF + 62); ctx.scale(.9, .9); piramide(0, 0, it.e.id); ctx.restore(); }   // a 0,9 de su tamaño
       if (it.e.icono === "poblado"){ ctx.save(); ctx.translate(it.x, it.yF + 62); ctx.scale(1.6, 1.6); choza(0, 0); ctx.restore(); }
       if (it.e.icono === "escalonada") escalonada(it.x, it.yF + 62, it.e.id, it.e.escalonada);
       if (it.e.icono === "coronas")  coronas(it.x, it.yF + 26, it.e.id);
@@ -4494,7 +4504,7 @@ function dibujarEventos(yL){
         ctx.textAlign = "left"; ctx.fillStyle = TINTA; ctx.font = `15px ${MARCADOR}`; ctx.fillText(it.e.t, it.x + 40, it.yF + 18);
         ctx.fillStyle = "#555"; ctx.font = `600 18px ${FUENTE}`; ctx.fillText(it.e.añoTxt, it.x + 40, it.yF + 36);
       }
-      else if (it.e.icono === "piramide" || it.e.icono === "escalonada"){ ctx.textAlign = "left"; ctx.fillText(it.e.añoTxt, it.x + 70, it.yF + 34); }
+      else if (it.e.icono === "piramide" || it.e.icono === "escalonada"){ ctx.textAlign = "left"; ctx.fillText(it.e.añoTxt, it.x + (it.e.icono === "piramide" ? 63 : 70), it.yF + 34); }
       else if (it.e.icono === "cohete"){ ctx.textAlign = "left"; ctx.fillText(it.e.añoTxt, it.x + 34, it.yF + 32); }
       else if (TEXTO_DEBAJO.includes(it.e.icono)){
         if (sinTexto.has(it)){ ctx.restore(); ctx.textAlign = "left"; continue; }
