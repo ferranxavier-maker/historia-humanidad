@@ -477,66 +477,96 @@ const POBLACION = [
   [1999, 6012], [2011, 6936], [2024, 8200]
 ];
 const ALTO_POBLACION = 150;
-const fmtMillones = m => m >= 1000 ? (m / 1000).toLocaleString("es-ES", { maximumFractionDigits: 1 }) + " mil millones" : m.toLocaleString("es-ES") + " millones";
-let zonaPoblacion = null;
+const miles = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ".");   // 8200 → 8.200
+const fmtMillones = m => miles(m) + " millones";
+const fmtAño = a => { a = Math.round(a); return a <= 0 ? Math.abs(a - 1).toLocaleString("es-ES") + " a.C." : a.toLocaleString("es-ES") + " d.C."; };
+// Población (millones) en un año cualquiera: interpolación lineal entre las estimaciones
+function poblacionEn(año){
+  for (let i = 1; i < POBLACION.length; i++){
+    const [a0, m0] = POBLACION[i - 1], [a1, m1] = POBLACION[i];
+    if (año <= a1) return m0 + (m1 - m0) * (año - a0) / (a1 - a0);
+  }
+  return POBLACION[POBLACION.length - 1][1];
+}
+let zonaPoblacion = null, ratonPob = null;     // ratonPob: x del ratón cuando está sobre el gráfico
 function dibujarPoblacion(yL){
   zonaPoblacion = null;
   const yP = yEdades(yL) + 16 + (ALTO_EDADES + 4) * alfaPaso(PASOS_ABAJO.edades);
-  const yBase = yP + 66 + 34 + ALTO_POBLACION;               // debajo de los eones
-  const xIni = xDe(POBLACION[0][0]), xFin = xDe(POBLACION[POBLACION.length - 1][0]);
+  const yBase = yP + 66 + 40 + ALTO_POBLACION;               // debajo de los eones
+  const aIni = POBLACION[0][0], aFin = POBLACION[POBLACION.length - 1][0];
+  const xIni = xDe(aIni), xFin = xDe(aFin);
   if (xFin < 0 || xIni > W) return;
-  const a = Math.min(1, Math.max(0, (xFin - xIni - 60) / 120));   // de muy lejos es una raya: no se dibuja
-  if (!a) return;
+  const alfa = Math.min(1, Math.max(0, (xFin - xIni - 60) / 120));   // de muy lejos es una raya: no se dibuja
+  if (!alfa) return;
   const max = 8200, yDe = m => yBase - ALTO_POBLACION * m / max;
-  const pts = POBLACION.map(([año, m]) => [xDe(año), yDe(m)]);
-  ctx.save(); ctx.globalAlpha = a;
-  // Área
-  const area = () => { ctx.beginPath(); ctx.moveTo(pts[0][0], yBase); for (const [x, y] of pts) ctx.lineTo(x, y); ctx.lineTo(pts[pts.length - 1][0], yBase); ctx.closePath(); };
-  // Trama a mano (fija a la línea del tiempo para que no «nade» al mover)
-  ctx.save(); area(); ctx.clip();
-  const r = aleatorio(777), sep = 16, off = ((xDe(0) % sep) + sep) % sep;
-  ctx.strokeStyle = "rgba(30,30,30,.55)"; ctx.lineWidth = 1.1;
-  const x0 = Math.max(pts[0][0], -200) - ALTO_POBLACION, x1 = Math.min(pts[pts.length - 1][0], W + 200);
-  for (let x = Math.floor((x0 - off) / sep) * sep + off; x < x1 + ALTO_POBLACION; x += sep){
-    ctx.beginPath(); ctx.moveTo(x, yBase + 2); ctx.lineTo(x + ALTO_POBLACION * .9, yBase - ALTO_POBLACION - 2 + (r() - .5) * 4); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x + ALTO_POBLACION * .9, yBase + 2); ctx.lineTo(x, yBase - ALTO_POBLACION - 2 + (r() - .5) * 4); ctx.stroke();
+  // Puntos: los de las estimaciones y, entre medias, los necesarios para que la curva sea suave en pantalla
+  const pts = [];
+  for (let i = 0; i < POBLACION.length; i++){
+    const [a0, m0] = POBLACION[i];
+    pts.push([xDe(a0), yDe(m0)]);
   }
+  const v1 = Math.max(xIni, 0), v2 = Math.min(xFin, W);
+  ctx.save(); ctx.globalAlpha = alfa;
+  // Rejilla suave: 2, 4, 6 y 8 mil millones
+  ctx.font = `13px ${FUENTE}`; ctx.textBaseline = "middle"; ctx.textAlign = "left";
+  for (const m of [2000, 4000, 6000, 8000]){
+    const y = yDe(m);
+    ctx.strokeStyle = "rgba(30,30,30,.10)"; ctx.lineWidth = 1; ctx.setLineDash([2, 4]);
+    ctx.beginPath(); ctx.moveTo(v1, y); ctx.lineTo(v2, y); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = "rgba(30,30,30,.45)";
+    if (v2 - v1 > 120) ctx.fillText(miles(m) + " M", v1 + 4, y - 7);
+  }
+  // Área con degradado suave y línea fina
+  const grad = ctx.createLinearGradient(0, yBase - ALTO_POBLACION, 0, yBase);
+  grad.addColorStop(0, "rgba(40, 120, 200, .30)"); grad.addColorStop(1, "rgba(40, 120, 200, .06)");
+  ctx.beginPath(); ctx.moveTo(pts[0][0], yBase);
+  for (const [x, y] of pts) ctx.lineTo(x, y);
+  ctx.lineTo(pts[pts.length - 1][0], yBase); ctx.closePath();
+  ctx.fillStyle = grad; ctx.fill();
+  ctx.strokeStyle = "rgba(30, 90, 160, .95)"; ctx.lineWidth = 1.6; ctx.lineJoin = "round";
+  ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.stroke();
+  // Base
+  ctx.strokeStyle = "rgba(30,30,30,.55)"; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(v1, yBase + .5); ctx.lineTo(v2, yBase + .5); ctx.stroke();
+  // Rótulos: título, cifra de hoy y fuentes
+  ctx.textBaseline = "alphabetic";
+  const xt = Math.max(xIni, 0) + 8;
+  ctx.fillStyle = TINTA; ctx.font = `15px ${MARCADOR}`;
+  if (xt < xFin - 260) ctx.fillText("POBLACIÓN MUNDIAL", xt, yBase - ALTO_POBLACION - 14);
+  ctx.font = `600 15px ${FUENTE}`; ctx.fillStyle = "rgba(30, 90, 160, 1)";
+  if (xFin > 0 && xFin < W + 200){
+    const der = xFin > W - 200;
+    ctx.textAlign = der ? "right" : "left";
+    ctx.fillText(fmtMillones(8200) + " (2024)", xFin + (der ? -10 : 8), yDe(8200) + 4);
+  }
+  ctx.textAlign = "left"; ctx.font = `13px ${FUENTE}`; ctx.fillStyle = "#888";
+  if (xt < xFin - 320) ctx.fillText("Estimaciones: HYDE, Oficina del Censo de EE. UU. y ONU (2024)", xt, yBase + 18);
+  zonaPoblacion = { x0: xIni, x1: xFin, y0: yBase - ALTO_POBLACION - 20, y1: yBase + 6 };
+  // Ratón sobre el gráfico: bolita en la curva, raya hasta la línea del tiempo y marca con el año arriba
+  if (ratonPob !== null && ratonPob >= xIni && ratonPob <= xFin){
+    const x = ratonPob, año = añoDe(x), m = poblacionEn(año), y = yDe(m);
+    ctx.strokeStyle = "rgba(30, 90, 160, .45)"; ctx.lineWidth = 1; ctx.setLineDash([3, 4]);
+    ctx.beginPath(); ctx.moveTo(x, yL + 8); ctx.lineTo(x, yBase); ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = "#fff"; ctx.fill(); ctx.strokeStyle = "rgba(30, 90, 160, 1)"; ctx.lineWidth = 2; ctx.stroke();
+    // Cifra junto a la bolita
+    const txt = fmtMillones(m);
+    ctx.font = `600 16px ${FUENTE}`; const wt = ctx.measureText(txt).width;
+    const izq = x + 12 + wt > W - 8;
+    ctx.textAlign = izq ? "right" : "left"; ctx.textBaseline = "bottom"; ctx.fillStyle = TINTA;
+    ctx.fillText(txt, x + (izq ? -12 : 12), y - 10);
+    // Marca en la línea del tiempo con el año
+    ctx.beginPath(); ctx.arc(x, yL, 5, 0, Math.PI * 2); ctx.fillStyle = "rgba(30, 90, 160, 1)"; ctx.fill();
+    const ta = fmtAño(año);
+    ctx.font = `600 16px ${FUENTE}`; const wa = ctx.measureText(ta).width;
+    const yb = yL - 40;                               // encima de la línea, para no tapar las fechas
+    ctx.fillStyle = "rgba(255,255,255,.95)"; ctx.fillRect(x - wa / 2 - 7, yb, wa + 14, 24);
+    ctx.strokeStyle = "rgba(30, 90, 160, 1)"; ctx.lineWidth = 1.2; ctx.strokeRect(x - wa / 2 - 7, yb, wa + 14, 24);
+    ctx.beginPath(); ctx.moveTo(x, yb + 24); ctx.lineTo(x, yL - 5); ctx.stroke();
+    ctx.fillStyle = TINTA; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText(ta, x, yb + 12);
+  }
+  ctx.textBaseline = "top"; ctx.textAlign = "left";
   ctx.restore();
-  // Rotulador azul por el borde (dos pasadas) y por la base
-  ctx.save(); ctx.globalCompositeOperation = "multiply"; ctx.lineJoin = "round"; ctx.lineCap = "round";
-  for (const [dy, gr, al] of [[0, 9, .55], [2, 6, .45]]){
-    ctx.strokeStyle = `rgba(0, 150, 225, ${al})`; ctx.lineWidth = gr;
-    ctx.beginPath(); ctx.moveTo(pts[0][0], yBase - dy);
-    for (const [x, y] of pts) ctx.lineTo(x, Math.min(yBase - dy, y + dy));
-    ctx.lineTo(pts[pts.length - 1][0], yBase - dy); ctx.stroke();
-  }
-  ctx.restore();
-  // Base y contorno fino a tinta
-  raya(Math.max(xIni, -50), yBase, Math.min(xFin + 20, W + 50), yBase, 4242, 1.6);
-  ctx.strokeStyle = TINTA; ctx.lineWidth = 1.3; ctx.beginPath();
-  pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.stroke();
-  // Rótulos: título a la izquierda, cifra de hoy en el extremo y fuente debajo
-  ctx.textBaseline = "top"; ctx.textAlign = "left"; ctx.fillStyle = TINTA;
-  ctx.font = `16px ${MARCADOR}`;
-  const xt = Math.max(Math.max(xIni, 0) + 8, 8);
-  if (xt < xFin - 200) ctx.fillText("POBLACIÓN MUNDIAL", xt, yBase - ALTO_POBLACION);
-  ctx.font = `600 17px ${FUENTE}`; ctx.fillStyle = "#555";
-  const xh = pts[pts.length - 1][0];
-  if (xh > 0 && xh < W + 200){
-    ctx.textAlign = xh > W - 230 ? "right" : "left";
-    ctx.fillText("c. " + fmtMillones(8200) + " (2024)", xh + (ctx.textAlign === "right" ? -14 : 10), yDe(8200) - 4);
-  }
-  // Valores intermedios cuando hay sitio (año 1 y 1800)
-  for (const [año, m] of [[1, 188], [1800, 989]]){
-    const x = xDe(año), y = yDe(m);
-    if (x < 10 || x > W - 10 || xh - x < 160) continue;
-    ctx.textAlign = "center"; ctx.fillText(fmtMillones(m), x, y - 22);
-    ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2); ctx.fillStyle = TINTA; ctx.fill(); ctx.fillStyle = "#555";
-  }
-  ctx.font = `14px ${FUENTE}`; ctx.textAlign = "left"; ctx.fillStyle = "#777";
-  if (xt < xFin - 300) ctx.fillText("Fuentes: HYDE, Oficina del Censo de EE. UU., ONU (2024)", xt, yBase + 6);
-  ctx.restore();
-  zonaPoblacion = { x0: xIni, x1: xFin, y0: yBase - ALTO_POBLACION, y1: yBase };
 }
 
 /* ================= LAS EDADES DE LA HISTORIA =================
@@ -1388,8 +1418,6 @@ function dibujar(){
 
   // Escala geológica (eones, eras y periodos) debajo de la línea
   dibujarGeologia(yL);
-  // Población mundial, debajo de los eones
-  dibujarPoblacion(yL);
 
   // Periodos (imperios…): franja de rotulador sobre la línea
   dibujarPeriodos(yL);
@@ -1435,6 +1463,9 @@ function dibujar(){
   // Eventos: cada uno en su fila (invisible), debajo de la línea
   dibujarEventos(yL);
   dibujarEstrellas(yL);
+
+  // Población mundial, debajo de los eones (al final, para que la marca del ratón quede por encima)
+  dibujarPoblacion(yL);
 
   // Flechas en los extremos: la línea sigue
   raya(W - 30, yL - 10, W - 14, yL, 3.1, 2.4); raya(W - 30, yL + 10, W - 14, yL, 3.2, 2.4);
@@ -5010,7 +5041,14 @@ cv.addEventListener("pointerdown", e => {
 });
 cv.addEventListener("pointermove", e => {
   const prev = punteros.get(e.pointerId);
-  if (!prev){ cv.style.cursor = zonaEn(e.clientX, e.clientY) ? "pointer" : ""; return; }
+  if (!prev){
+    cv.style.cursor = zonaEn(e.clientX, e.clientY) ? "pointer" : "";
+    // Ratón sobre el gráfico de población: bolita y año
+    const z = zonaPoblacion, dentro = z && e.clientX >= z.x0 && e.clientX <= z.x1 && e.clientY >= z.y0 && e.clientY <= z.y1;
+    const nuevo = dentro ? e.clientX : null;
+    if (nuevo !== ratonPob){ ratonPob = nuevo; pedir(); }
+    return;
+  }
   const act = { x: e.clientX, y: e.clientY };
   if (punteros.size === 1){
     centro -= (act.x - prev.x) / ppa;
@@ -5036,6 +5074,7 @@ const soltar = e => {
   if (!punteros.size) cv.classList.remove("arrastrando");
 };
 cv.addEventListener("pointerup", soltar);
+cv.addEventListener("pointerleave", () => { if (ratonPob !== null){ ratonPob = null; pedir(); } });
 cv.addEventListener("pointercancel", soltar);
 
 // --- Nota con el resumen ---
