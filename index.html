@@ -1436,17 +1436,6 @@ function dibujar(){
   dibujarEventos(yL);
   dibujarEstrellas(yL);
 
-  // Hoy
-  const xh = xDe(AÑO_HOY);
-  if (xh > -80 && xh < W + 80){
-    raya(xh, yL - 24, xh, yL + 10, 7.77, 2.6);
-    ctx.font = `17px ${MARCADOR}`; ctx.textBaseline = "bottom";
-    const wh = ctx.measureText(`HOY ${AÑO_HOY}`).width;
-    fluorLienzo(xh - wh / 2 - 4, xh + wh / 2 + 4, yL - 36, 14, 9);
-    ctx.fillStyle = TINTA; ctx.fillText(`HOY ${AÑO_HOY}`, xh, yL - 28);
-    ctx.textBaseline = "top";
-  }
-
   // Flechas en los extremos: la línea sigue
   raya(W - 30, yL - 10, W - 14, yL, 3.1, 2.4); raya(W - 30, yL + 10, W - 14, yL, 3.2, 2.4);
   raya(30, yL - 10, 14, yL, 4.1, 2.4);         raya(30, yL + 10, 14, yL, 4.2, 2.4);
@@ -4296,7 +4285,7 @@ function dibujarPeriodos(yL){
   // 3) Nombres encima de cada franja, sin pisar otras franjas ni otros nombres
   const ocupadas = [];
   ctx.font = `17px ${MARCADOR}`;
-  const xh = xDe(AÑO_HOY), wh = ctx.measureText(`HOY ${AÑO_HOY}`).width / 2 + 10;
+  const xh = -1e9, wh = 0;                    // (ya no hay rótulo de HOY que esquivar)
   for (const f of franjas){
     const { e, x1, x2, xFin, yB, alto, a } = f;
     ctx.save(); ctx.globalAlpha = a;
@@ -4395,7 +4384,7 @@ function visiblePorPeso(e, span, T = umbralHistoria(e)){
 // Nunca salen dos en el mismo paso. Lo de antes de los primates sigue con su paso puesto a mano.
 const ESC_MIN = .1;                 // al salir, los dibujos miden 1/10 de lo normal…
 const PASOS_CRECER = 3;             // …y crecen hasta su tamaño en estos pasos de rueda (prehistoria)
-const esHistoria = e => e.año > -2559 && e.icono !== "cohete";   // entre la pirámide y el cohete (los dos extremos)
+const esHistoria = e => e.año > -2559;          // entre la pirámide y hoy (los dos extremos)
 // Después de la pirámide, el tamaño depende solo de la escala: 1/10 con SPAN_TAMAÑO_NORMAL/ESC_MIN años en pantalla
 // (12.000) y tamaño normal con SPAN_TAMAÑO_NORMAL (1.200) o menos. Salen todos a la vez cuando empiezan a crecer.
 const SPAN_TAMAÑO_NORMAL = 1200;
@@ -4444,7 +4433,6 @@ function pasosDinamicos(lista){
     let n = ultP + 1;
     // Rueda, escritura y pirámide: cada una en el paso siguiente a la anterior, sin esperar a caber
     // (salen pequeñas y crecen; si se tocan un rato, se tocan)
-    if (e.icono === "cohete"){ pasos.set(e, ultP); continue; }   // el otro extremo: sale grande, a la vez que la pirámide
     if (e.año >= -5000 && [...pasos.keys()].some(o => o.año >= -5000)){ pasos.set(e, n); usados.add(n); ultP = n; continue; }
     for (; n < 400; n++){
       if (usados.has(n)) continue;
@@ -4590,7 +4578,7 @@ function dibujarEventos(yL){
       // Calaveras y animales: siempre a su altura (un solo carril); si no caben, esperan a otro zoom
       const maxK = TEXTO_DEBAJO.includes(c.e.icono) ? 1 : max;
       // La choza va a la altura de «HOY»: si lo pisaría, espera a otro zoom
-      if (c.e.icono === "poblado"){ const xh = xDe(AÑO_HOY); if (c.cx < xh + 60 && c.cx + c.w > xh - 60) return null; }
+
       for (let k = 0; k < maxK; k++) if (libre(k, c.cx, c.cx + c.w, tmp, c.zp)) return { k, d: 0 };
       if (c.e.cara) return null;
       // Apartarlo un poco a la derecha (hasta 40 px; si ya se ven los trazos, hasta 200 px)
