@@ -659,16 +659,16 @@ const EVENTOS = [
       { h: "De dónde vino el agua", p: "Se sigue discutiendo. Parte salió del interior de la Tierra con los gases de los volcanes, y parte pudo llegar con meteoritos y, quizá, cometas." },
       { h: "La cuna de la vida", p: "En esos océanos apareció la vida. Las pruebas más antiguas aceptadas tienen unos 3.500 millones de años; hay indicios más antiguos que todavía se discuten." }
     ] },
-  { desde: "-3500000000", f: "-400000000", desvanece: "2026", fila: "periodos", conImperios: true, paso: 6, t: "Vida unicelular", fechas: "hace c. 3.500 millones de años – hoy",
+  { desde: "-3500000000", f: "-1200000000", desvanece: "-600000000", funde: true, fila: "periodos", conImperios: true, paso: 6, t: "Vida unicelular", fechas: "hace c. 3.500 millones de años – hoy (da paso a la pluricelular)",
     color: "rgba(80, 160, 190, .40)",
-    resumen: "Las pruebas más antiguas aceptadas de vida tienen unos 3.500 millones de años: estromatolitos de Australia, capas formadas por colonias de microbios sin núcleo, parecidos a las bacterias. Durante casi 3.000 millones de años, la vida fue casi solo unicelular y estuvo en el agua. Nunca desapareció: las bacterias siguen siendo hoy los seres vivos más numerosos, por eso la franja se difumina hasta hoy. Las fechas son aproximadas.",
+    resumen: "Las pruebas más antiguas aceptadas de vida tienen unos 3.500 millones de años: estromatolitos de Australia, capas formadas por colonias de microbios sin núcleo, parecidos a las bacterias. Durante casi 3.000 millones de años, la vida fue casi solo unicelular y estuvo en el agua. De ella salió, poco a poco, la vida pluricelular: por eso en la línea una franja se funde con la otra. Pero nunca desapareció: las bacterias siguen siendo hoy los seres vivos más numerosos. Las fechas son aproximadas.",
     detalle: [
       { h: "Los primeros seres vivos", p: "Eran células muy sencillas, sin núcleo (procariotas), como las bacterias y las arqueas actuales. Las pruebas más antiguas aceptadas son estromatolitos de unos 3.500 millones de años en Australia. Hay indicios más antiguos que se discuten: posibles estromatolitos de hace unos 3.700 millones de años en Groenlandia y carbono de posible origen biológico de hace unos 4.100 millones de años en circones de Australia." },
       { h: "El oxígeno", p: "Algunas de esas bacterias, las cianobacterias, aprendieron a hacer la fotosíntesis liberando oxígeno. Hace unos 2.400 millones de años, ese oxígeno empezó a acumularse en la atmósfera: la Gran Oxidación." },
       { h: "Células con núcleo", p: "Hace unos 2.000 a 1.800 millones de años aparecieron las células eucariotas, las que tienen núcleo, como las nuestras. Probablemente surgieron cuando una célula englobó a una bacteria que acabó convirtiéndose en la mitocondria." },
       { h: "Y sigue hoy", p: "Hace unos 600 millones de años aparecieron los primeros seres pluricelulares grandes, pero la vida unicelular siguió. Hoy las bacterias y las arqueas están en todas partes, del fondo del mar a nuestro intestino, y son imprescindibles para la vida del planeta." }
     ] },
-  { desde: "-1200000000", solidoDesde: "-600000000", f: "-100000000", desvanece: "2026", fila: "periodos", conImperios: true, paso: 10, t: "Vida pluricelular", fechas: "surge poco a poco de la unicelular; compleja desde hace c. 600 millones de años – hoy",
+  { desde: "-1200000000", solidoDesde: "-600000000", f: "-100000000", desvanece: "2026", fila: "periodos", conImperios: true, funde: true, paso: 10, t: "Vida pluricelular", fechas: "surge poco a poco de la unicelular; compleja desde hace c. 600 millones de años – hoy",
     color: "rgba(110, 175, 120, .42)",
     resumen: "Hace unos 600 millones de años, al final del Proterozoico, aparecieron los primeros seres pluricelulares grandes y complejos, la fauna de Ediacara. A partir de ahí la vida pluricelular se diversificó: animales, plantas y hongos colonizaron el mar y la tierra firme. No apareció de golpe: salió de la vida unicelular poco a poco (hay algas pluricelulares sencillas de hace más de 1.000 millones de años), por eso la franja empieza difuminada. Sigue hoy, junto a la unicelular. Las fechas son aproximadas.",
     detalle: [
@@ -3817,8 +3817,8 @@ function asignarCarriles(){
   per.filter(e => e.carril !== undefined).forEach(e => puestos.push(e));
   // Cada zona (especies / fila de los imperios) reparte sus carriles por separado
   // En el planeta, lo que se funde (Pangea → continentes) puede compartir fila: cuenta solo la parte sólida
-  const ini = e => e.geografia ? (e.añoSolido ?? e.añoDesde) : e.añoDesde;
-  const fin2 = e => e.geografia ? e.añoHasta : fin(e);
+  const ini = e => (e.geografia || e.funde) ? (e.añoSolido ?? e.añoDesde) : e.añoDesde;
+  const fin2 = e => (e.geografia || e.funde) ? e.añoHasta : fin(e);
   const colocar = (lista, k0, zona) => lista.sort((a, b) => a.añoDesde - b.añoDesde).forEach(e => {
     let k = k0;
     while (zona.some(o => o.carril === k && ini(o) < fin2(e) && ini(e) < fin2(o))) k++;
