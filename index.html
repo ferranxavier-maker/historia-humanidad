@@ -115,8 +115,8 @@ header{position:fixed;top:0;left:0;right:0;padding:24px 16px 0;pointer-events:no
 .ayuda{position:fixed;right:16px;bottom:18px;z-index:3;color:#7d776b;font-size:19px;pointer-events:none;transform:rotate(-2deg)}
 @media (max-width:600px){.ayuda{display:none}}
 /* Globo y contador de visitas (como en theironcapi), abajo del todo y centrados */
-#visitas{position:fixed;bottom:6px;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:row;align-items:center;gap:10px}
-#visitas .globo{margin:0}
+#visitas{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:0}
+#visitas .globo{margin:0 0 14px}
 #visitas .vc-wrap{margin:0}
 @media (max-width:700px){#visitas{display:none}}
 .vc-wrap{display:flex;justify-content:center;margin:2px 0 16px;position:relative}
@@ -130,7 +130,7 @@ header{position:fixed;top:0;left:0;right:0;padding:24px 16px 0;pointer-events:no
 .vc-d::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;margin-top:-1px;background:#0e0d0b}
 .vc-d.vc-flip{animation:vcflip .18s ease-in}
 @keyframes vcflip{0%{transform:rotateX(0)}50%{transform:rotateX(90deg)}100%{transform:rotateX(0)}}
-.globo{width:64px;height:64px;max-width:100%;margin:0 auto 6px;cursor:grab;position:relative}
+.globo{width:120px;height:120px;max-width:100%;margin:0 auto 6px;cursor:grab;position:relative}
 .globo::after{content:"";position:absolute;left:22%;right:22%;bottom:-8px;height:12px;border-radius:50%;background:radial-gradient(ellipse at center,rgba(0,0,0,.45) 0%,rgba(0,0,0,.18) 45%,rgba(0,0,0,0) 72%);pointer-events:none}
 .globo:active{cursor:grabbing}
 </style>
@@ -969,20 +969,20 @@ const EVENTOS = [
       { h: "Hechos para los árboles", p: "Manos y pies con dedos que agarran, uñas en lugar de garras y ojos al frente para calcular distancias al saltar de rama en rama. Son rasgos que seguimos teniendo nosotros." },
       { h: "Sus parientes de hoy", p: "Los lémures de Madagascar y los loris de Asia y África son los primates actuales más parecidos a aquellos primeros." }
     ] },
-  { f: "-40000000", fila: "hitos", t: "Primates superiores", icono: "mono", nivel: 1, paso: 26,
+  { f: "-40000000", fila: "hitos", t: "Primates superiores", icono: "mono", nivel: 1, paso: 27,
     fechaTxt: "hace c. 40 millones de años",
     resumen: "Los primates superiores o antropoides (monos y simios) aparecieron hace unos 40 millones de años, probablemente en Asia o en África (fecha aproximada). Tenían el cerebro más grande y eran de vida diurna. De ellos salieron los monos de América, los de África y Asia y, hace unos 25 millones de años, los simios, el grupo al que pertenecemos.",
     detalle: [
       { h: "Monos y simios", p: "Los monos suelen tener cola; los simios (gibones, orangutanes, gorilas, chimpancés y humanos) no la tienen y tienen un cerebro mayor." },
       { h: "Nuestros primos", p: "Los parientes vivos más cercanos de los humanos son los chimpancés y los bonobos. Nuestros linajes se separaron hace unos 6 o 7 millones de años." }
     ] },
-  { f: "-4200000", fila: "hitos", t: "Australopithecus", icono: "australopiteco", nivel: 1, paso: 27, ficha: "Australopithecus",
+  { f: "-4200000", fila: "hitos", t: "Australopithecus", icono: "australopiteco", nivel: 1, paso: 28, ficha: "Australopithecus",
     fechaTxt: "hace c. 4,2 millones de años" },
   { f: "-3000000", fila: "hitos", t: "La Tierra hoy", icono: "tierraHoy", nivel: 1, paso: 28, ficha: "Los continentes se separan",
     fechaTxt: "hace c. 3 millones de años" },
   { f: "-1900000", fila: "hitos", t: "Homo erectus", icono: "erectus", nivel: 1, paso: 29, ficha: "Homo erectus",
     fechaTxt: "hace c. 1,9 millones de años" },
-  { f: "-400000", fila: "hitos", t: "Neandertales", icono: "neandertal", nivel: 1, paso: 30, ficha: "Neandertales",
+  { f: "-400000", fila: "hitos", t: "Neandertales", icono: "neandertal", nivel: 1, paso: 39, ficha: "Neandertales",
     fechaTxt: "hace c. 400.000 años" },
   { f: "-300000", fila: "hitos", t: "Homo sapiens", icono: "sapiens", nivel: 1, paso: 31, ficha: "Homo sapiens",
     fechaTxt: "hace c. 300.000 años" },
@@ -1211,7 +1211,7 @@ function limitarVista(){
 function dibujar(){
   limitarVista();
   ctx.clearRect(0, 0, W, H);
-  const yL = Math.max(360, Math.min(H * 0.73, H - 490)) + despY; // altura de la línea (deja sitio debajo para las edades)
+  const yL = Math.max(360, Math.min(H * 0.73, H - 625)) + despY; // altura de la línea (deja sitio debajo para las edades)
   const { paso, sub } = intervalo();
   const desde = añoDe(-60), hasta = añoDe(W + 60);
 
@@ -4063,8 +4063,9 @@ function dibujarEventos(yL){
       for (let k = 0; k < maxK; k++) if (libre(k, c.cx, c.cx + c.w, tmp, c.zp)) return { k, d: 0 };
       if (c.e.cara) return null;
       // Apartarlo un poco a la derecha (hasta 40 px; si ya se ven los trazos, hasta 200 px)
-      // (los animales y los humanos, hasta 160 px y siempre en su fila, con un trazo hasta su fecha)
-      const limite = maxK === 1 ? 160 : W / ppa < 1800 ? 200 : 40;
+      // (los animales, calaveras y humanos nunca se apartan: salen en su fecha exacta cuando caben)
+      if (maxK === 1) return null;
+      const limite = W / ppa < 1800 ? 200 : 40;
       const huecos = ocup.flat().concat(tmp).map(o => o.b + 8 - c.cx).filter(d => d > 0 && d < limite).sort((p, q) => p - q);
       for (const d of huecos) for (let k = 0; k < maxK; k++) if (libre(k, c.cx + d, c.cx + d + c.w, tmp)) return { k, d };
       return null;
@@ -4076,7 +4077,35 @@ function dibujarEventos(yL){
     cands.forEach(c => c.p = prioBase(c.e));
     const orden = cands.slice().sort((p, q) => q.p - p.p || p.cx - q.cx);
     const tmp = [];
+    // Cadena del meteorito a los humanos: se colocan en orden cronológico y, si uno no cabe todavía,
+    // los posteriores esperan (así salen siempre de uno en uno, en orden, al acercarse)
+    const enCadena = c => TEXTO_DEBAJO.includes(c.e.icono) && (c.e.paso || 0) >= 24;
+    const cadena = orden.filter(enCadena);
+    const todaCadena = EVENTOS.filter(e => e.fila === fila && TEXTO_DEBAJO.includes(e.icono) && (e.paso || 0) >= 24).sort((p, q) => p.año - q.año);
+    // Paso en que cada uno cabe en su fecha junto al anterior; nunca dos en el mismo paso
+    const pasoActual = Math.log(ZOOM_BASE_AÑOS / (W / ppa)) / Math.log(PASO_RUEDA);
+    let pasoPrev = -1, ePrev = null;
+    const pasoCadena = new Map();
+    for (const e of todaCadena){
+      let n = e.paso || 0;
+      if (ePrev){
+        const wDib = x => HUMANOS.includes(x.icono) ? 26 : x.icono === "tierraHoy" ? 46 : 44;   // solo el dibujo (el texto sale cuando cabe)
+        const necesita = (wDib(ePrev) + wDib(e)) / 2 + 14;   // px entre los dos
+        const spanMax = W * Math.abs(e.año - ePrev.año) / necesita;
+        n = Math.max(n, Math.ceil(Math.log(ZOOM_BASE_AÑOS / spanMax) / Math.log(PASO_RUEDA) - 1e-9), pasoPrev + 1);
+      }
+      pasoCadena.set(e, n); pasoPrev = n; ePrev = e;
+    }
+    let cadenaRota = false;
+    for (const e of todaCadena){
+      const c = cadena.find(x => x.e === e);
+      if (!c || pasoActual + .5 < pasoCadena.get(e)){ cadenaRota = true; continue; }   // aún no toca: los siguientes esperan
+      const r = cadenaRota ? null : intentar(c, tmp);
+      if (r){ r.o = { k: r.k, a: c.cx + r.d, b: c.cx + r.d + c.w, zp: c.zp }; r.etapa = 1; puestos.set(c, r); ocup[r.k].push(r.o); }
+      else cadenaRota = true;
+    }
     for (const c of orden){
+      if (enCadena(c)) continue;
       // Si cerca hay algo más antiguo (de más peso) que no ha cabido, este espera su turno
       // y no ocupa sitio: así nunca sale algo antes que lo anterior, y lo que sale ya no se va.
       const r = intentar(c, tmp);
@@ -4280,9 +4309,6 @@ function dibujarEventos(yL){
       if (it.e.icono === "solJoven") solJoven(it.x, it.yF + 10, it.e.id);
       // Los de la fila de arriba (las extinciones) suben 50 px para que su texto no pise la fila de los animales
       const subeTD = it.e.fila === "personas" && TEXTO_DEBAJO.includes(it.e.icono) ? 50 : 0;
-      if (TEXTO_DEBAJO.includes(it.e.icono) && it.xLinea !== undefined && Math.abs(it.x - it.xLinea) > 2){
-        ctx.save(); ctx.globalAlpha *= .45; raya(it.xLinea, yL - 6, it.x, it.yF + (sinTexto.has(it) ? 4 : 78) - subeTD, it.e.id + .7, 1); ctx.restore();
-      }
       if (it.e.icono === "calavera") calavera(it.x, it.yF - 18 - subeTD, it.e.id);
       if (it.e.icono === "asteroide") asteroide(it.x, it.yF - 18 - subeTD, it.e.id);
       if (it.e.icono === "tierraHoy") tierraHoy(it.x, it.yF - 14 - subeTD, it.e.id);
@@ -5303,7 +5329,7 @@ if ("serviceWorker" in navigator && location.protocol === "https:"){
   var LIB="https://cdn.jsdelivr.net/npm/globe.gl@2.46.2/dist/globe.gl.min.js";
   var TOPOLIB="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js";
   var MAPA="https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-110m.json";
-  var ROJO="#e0182a", AMARILLO="#ffd400", TAM=64;
+  var ROJO="#e0182a", AMARILLO="#ffd400", TAM=120;
   var el=document.getElementById("globo-visitas");
   if(!el)return;
   function sget(k){try{return sessionStorage.getItem(k);}catch(e){return null;}}
