@@ -1270,6 +1270,7 @@ function dibujar(){
 
   // Eventos: cada uno en su fila (invisible), debajo de la línea
   dibujarEventos(yL);
+  dibujarEstrellas(yL);
 
   // Hoy
   const xh = xDe(AÑO_HOY);
@@ -3544,6 +3545,62 @@ function tierraHoy(cx, cy, semilla){
   ctx.restore();
   circuloMano(cx, cy, R0, s, 2.2);
 }
+
+/* ================= ESTRELLAS («para saber más») =================
+   Una estrella amarilla con un tema: en vez de llenar la línea de elementos parecidos, se ponen
+   los más importantes y una estrella que lo explica todo (resumen + «quiero saber más»).
+   Cada estrella sale en su fecha, por encima de la fila de los hitos, cuando ya se ve «trasDe». */
+const ESTRELLAS = [
+  { f: "-350000", t: "Especies humanas", trasDe: "Homo sapiens",
+    txt: "hace c. 4 millones de años – hoy",
+    resumen: "Homo sapiens no es la única especie humana que ha existido. Durante millones de años hubo varias, del mismo género que nosotros (Homo) o muy cercanas, y muchas convivieron a la vez. No forman una cadena de abuelos y nietos, sino las ramas de un árbol: la mayoría se extinguieron sin dejar descendencia. Hoy solo quedamos nosotros.",
+    detalle: [
+      { h: "Australopithecus", p: "Hace unos 4,2 a 2 millones de años, en África. Todavía no son del género Homo: andaban erguidos, pero tenían un cerebro pequeño, como el de un chimpancé. La famosa «Lucy», hallada en Etiopía en 1974, es un Australopithecus afarensis de hace unos 3,2 millones de años." },
+      { h: "Homo habilis", p: "Hace unos 2,4 a 1,4 millones de años, en África. Uno de los primeros del género Homo, con un cerebro algo mayor. Se le asocia a las herramientas de piedra tallada más antiguas, por eso se le llamó «hombre hábil»." },
+      { h: "Homo erectus", p: "Hace unos 1,9 millones a 110.000 años. El primero con proporciones del cuerpo parecidas a las nuestras: alto y buen caminante. Fue el primero en salir de África, llegó hasta China e Indonesia, y usaba el fuego." },
+      { h: "Homo antecessor", p: "Hace unos 1,2 millones a 800.000 años. Sus restos se encontraron en la Gran Dolina de Atapuerca (Burgos) y son de los humanos más antiguos que se conocen en Europa." },
+      { h: "Homo heidelbergensis", p: "Hace unos 700.000 a 200.000 años, en África y Europa. Probablemente el antepasado común de los neandertales y de los Homo sapiens. Cazaba grandes animales con lanzas de madera." },
+      { h: "Neandertales", p: "Hace unos 400.000 a 40.000 años, en Europa y Oriente Próximo. Robustos y adaptados al frío, enterraban a sus muertos, hacían adornos y quizá pinturas. Se cruzaron con nuestra especie: los no africanos llevamos en torno a un 2 % de ADN neandertal." },
+      { h: "Denisovanos", p: "Hace unos 200.000 a 50.000 años, en Asia. Se conocen sobre todo por su ADN, sacado en 2010 de un hueso de un dedo de la cueva de Denísova (Siberia). También se cruzaron con los Homo sapiens: su huella genética es mayor en Papúa Nueva Guinea y entre los aborígenes australianos." },
+      { h: "Homo floresiensis", p: "Hace unos 100.000 a 50.000 años, en la isla de Flores (Indonesia). Medía apenas un metro, por lo que se le apodó «hobbit». Probablemente se hizo pequeño por vivir aislado en una isla." },
+      { h: "Homo sapiens", p: "Desde hace unos 300.000 años, en África. Somos nosotros. Hace unos 70.000 a 50.000 años salimos de África y nos extendimos por todo el planeta. Somos la única especie humana que queda." }
+    ] }
+];
+ESTRELLAS.forEach((e, i) => { e.id = 3000 + i; e.año = leerFecha(e.f).año; e.sub = "Para saber más"; });
+
+// Estrella amarilla con borde negro, dibujada a mano
+function estrella(cx, cy, r, semilla){
+  const a = aleatorio(semilla);
+  ctx.save();
+  ctx.beginPath();
+  for (let k = 0; k < 10; k++){
+    const ang = -Math.PI / 2 + k * Math.PI / 5, rr = (k % 2 ? r * .45 : r) * (1 + (a() - .5) * .08);
+    const x = cx + Math.cos(ang) * rr, y = cy + Math.sin(ang) * rr;
+    k ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = "#ffd400"; ctx.fill();
+  ctx.strokeStyle = TINTA; ctx.lineWidth = 2.2; ctx.lineJoin = "round"; ctx.stroke();
+  ctx.restore();
+}
+function dibujarEstrellas(yL){
+  const y = yFila("hitos", yL) - 62;
+  const visibles = new Set(zonas.map(z => z.e.t));
+  ctx.save();
+  for (const e of ESTRELLAS){
+    if (e.trasDe && !visibles.has(e.trasDe)) continue;
+    const x = xDe(e.año);
+    if (x < -40 || x > W + 40) continue;
+    estrella(x, y, 15, e.id);
+    ctx.fillStyle = TINTA; ctx.font = `15px ${MARCADOR}`; ctx.textAlign = "left"; ctx.textBaseline = "middle";
+    ctx.fillText(e.t, x + 22, y + 1);
+    const w = ctx.measureText(e.t).width;
+    zonas.push({ x0: x - 18, y0: y - 18, x1: x + 26 + w, y1: y + 18, e });
+  }
+  ctx.textAlign = "left"; ctx.textBaseline = "top";
+  ctx.restore();
+}
+
 // Las tres Tierras (azul, Pangea y la de hoy) a la altura de «Nace la Tierra», con su nombre debajo.
 // Al pulsarlas se abre la ficha de su franja (océanos, Pangea, los continentes se separan).
 let tierrasDibujadas = [];
@@ -5284,11 +5341,11 @@ document.getElementById("detVolver").onclick = () => {
   try { if (location.hash) history.replaceState(null, "", location.pathname + location.search); } catch (_) {}
 };
 window.addEventListener("popstate", () => {
-  const ev = EVENTOS.concat(GEO, EDADES).find(e => e.detalle && "#" + slug(e.t) === location.hash);
+  const ev = EVENTOS.concat(GEO, EDADES, ESTRELLAS).find(e => e.detalle && "#" + slug(e.t) === location.hash);
   ev ? abrirDetalle(ev, true) : cerrarDetalle();
 });
 // Si se entra con un enlace directo (#adolf-hitler, por ejemplo), abrir esa subpágina
-{ const ev = EVENTOS.concat(GEO, EDADES).find(e => e.detalle && "#" + slug(e.t) === location.hash); if (ev) abrirDetalle(ev, true); }
+{ const ev = EVENTOS.concat(GEO, EDADES, ESTRELLAS).find(e => e.detalle && "#" + slug(e.t) === location.hash); if (ev) abrirDetalle(ev, true); }
 document.getElementById("cerrarNota").onclick = cerrarNota;
 window.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
