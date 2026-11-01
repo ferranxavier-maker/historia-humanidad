@@ -976,6 +976,15 @@ const EVENTOS = [
       { h: "Monos y simios", p: "Los monos suelen tener cola; los simios (gibones, orangutanes, gorilas, chimpancés y humanos) no la tienen y tienen un cerebro mayor." },
       { h: "Nuestros primos", p: "Los parientes vivos más cercanos de los humanos son los chimpancés y los bonobos. Nuestros linajes se separaron hace unos 6 o 7 millones de años." }
     ] },
+  { f: "-5000000", fila: "hitos", t: "Mamuts", icono: "mamut", nivel: 1, paso: 28,
+    fechaTxt: "hace c. 5 millones de años",
+    resumen: "Los mamuts aparecieron hace unos 5 millones de años en África (fecha aproximada) y desde allí se extendieron por Eurasia y América. El mamut lanudo, adaptado al frío de las glaciaciones, surgió hace unos 400.000 a 200.000 años. Casi todos desaparecieron hace unos 10.000 años.",
+    detalle: [
+      { h: "Parientes de los elefantes", p: "Eran proboscídeos, como los elefantes actuales, y su pariente vivo más cercano es el elefante asiático. Los primeros mamuts vivían en climas templados; con el tiempo, algunas especies se adaptaron al frío." },
+      { h: "El mamut lanudo", p: "Tenía pelo largo y espeso, orejas pequeñas, una capa de grasa bajo la piel y unos colmillos curvados que podían superar los 4 metros. Vivía en la estepa helada de Europa, Asia y Norteamérica durante las glaciaciones." },
+      { h: "Con los humanos", p: "Convivió con los neandertales y con el Homo sapiens, que los cazaban y aprovechaban su carne, su piel, sus huesos y sus colmillos. Aparecen pintados en cuevas como Rouffignac, en Francia." },
+      { h: "Los últimos", p: "Casi todos desaparecieron hace unos 10.000 años, al final de la última glaciación, probablemente por el cambio de clima y la caza. Una población aislada sobrevivió en la isla de Wrangel, en el Ártico ruso, hasta hace unos 4.000 años." }
+    ] },
   { f: "-4200000", fila: "hitos", t: "Australopithecus", icono: "australopiteco", nivel: 1, paso: 28, ficha: "Australopithecus",
     fechaTxt: "hace c. 4,2 millones de años" },
   { f: "-3000000", fila: "hitos", t: "La Tierra hoy", icono: "tierraHoy", nivel: 1, paso: 28, ficha: "Los continentes se separan",
@@ -3093,7 +3102,7 @@ function solRojo(cx, cy, semilla){
 
 const COSMICOS = ["sol", "tierra", "tierraAzul", "bigbang", "estrellas", "galaxia", "solJoven"];
 // Calaveras y animales: nombre y fecha debajo, en líneas cortas y centradas
-const TEXTO_DEBAJO = ["calavera", "asteroide", "tierraHoy", "trilobites", "anfibio", "reptil", "mamifero", "primate", "mono", "australopiteco", "erectus", "neandertal", "sapiens"];
+const TEXTO_DEBAJO = ["calavera", "asteroide", "tierraHoy", "trilobites", "anfibio", "reptil", "mamifero", "primate", "mono", "mamut", "australopiteco", "erectus", "neandertal", "sapiens"];
 const HUMANOS = ["australopiteco", "erectus", "neandertal", "sapiens"];   // figuras estrechas
 function lineasCalavera(e){
   const p = e.t.split(" ");
@@ -3340,6 +3349,21 @@ const australopiteco = (x, y) => homininido(x, y, "rgba(140, 105, 75, .6)", 7, 3
 const erectus = (x, y) => homininido(x, y, "rgba(165, 120, 85, .6)", 3, 38, 5, true);
 const neandertal = (x, y) => homininido(x, y, "rgba(170, 130, 95, .6)", 2.5, 36, 6, true);
 const sapiens = (x, y) => homininido(x, y, "rgba(185, 140, 105, .6)", 1, 40, 5.5, false);
+// Mamut lanudo: lomo alto con joroba, cabeza abombada, trompa y colmillos curvados, pelo largo
+function mamut(x, y){
+  silueta(x, y, "rgba(140, 95, 60, .6)", [13, -24], () => {
+    M(-22, -14); Q(-24, -24, -16, -30); Q(-6, -36, 4, -34); Q(10, -40, 16, -36);   // lomo, joroba y cabeza
+    Q(22, -32, 20, -24); Q(23, -16, 24, -8); Q(25, -4, 22, -3); Q(20, -8, 17, -18);  // trompa
+    Q(15, -14, 14, -12); L(14, 0); L(8, 0); L(8, -9); Q(0, -8, -8, -9); L(-8, 0); L(-14, 0); L(-15, -10);
+    Q(-19, -10, -22, -14);
+  }, () => {
+    ctx.lineWidth = 2; ctx.strokeStyle = "#fffdf7";                         // colmillo (marfil)
+    ctx.beginPath(); ctx.moveTo(15, -20); ctx.bezierCurveTo(24, -12, 30, -18, 27, -26); ctx.stroke();
+    ctx.strokeStyle = TINTA; ctx.lineWidth = 1.2; ctx.stroke();
+    ctx.lineWidth = 1;                                                       // mechones de pelo
+    for (const [a, b] of [[-18, -10], [-12, -8], [-4, -7], [4, -8], [10, -10]]){ ctx.beginPath(); ctx.moveTo(a, b); ctx.lineTo(a + 1, b + 4); ctx.stroke(); }
+  });
+}
 // Trilobites visto desde arriba: escudo de la cabeza, cuerpo segmentado en tres lóbulos y cola
 function trilobites(x, y){
   ctx.save(); ctx.translate(x, y);
@@ -4318,6 +4342,7 @@ function dibujarEventos(yL){
       if (it.e.icono === "mamifero") mamifero(it.x, it.yF - 4 - subeTD);
       if (it.e.icono === "primate")  primate(it.x, it.yF - 4 - subeTD);
       if (it.e.icono === "mono")     mono(it.x, it.yF - 4 - subeTD);
+      if (it.e.icono === "mamut")    mamut(it.x, it.yF - 4 - subeTD);
       if (HUMANOS.includes(it.e.icono)) ({ australopiteco, erectus, neandertal, sapiens })[it.e.icono](it.x, it.yF + 2 - subeTD);
       ctx.fillStyle = "#555"; ctx.textAlign = "center";
       ctx.font = `600 18px ${FUENTE}`;
