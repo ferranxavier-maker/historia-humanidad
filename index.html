@@ -4317,7 +4317,7 @@ function visiblePorPeso(e, span, T = umbralHistoria(e)){
 // Nunca salen dos en el mismo paso. Lo de antes de los primates sigue con su paso puesto a mano.
 const ESC_MIN = .1;                 // al salir, los dibujos miden 1/10 de lo normal…
 const PASOS_CRECER = 3;             // …y crecen hasta su tamaño en estos pasos de rueda (prehistoria)
-const esHistoria = e => e.año > -2559;          // después de la pirámide de Keops (c. 2560 a.C.)
+const esHistoria = e => e.año > -2559 && e.icono !== "cohete";   // entre la pirámide y el cohete (los dos extremos)
 // Después de la pirámide, el tamaño depende solo de la escala: 1/10 con SPAN_TAMAÑO_NORMAL/ESC_MIN años en pantalla
 // (12.000) y tamaño normal con SPAN_TAMAÑO_NORMAL (1.200) o menos. Salen todos a la vez cuando empiezan a crecer.
 const SPAN_TAMAÑO_NORMAL = 1200;
@@ -4366,6 +4366,7 @@ function pasosDinamicos(lista){
     let n = ultP + 1;
     // Rueda, escritura y pirámide: cada una en el paso siguiente a la anterior, sin esperar a caber
     // (salen pequeñas y crecen; si se tocan un rato, se tocan)
+    if (e.icono === "cohete"){ pasos.set(e, ultP); continue; }   // el otro extremo: sale grande, a la vez que la pirámide
     if (e.año >= -5000 && [...pasos.keys()].some(o => o.año >= -5000)){ pasos.set(e, n); usados.add(n); ultP = n; continue; }
     for (; n < 400; n++){
       if (usados.has(n)) continue;
