@@ -4113,6 +4113,43 @@ function prioridadEvento(e){
 function visiblePorPeso(e, span, T = umbralHistoria(e)){
   return Math.min(1, Math.max(0, (T - span) / (T * .25)));
 }
+// Pasos de rueda calculados por código para la fila de hitos e inventos:
+// todo va en orden cronológico, de uno en uno (nunca dos en el mismo paso), y cada cosa sale
+// en cuanto cabe junto a la anterior sin pisarla. Solo depende del zoom, no de dónde esté la vista:
+// lo del 1960 sale en el mismo paso que saldría algo del 1960 a.C. con la misma separación.
+// Lo de antes de los primates (Big Bang, Tierra, primeros animales) sigue con su paso puesto a mano.
+function pasosDinamicos(lista){
+  // Solo los de nivel 1; los de nivel 2 y 3 (la corona de Egipto, por ejemplo) rellenan huecos cuando caben
+  const cad = lista.filter(e => !e.siempre && (e.nivel || 2) === 1 && (e.paso === undefined || e.paso >= 24)).sort((a, b) => a.año - b.año);
+  ctx.save();
+  // Lo que ocupa cada cosa a la izquierda y a la derecha de su fecha, en px
+  const ext = new Map();
+  for (const e of cad){
+    ctx.font = `600 18px ${FUENTE}`; const wa = ctx.measureText(e.añoTxt || "").width;
+    let iz, de;
+    if (e.icono === "piramide"){ iz = 65; de = 63 + wa + 6; }
+    else if (e.icono === "cohete"){ iz = 40; de = 34 + wa + 6; }
+    else if (e.icono === "coronas"){ iz = 26; de = 32 + wa + 6; }
+    else if (e.icono === "poblado"){ ctx.font = `15px ${MARCADOR}`; iz = 34; de = 40 + Math.max(ctx.measureText(e.t).width, wa) + 6; }
+    else if (e.icono){ iz = de = HUMANOS.includes(e.icono) ? 13 : e.icono === "tierraHoy" ? 23 : e.icono === "papiro" ? 32 : e.icono === "calavera" ? 17 : 22; }
+    else { iz = de = 37; }
+    ext.set(e, [iz, de]);
+  }
+  ctx.restore();
+  const pasos = new Map();
+  let prev = null, nPrev = 0;
+  for (const e of cad){
+    let n;
+    if (!prev) n = e.paso ?? 24;
+    else {
+      const necesita = ext.get(prev)[1] + ext.get(e)[0] + 14;               // px entre las dos fechas
+      const spanMax = W * Math.abs(e.año - prev.año) / necesita;            // años en pantalla con los que ya caben
+      n = Math.max(nPrev + 1, Math.ceil(Math.log(ZOOM_BASE_AÑOS / spanMax) / Math.log(PASO_RUEDA) - 1e-9));
+    }
+    pasos.set(e, n); prev = e; nPrev = n;
+  }
+  return pasos;
+}
 function dibujarEventos(yL){
   const visibleLejos = Math.min(1, Math.max(0, (60000 - W / ppa) / 40000));
   // Cada evento: "siempre" = nunca desaparece; "verDesde" = aparece al acercarse por debajo
@@ -4149,6 +4186,9 @@ function dibujarEventos(yL){
     const lista = EVENTOS.filter(e => fila === "hitos"
       ? (e.fila === "hitos" && filasActivas.has("hitos")) || (e.fila === "inventos" && filasActivas.has("inventos"))
       : e.fila === fila).sort((a, b) => a.año - b.año);
+    // Fila de hitos e inventos: el paso en que sale cada cosa lo calcula el código (no se pone a mano)
+    const dinamica = fila === "hitos" ? pasosDinamicos(lista) : null;
+    if (dinamica) for (const [e, n] of dinamica) e.verDesde = verPaso(n);
     for (const e of lista){
       if (!visib(e)) continue;                     // ya desvanecido: no ocupa sitio
       const x = xDe(e.año);
@@ -4252,14 +4292,14 @@ function dibujarEventos(yL){
     // Cadena del meteorito a los humanos: se colocan en orden cronológico y, si uno no cabe todavía,
     // los posteriores esperan (así salen siempre de uno en uno, en orden, al acercarse)
     const GRANDES = ["poblado", "papiro", "piramide"];
-    const enCadena = c => (TEXTO_DEBAJO.includes(c.e.icono) || GRANDES.includes(c.e.icono)) && (c.e.paso || 0) >= 24;
+    const enCadena = c => dinamica ? dinamica.has(c.e) : (TEXTO_DEBAJO.includes(c.e.icono) || GRANDES.includes(c.e.icono)) && (c.e.paso || 0) >= 24;
     const cadena = orden.filter(enCadena);
-    const todaCadena = EVENTOS.filter(e => (e.fila === fila || (FILAS[e.fila] || {}).junto === fila) && (TEXTO_DEBAJO.includes(e.icono) || GRANDES.includes(e.icono)) && (e.paso || 0) >= 24).sort((p, q) => p.año - q.año);
+    const todaCadena = dinamica ? [...dinamica.keys()] : EVENTOS.filter(e => (e.fila === fila || (FILAS[e.fila] || {}).junto === fila) && (TEXTO_DEBAJO.includes(e.icono) || GRANDES.includes(e.icono)) && (e.paso || 0) >= 24).sort((p, q) => p.año - q.año);
     // Paso en que cada uno cabe en su fecha junto al anterior; nunca dos en el mismo paso
     const pasoActual = Math.log(ZOOM_BASE_AÑOS / (W / ppa)) / Math.log(PASO_RUEDA);
     let pasoPrev = -1, ePrev = null;
-    const pasoCadena = new Map();
-    for (const e of todaCadena){
+    const pasoCadena = dinamica || new Map();
+    if (!dinamica) for (const e of todaCadena){
       let n = e.paso || 0;
       if (ePrev){
         const wDib = x => HUMANOS.includes(x.icono) ? 26 : x.icono === "tierraHoy" ? 46 : x.icono === "poblado" || x.icono === "papiro" ? 64 : x.icono === "piramide" ? 135 : 44;   // solo el dibujo (el texto sale cuando cabe)
@@ -4441,7 +4481,7 @@ function dibujarEventos(yL){
     const vec = items.filter(o => o !== it && o.cabe && o.yF === it.yF).map(o => o.e.icono === "piramide" ? { x: o.x, w: o.w, izq: 65 } : { x: o.x, w: o.e._wTexto || o.w });
     if (it.e.fila === "hitos") vec.push(...tierrasDibujadas);   // las Tierras van a la misma altura
     if (it.e.icono === "papiro" && it.e.fila === "inventos"){   // su texto va a la derecha del dibujo
-      const a = it.x - 22, b = it.x + 28 + it.e._wTexto;
+      const a = it.x - 22, b = it.x + 32 + it.e._wTexto;
       if (vec.some(o => o.x - (o.izq ?? o.w / 2) < b + 6 && o.x + o.w / 2 > a - 6)) sinTexto.add(it);
     }
     else if (vec.some(o => Math.abs(o.x - it.x) < it.e._wTexto / 2 + o.w / 2 + 6)) sinTexto.add(it);
@@ -4518,9 +4558,9 @@ function dibujarEventos(yL){
           let yt = it.yF + 40 - 17 * (L.tit.length + L.fec.length) / 2;
           ctx.textAlign = "left";
           ctx.fillStyle = TINTA; ctx.font = `15px ${MARCADOR}`;
-          for (const t of L.tit){ ctx.fillText(t, it.x + 28, yt); yt += 17; }
+          for (const t of L.tit){ ctx.fillText(t, it.x + 32, yt); yt += 17; }
           ctx.fillStyle = "#555"; ctx.font = `600 15px ${FUENTE}`;
-          for (const t of L.fec){ ctx.fillText(t, it.x + 28, yt); yt += 17; }
+          for (const t of L.fec){ ctx.fillText(t, it.x + 32, yt); yt += 17; }
           ctx.restore(); ctx.textAlign = "left"; continue;
         }
         ctx.fillStyle = TINTA; ctx.font = `15px ${MARCADOR}`;
