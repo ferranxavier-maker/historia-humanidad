@@ -717,7 +717,7 @@ const EVENTOS = [
       { h: "¿Erectus o ergaster?", p: "Muchos especialistas llaman Homo ergaster a los ejemplares africanos más antiguos y reservan Homo erectus para los de Asia; otros los consideran la misma especie con variaciones. Es un debate abierto, como la relación exacta de erectus con especies posteriores, como Homo antecessor (Atapuerca) o Homo heidelbergensis." },
       { h: "Los últimos", p: "Los últimos Homo erectus que se conocen vivieron en Ngandong, en la isla de Java, hace entre unos 117.000 y 108.000 años. Para entonces ya existían los neandertales en Europa y Homo sapiens en África: durante un tiempo, varias especies humanas compartieron el planeta." }
     ] },
-  { desde: "-298000", f: "-20000", desvanece: "-10000", carril: 0, fila: "periodos", t: "Homo sapiens",
+  { desde: "-298000", f: "-20000", desvanece: "-10000", carril: 3, fila: "periodos", t: "Homo sapiens",
     fechas: "hace c. 300.000 años – hoy (y sigue)", color: "rgba(230, 80, 150, .40)",
     resumen: "Nuestra especie. Los fósiles más antiguos que se conocen, hallados en Jebel Irhoud (Marruecos), tienen unos 300.000 años. Nacimos en África, desde allí nos extendimos por todo el planeta y somos la única especie humana que queda. A veces se nos llama Homo sapiens sapiens, un nombre que hoy se usa menos.",
     detalle: [
@@ -728,7 +728,7 @@ const EVENTOS = [
       { h: "Arte, agricultura y ciudades", p: "Hace decenas de miles de años ya pintábamos cuevas, como Chauvet (Francia) o Altamira (Cantabria). Hace unos 12.000 años, en Oriente Próximo, empezamos a cultivar plantas y domesticar animales: el Neolítico. Llegaron después los poblados, las ciudades y, hacia el 3200 a.C., la escritura, con la que empieza la historia." },
       { h: "Y seguimos", p: "Durante casi toda nuestra existencia fuimos muy pocos: quizá unos pocos millones de personas al final de la Prehistoria. En 2022 superamos los 8.000 millones. Esta línea del tiempo es, en el fondo, nuestra historia, y sigue escribiéndose." }
     ] },
-  { desde: "-398000", f: "-38000", fila: "periodos", t: "Neandertales", fechas: "hace c. 400.000 – 40.000 años",
+  { desde: "-398000", f: "-38000", carril: 0, fila: "periodos", t: "Neandertales", fechas: "hace c. 400.000 – 40.000 años",
     color: "rgba(40, 160, 170, .40)",
     resumen: "Especie humana, Homo neanderthalensis, que vivió en Europa y en Asia occidental entre hace unos 400.000 y 40.000 años (las fechas son aproximadas). Eran más bajos y robustos que nosotros, estaban adaptados al frío y tenían un cerebro tan grande como el nuestro. Convivieron con nuestra especie, Homo sapiens, y se cruzaron con ella: la mayoría de las personas que no tienen ascendencia africana reciente llevan entre un 1 y un 2 % de ADN neandertal.",
     detalle: [
@@ -4136,6 +4136,8 @@ function dibujarEventos(yL){
     const intentar = (c, tmp) => {
       // Calaveras y animales: siempre a su altura (un solo carril); si no caben, esperan a otro zoom
       const maxK = TEXTO_DEBAJO.includes(c.e.icono) ? 1 : max;
+      // La choza va a la altura de «HOY»: si lo pisaría, espera a otro zoom
+      if (c.e.icono === "poblado"){ const xh = xDe(AÑO_HOY); if (c.cx < xh + 60 && c.cx + c.w > xh - 60) return null; }
       for (let k = 0; k < maxK; k++) if (libre(k, c.cx, c.cx + c.w, tmp, c.zp)) return { k, d: 0 };
       if (c.e.cara) return null;
       // Apartarlo un poco a la derecha (hasta 40 px; si ya se ven los trazos, hasta 200 px)
