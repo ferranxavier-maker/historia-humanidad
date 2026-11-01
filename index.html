@@ -4352,39 +4352,48 @@ function prioridadEvento(e){
 function visiblePorPeso(e, span, T = umbralHistoria(e)){
   return Math.min(1, Math.max(0, (T - span) / (T * .25)));
 }
-// Pasos de rueda calculados por código para la fila de hitos e inventos:
-// sale antes lo que está más lejos del año 0, igual a un lado que al otro (lo del 1960 sale a la vez
-// que lo del 1960 a.C.). Cada cosa sale cuando, con la vista centrada en el 0, ya quedaría dentro de la pantalla.
-// Nunca salen dos en el mismo paso: si coinciden, primero la más importante (nivel más bajo) y luego la más lejana al 0.
-// Lo de antes de los primates (Big Bang, Tierra, primeros animales) sigue con su paso puesto a mano.
-const K_DISTANCIA = 2.5;            // sale cuando en pantalla caben 2,5 veces su distancia al 0
-const ESC_MIN = .1;                 // tamaño mínimo de los dibujos encogidos (1/10 del normal)
+// Pasos de rueda calculados por código para la fila de hitos e inventos, como en un mapa:
+// a cada escala se colocan las cosas por prioridad (primero el nivel más bajo = más importante; a igualdad,
+// lo más lejano al año 0) y cada una sale en el primer paso en que no pisa a ninguna de las que salen antes
+// ni a las de más prioridad que salgan después. Solo depende del zoom, no de dónde esté la vista.
+// Nunca salen dos en el mismo paso. Lo de antes de los primates sigue con su paso puesto a mano.
+const ESC_MIN = .1;                 // al salir, los dibujos miden 1/10 de lo normal…
+const PASOS_CRECER = 3;             // …y crecen hasta su tamaño en estos pasos de rueda
 function pasosDinamicos(lista){
   const cad = lista.filter(e => !e.siempre && (e.paso === undefined || e.paso >= 24));
-  const base = new Map();
+  ctx.save();
+  // Lo que ocupa cada cosa a tamaño normal a la izquierda y a la derecha de su fecha, en px (con su año)
+  const ext = new Map();
   for (const e of cad){
-    const d = Math.max(Math.abs(e.año), 1);
-    base.set(e, Math.max(24, Math.ceil(Math.log(ZOOM_BASE_AÑOS / (K_DISTANCIA * d)) / Math.log(PASO_RUEDA) - 1e-9)));
+    ctx.font = `600 18px ${FUENTE}`; const wa = ctx.measureText(e.añoTxt || "").width;
+    let iz, de;
+    if (e.icono === "piramide"){ iz = 65; de = 63 + wa + 6; }
+    else if (e.icono === "cohete"){ iz = 40; de = 34 + wa + 6; }
+    else if (e.icono === "coronas"){ iz = 26; de = 32 + wa + 6; }
+    else if (DIBUJOS_INVENTO[e.icono]){ iz = SEP_INVENTO(e); de = SEP_INVENTO(e) + wa + 6; }
+    else if (e.icono === "poblado"){ ctx.font = `15px ${MARCADOR}`; iz = 34; de = 40 + Math.max(ctx.measureText(e.t).width, wa) + 6; }
+    else if (e.icono){ iz = de = HUMANOS.includes(e.icono) ? 13 : e.icono === "tierraHoy" ? 23 : e.icono === "papiro" ? 32 : e.icono === "calavera" ? 17 : 22; }
+    else { iz = de = 37; }
+    ext.set(e, [iz, de]);
   }
-  const pasos = new Map();
-  let ult = -Infinity;
-  for (const e of cad.slice().sort((a, b) => base.get(a) - base.get(b) || (a.nivel || 2) - (b.nivel || 2) || Math.abs(b.año) - Math.abs(a.año))){
-    const n = Math.max(base.get(e), ult + 1);
-    pasos.set(e, n); ult = n;
+  ctx.restore();
+  const prio = cad.slice().sort((a, b) => (a.nivel || 2) - (b.nivel || 2) || Math.abs(b.año) - Math.abs(a.año));
+  const pasos = new Map(), usados = new Set();
+  for (const e of prio){
+    let n = 24;
+    for (; n < 400; n++){
+      if (usados.has(n)) continue;
+      let ok = true;
+      for (const [o, m] of pasos){
+        const [izq, der] = e.año < o.año ? [e, o] : [o, e];
+        const px = W * Math.abs(e.año - o.año) / verPaso(Math.max(n, m));   // cuando ya se ven los dos
+        if (px < ext.get(izq)[1] + ext.get(der)[0] + 14){ ok = false; break; }
+      }
+      if (ok) break;
+    }
+    pasos.set(e, n); usados.add(n);
   }
   return pasos;
-}
-// Lo que ocupa solo el dibujo (sin el año) a la izquierda y a la derecha de su fecha, en px
-function dibujoLR(e){
-  if (e.icono === "piramide") return [65, 63];
-  if (e.icono === "escalonada") return [72, 70];
-  if (e.icono === "cohete") return [40, 34];
-  if (e.icono === "coronas") return [26, 32];
-  if (e.icono === "poblado") return [34, 40];
-  if (e.icono === "libro") return [50, 52];
-  if (DIBUJOS_INVENTO[e.icono]){ const s = SEP_INVENTO(e); return [s, s]; }
-  if (TEXTO_DEBAJO.includes(e.icono)){ const w = HUMANOS.includes(e.icono) ? 26 : e.icono === "calavera" ? 34 : e.icono === "tierraHoy" ? 46 : 44; return [w / 2, w / 2]; }
-  return null;
 }
 function dibujarEventos(yL){
   const visibleLejos = Math.min(1, Math.max(0, (60000 - W / ppa) / 40000));
@@ -4550,29 +4559,13 @@ function dibujarEventos(yL){
       }
       pasoCadena.set(e, n); pasoPrev = n; ePrev = e;
     }
-    // Fila de hitos e inventos: todos los dibujos tienen siempre el mismo tamaño. Es el que cabe en el par
-    // más apretado de los que ya han salido (como mucho el normal, como poco 1/10), así que crecen todos a la vez
-    // al acercarse. El año solo se pone a tamaño normal y si hay sitio para él.
-    if (dinamica){
-      const vis = todaCadena.map(e => cadena.find(x => x.e === e)).filter(c => c && pasoActual + .5 >= pasoCadena.get(c.e)).sort((p, q) => p.e.año - q.e.año);
-      let esc = 1;
-      for (const c of vis) c.sinAño = false;
-      for (let i = 1; i < vis.length; i++){
-        const a = vis[i - 1], b = vis[i], la = dibujoLR(a.e), lb = dibujoLR(b.e);
-        if (!la || !lb) continue;
-        const g = b.x - a.x;
-        if (g >= (a.cx + a.w - a.x) + (b.x - b.cx) + 14) continue;      // caben con su año
-        if (!TEXTO_DEBAJO.includes(a.e.icono)) a.sinAño = true;
-        esc = Math.min(esc, (g - 12) / (la[1] + lb[0]));
-      }
-      esc = Math.max(ESC_MIN, Math.min(1, esc));
-      for (const c of vis){
-        const l = dibujoLR(c.e);
-        if (!l){ c.esc = 1; continue; }
-        c.esc = esc;
-        if (esc < 1) c.sinAño = true;
-        if (c.sinAño){ c.cx = c.x - l[0] * esc; c.w = (l[0] + l[1]) * esc; }
-      }
+    // Fila de hitos e inventos: cada dibujo sale a 1/10 de su tamaño y crece hasta el normal en unos pasos de rueda.
+    // Su sitio se reserva a tamaño normal, así que al crecer no pisa a nadie. El año sale cuando ya ha crecido.
+    if (dinamica) for (const c of cadena){
+      if (!dinamica.has(c.e)) continue;
+      const g = Math.min(1, Math.max(0, (pasoActual + .5 - pasoCadena.get(c.e)) / PASOS_CRECER));
+      c.esc = ESC_MIN + (1 - ESC_MIN) * g;
+      c.sinAño = c.esc < 1;
     }
     let cadenaRota = false;
     for (const e of todaCadena){
