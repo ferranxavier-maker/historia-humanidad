@@ -4353,49 +4353,38 @@ function visiblePorPeso(e, span, T = umbralHistoria(e)){
   return Math.min(1, Math.max(0, (T - span) / (T * .25)));
 }
 // Pasos de rueda calculados por código para la fila de hitos e inventos:
-// cada cosa sale en cuanto cabe junto a la anterior en el tiempo sin pisarla, y nunca salen dos
-// en el mismo paso (si coinciden, primero la más antigua). Solo depende del zoom y de la separación,
-// no de dónde esté la vista: lo del 1960 sale igual que saldría algo del 1960 a.C.
+// sale antes lo que está más lejos del año 0, igual a un lado que al otro (lo del 1960 sale a la vez
+// que lo del 1960 a.C.). Cada cosa sale cuando, con la vista centrada en el 0, ya quedaría dentro de la pantalla.
+// Nunca salen dos en el mismo paso: si coinciden, primero la más importante (nivel más bajo) y luego la más lejana al 0.
 // Lo de antes de los primates (Big Bang, Tierra, primeros animales) sigue con su paso puesto a mano.
+const K_DISTANCIA = 2.5;            // sale cuando en pantalla caben 2,5 veces su distancia al 0
+const ESC_MIN_PX = 12;              // ancho mínimo de un dibujo encogido (1/10 de la pirámide)
 function pasosDinamicos(lista){
-  // Solo los de nivel 1; los de nivel 2 y 3 (la corona de Egipto, por ejemplo) rellenan huecos cuando caben
-  const cad = lista.filter(e => !e.siempre && (e.nivel || 2) === 1 && (e.paso === undefined || e.paso >= 24)).sort((a, b) => a.año - b.año);
-  ctx.save();
-  // Lo que ocupa cada cosa a la izquierda y a la derecha de su fecha, en px
-  const ext = new Map();
-  for (const e of cad){
-    ctx.font = `600 18px ${FUENTE}`; const wa = ctx.measureText(e.añoTxt || "").width;
-    let iz, de;
-    if (e.icono === "piramide"){ iz = 65; de = 63 + wa + 6; }
-    else if (e.icono === "cohete"){ iz = 40; de = 34 + wa + 6; }
-    else if (e.icono === "coronas"){ iz = 26; de = 32 + wa + 6; }
-    else if (DIBUJOS_INVENTO[e.icono]){ iz = SEP_INVENTO(e); de = SEP_INVENTO(e) + wa + 6; }
-    else if (e.icono === "poblado"){ ctx.font = `15px ${MARCADOR}`; iz = 34; de = 40 + Math.max(ctx.measureText(e.t).width, wa) + 6; }
-    else if (e.icono){ iz = de = HUMANOS.includes(e.icono) ? 13 : e.icono === "tierraHoy" ? 23 : e.icono === "papiro" ? 32 : e.icono === "calavera" ? 17 : 22; }
-    else { iz = de = 37; }
-    ext.set(e, [iz, de]);
-  }
-  ctx.restore();
+  const cad = lista.filter(e => !e.siempre && (e.paso === undefined || e.paso >= 24));
   const base = new Map();
-  let prev = null;
   for (const e of cad){
-    let n;
-    if (!prev) n = e.paso ?? 24;
-    else {
-      const necesita = ext.get(prev)[1] + ext.get(e)[0] + 14;               // px entre las dos fechas
-      const spanMax = W * Math.abs(e.año - prev.año) / necesita;            // años en pantalla con los que ya caben
-      n = Math.max(cad[0].paso ?? 24, Math.ceil(Math.log(ZOOM_BASE_AÑOS / spanMax) / Math.log(PASO_RUEDA) - 1e-9));
-    }
-    base.set(e, n); prev = e;
+    const d = Math.max(Math.abs(e.año), 1);
+    base.set(e, Math.max(24, Math.ceil(Math.log(ZOOM_BASE_AÑOS / (K_DISTANCIA * d)) / Math.log(PASO_RUEDA) - 1e-9)));
   }
-  // De uno en uno: si dos tocan en el mismo paso, la más moderna pasa al siguiente
   const pasos = new Map();
   let ult = -Infinity;
-  for (const e of cad.slice().sort((a, b) => base.get(a) - base.get(b) || a.año - b.año)){
+  for (const e of cad.slice().sort((a, b) => base.get(a) - base.get(b) || (a.nivel || 2) - (b.nivel || 2) || Math.abs(b.año) - Math.abs(a.año))){
     const n = Math.max(base.get(e), ult + 1);
     pasos.set(e, n); ult = n;
   }
   return pasos;
+}
+// Lo que ocupa solo el dibujo (sin el año) a la izquierda y a la derecha de su fecha, en px
+function dibujoLR(e){
+  if (e.icono === "piramide") return [65, 63];
+  if (e.icono === "escalonada") return [72, 70];
+  if (e.icono === "cohete") return [40, 34];
+  if (e.icono === "coronas") return [26, 32];
+  if (e.icono === "poblado") return [34, 40];
+  if (e.icono === "libro") return [50, 52];
+  if (DIBUJOS_INVENTO[e.icono]){ const s = SEP_INVENTO(e); return [s, s]; }
+  if (TEXTO_DEBAJO.includes(e.icono)){ const w = HUMANOS.includes(e.icono) ? 26 : e.icono === "calavera" ? 34 : e.icono === "tierraHoy" ? 46 : 44; return [w / 2, w / 2]; }
+  return null;
 }
 function dibujarEventos(yL){
   const visibleLejos = Math.min(1, Math.max(0, (60000 - W / ppa) / 40000));
@@ -4561,12 +4550,35 @@ function dibujarEventos(yL){
       }
       pasoCadena.set(e, n); pasoPrev = n; ePrev = e;
     }
+    // Fila de hitos e inventos: lo que ya ha salido se encoge si no cabe junto a su vecino (hasta 1/10 de la pirámide)
+    // y crece al acercarse hasta su tamaño normal; el año solo se pone cuando hay sitio para él.
+    if (dinamica){
+      const vis = todaCadena.map(e => cadena.find(x => x.e === e)).filter(c => c && pasoActual + .5 >= pasoCadena.get(c.e)).sort((p, q) => p.e.año - q.e.año);
+      for (const c of vis){ c.esc = 1; c.sinAño = false; }
+      for (let i = 1; i < vis.length; i++){
+        const a = vis[i - 1], b = vis[i], la = dibujoLR(a.e), lb = dibujoLR(b.e);
+        if (!la || !lb) continue;
+        const g = b.x - a.x;
+        if (g >= (a.cx + a.w - a.x) + (b.x - b.cx) + 14) continue;      // caben con su año
+        if (!TEXTO_DEBAJO.includes(a.e.icono)) a.sinAño = true;
+        const s = Math.min(1, (g - 12) / (la[1] + lb[0]));
+        a.esc = Math.min(a.esc, s); b.esc = Math.min(b.esc, s);
+      }
+      for (const c of vis){
+        const l = dibujoLR(c.e);
+        if (!l){ c.esc = 1; continue; }
+        c.esc = Math.max(c.esc, Math.min(1, ESC_MIN_PX / (l[0] + l[1])));
+        if (c.esc < 1) c.sinAño = true;
+        if (c.sinAño){ c.cx = c.x - l[0] * c.esc; c.w = (l[0] + l[1]) * c.esc; }
+      }
+    }
     let cadenaRota = false;
     for (const e of todaCadena){
       const c = cadena.find(x => x.e === e);
       if (dinamica){                                  // cada uno a su paso, sin esperar a los demás
         if (!c || pasoActual + .5 < pasoCadena.get(e)) continue;
-        const r = intentar(c, tmp);
+        // Si ni encogido cabe, sale igual (se tocan un poco), salvo la choza, que no pisa «HOY»
+        const r = intentar(c, tmp) || (c.e.icono === "poblado" ? null : { k: 0, d: 0 });
         if (r){ r.o = { k: r.k, a: c.cx + r.d, b: c.cx + r.d + c.w, zp: c.zp }; r.etapa = 1; puestos.set(c, r); ocup[r.k].push(r.o); }
         continue;
       }
@@ -4646,7 +4658,8 @@ function dibujarEventos(yL){
       const r = puestos.get(c), cabe = !!r, carril = cabe ? r.k : 0, d = cabe ? r.d : 0;
       if (cabe && c.cajas){ c.cx = r.o.a; c.w = r.o.b - r.o.a; }
       its.push({ e: c.e, x: c.x + d, xLinea: c.x, yF: yF - carril * altoCarril(fila), w: c.w, cx: c.cx + d, cabe, arriba, etapa: cabe ? r.etapa : 1,
-                 pie: c.pie, carril, apartado: d > 0, p: c.p, escala: fila === "libros" && carril > 0 ? ESC_LIBRO : 1 });
+                 pie: c.pie, carril, apartado: d > 0, p: c.p, escala: fila === "libros" && carril > 0 ? ESC_LIBRO : 1,
+                 esc: c.esc || 1, sinAño: !!c.sinAño });
     }
     const usados = ocup.reduce((n, o, k) => o.length ? k + 1 : n, 1);
     return { its, usados, puestos: puestos.size };
@@ -4766,6 +4779,10 @@ function dibujarEventos(yL){
         const cy = it.yF + 12;
         ctx.translate(it.x, cy); ctx.scale(it.escala, it.escala); ctx.translate(-it.x, -cy);
       }
+      if (it.esc !== undefined && it.esc !== 1){      // fila de hitos e inventos: encogido mientras no quepa
+        const cy = it.yF + 60;
+        ctx.translate(it.x, cy); ctx.scale(it.esc, it.esc); ctx.translate(-it.x, -cy);
+      }
       if (it.e.icono === "bombilla") bombilla(it.x, it.yF + 16, it.e.id);
       if (it.e.icono === "rollo")    rolloImpreso(it.x, it.yF + 20, it.e.id);
       if (it.e.icono === "librito")  librito(it.x, it.yF + 20, it.e.id);
@@ -4799,6 +4816,7 @@ function dibujarEventos(yL){
       if (it.e.icono === "mamut")    mamut(it.x, it.yF - 4 - subeTD);
       if (it.e.icono === "choza")    choza(it.x, it.yF - 4 - subeTD);
       if (HUMANOS.includes(it.e.icono)) ({ australopiteco, erectus, neandertal, sapiens })[it.e.icono](it.x, it.yF + 2 - subeTD);
+      if (it.sinAño){ ctx.restore(); ctx.textAlign = "left"; continue; }   // aún sin sitio para el año
       ctx.fillStyle = "#555"; ctx.textAlign = "center";
       ctx.font = `600 18px ${FUENTE}`;
       if (it.e.icono === "libro"){ ctx.textAlign = "left"; ctx.fillText(it.e.añoTxt, it.x + 52, it.yF + 42); }
