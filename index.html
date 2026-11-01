@@ -5259,7 +5259,10 @@ window.addEventListener("keydown", e => {
 });
 
 window.addEventListener("resize", () => {
-  const z = ppa / ppaInicial; tamaño(); ppaInicial = W / 5000; ppa = ppaInicial * z; pedir();
+  let z = ppa / ppaInicial; tamaño(); ppaInicial = W / 5000;
+  // Si la página se abrió sin anchura (vista previa oculta, pestaña en segundo plano), el zoom era NaN: se vuelve al inicial
+  if (!isFinite(z) || z <= 0){ z = ZOOM_INICIO; centro = 0; }
+  ppa = ppaInicial * z; pedir();
 });
 
 tamaño(); vistaInicial(); dibujar();
