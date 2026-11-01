@@ -4317,7 +4317,7 @@ function visiblePorPeso(e, span, T = umbralHistoria(e)){
 // Nunca salen dos en el mismo paso. Lo de antes de los primates sigue con su paso puesto a mano.
 const ESC_MIN = .1;                 // al salir, los dibujos miden 1/10 de lo normal…
 const PASOS_CRECER = 3;             // …y crecen hasta su tamaño en estos pasos de rueda (prehistoria)
-const esHistoria = e => e.año > -2559;          // después de la pirámide de Keops (c. 2560 a.C.)
+const esHistoria = e => e.año > -2561;          // desde la pirámide de Keops (c. 2560 a.C.)
 // Historia: el tamaño de los dibujos depende solo del zoom y nunca baja al acercarse. Crecen al mismo ritmo
 // que se estira la línea (así lo que ya ha salido nunca se monta), desde 1/10 hasta su tamaño normal,
 // que alcanzan cuando en pantalla hay SPAN_TAMAÑO_NORMAL años o menos.
@@ -4356,14 +4356,14 @@ function pasosDinamicos(lista){
   }
   ctx.restore();
   const prio = cad.slice().sort((a, b) => (a.nivel || 2) - (b.nivel || 2) || Math.abs(b.año) - Math.abs(a.año));
-  // Después de la pirámide se mira si cabe con el tamaño que toca a ese zoom (sin año)
+  // Desde la pirámide se mira si cabe con el tamaño que toca a ese zoom (sin año)
   const dib = new Map();
   for (const e of cad) dib.set(e, dibujoLR(e) || ext.get(e));
   const pasos = new Map(), usados = new Set();
   let ultP = 24, ultH = 24;           // después del T. rex (paso 24)
   for (const e of prio){
     // Prehistoria: orden estricto (como pronto, en el paso siguiente al anterior).
-    // Después de la pirámide: todo sale a la vez, a 1/10, cuando empieza a crecer (ver escHistoria).
+    // Desde la pirámide: todo sale a la vez, a 1/10, cuando empieza a crecer (ver escHistoria).
     const historia = esHistoria(e);
     if (historia){ pasos.set(e, PASO_HISTORIA); continue; }
     let n = ultP + 1;
