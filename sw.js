@@ -1,6 +1,6 @@
 // Funcionamiento sin conexión: la página se sirve desde la red si hay internet
 // (así siempre se ve la última versión) y, si no, desde la copia guardada.
-const CACHE = "historia-v12";
+const CACHE = "historia-v13";
 const BASICOS = ["/", "/index.html", "/manifest.webmanifest", "/icons/icon-192.png", "/icons/icon-512.png", "/icons/icon-32.png"];
 
 self.addEventListener("install", e => {

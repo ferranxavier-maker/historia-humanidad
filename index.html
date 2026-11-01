@@ -658,14 +658,23 @@ const EVENTOS = [
       { h: "De dónde vino el agua", p: "Se sigue discutiendo. Parte salió del interior de la Tierra con los gases de los volcanes, y parte pudo llegar con meteoritos y, quizá, cometas." },
       { h: "La cuna de la vida", p: "En esos océanos apareció la vida. Las pruebas más antiguas aceptadas tienen unos 3.500 millones de años; hay indicios más antiguos que todavía se discuten." }
     ] },
-  { desde: "-3500000000", f: "-600000000", fila: "periodos", conImperios: true, paso: 6, t: "Vida unicelular", fechas: "hace c. 3.500 – 600 millones de años",
+  { desde: "-3500000000", f: "-400000000", desvanece: "2026", fila: "periodos", conImperios: true, paso: 6, t: "Vida unicelular", fechas: "hace c. 3.500 millones de años – hoy",
     color: "rgba(80, 160, 190, .40)",
-    resumen: "Las pruebas más antiguas aceptadas de vida tienen unos 3.500 millones de años: estromatolitos de Australia, capas formadas por colonias de microbios sin núcleo, parecidos a las bacterias. Durante casi 3.000 millones de años, la vida fue casi solo unicelular y estuvo en el agua. Las fechas son aproximadas.",
+    resumen: "Las pruebas más antiguas aceptadas de vida tienen unos 3.500 millones de años: estromatolitos de Australia, capas formadas por colonias de microbios sin núcleo, parecidos a las bacterias. Durante casi 3.000 millones de años, la vida fue casi solo unicelular y estuvo en el agua. Nunca desapareció: las bacterias siguen siendo hoy los seres vivos más numerosos, por eso la franja se difumina hasta hoy. Las fechas son aproximadas.",
     detalle: [
       { h: "Los primeros seres vivos", p: "Eran células muy sencillas, sin núcleo (procariotas), como las bacterias y las arqueas actuales. Las pruebas más antiguas aceptadas son estromatolitos de unos 3.500 millones de años en Australia. Hay indicios más antiguos que se discuten: posibles estromatolitos de hace unos 3.700 millones de años en Groenlandia y carbono de posible origen biológico de hace unos 4.100 millones de años en circones de Australia." },
       { h: "El oxígeno", p: "Algunas de esas bacterias, las cianobacterias, aprendieron a hacer la fotosíntesis liberando oxígeno. Hace unos 2.400 millones de años, ese oxígeno empezó a acumularse en la atmósfera: la Gran Oxidación." },
       { h: "Células con núcleo", p: "Hace unos 2.000 a 1.800 millones de años aparecieron las células eucariotas, las que tienen núcleo, como las nuestras. Probablemente surgieron cuando una célula englobó a una bacteria que acabó convirtiéndose en la mitocondria." },
-      { h: "El final de la vida solo unicelular", p: "Hacia el final del Proterozoico, hace unos 600 millones de años, aparecen los primeros seres pluricelulares grandes, la fauna de Ediacara, y poco después, en el Cámbrico, la explosión de animales." }
+      { h: "Y sigue hoy", p: "Hace unos 600 millones de años aparecieron los primeros seres pluricelulares grandes, pero la vida unicelular siguió. Hoy las bacterias y las arqueas están en todas partes, del fondo del mar a nuestro intestino, y son imprescindibles para la vida del planeta." }
+    ] },
+  { desde: "-600000000", f: "-100000000", desvanece: "2026", fila: "periodos", conImperios: true, paso: 10, t: "Vida pluricelular", fechas: "hace c. 600 millones de años – hoy",
+    color: "rgba(110, 175, 120, .42)",
+    resumen: "Hace unos 600 millones de años, al final del Proterozoico, aparecieron los primeros seres pluricelulares grandes y complejos, la fauna de Ediacara. A partir de ahí la vida pluricelular se diversificó: animales, plantas y hongos colonizaron el mar y la tierra firme. Sigue hoy, junto a la unicelular. Las fechas son aproximadas.",
+    detalle: [
+      { h: "Ediacara", p: "Los primeros seres pluricelulares grandes, de hace unos 600 a 540 millones de años, tenían el cuerpo blando y formas de hoja, disco o tubo. Muchos no se parecen a nada que viva hoy. Toman el nombre de las colinas de Ediacara, en Australia." },
+      { h: "Antes ya había pluricelulares sencillos", p: "Algunas algas pluricelulares existían desde hace más de 1.000 millones de años. Lo nuevo hace unos 600 millones fue el tamaño y la complejidad." },
+      { h: "La explosión cámbrica", p: "Hace unos 539 millones de años aparecieron en poco tiempo casi todos los grandes grupos de animales actuales, ya con conchas, caparazones y ojos." },
+      { h: "A tierra firme", p: "Las plantas colonizaron la tierra hace unos 470 millones de años, después llegaron los artrópodos y, hace unos 375 millones, los primeros vertebrados con patas. De ahí salieron anfibios, reptiles, dinosaurios, mamíferos y, al final, nosotros." }
     ] },
   { desde: "-335000000", solidoDesde: "-300000000", f: "-200000000", desvanece: "-175000000", fila: "periodos", conImperios: true, geografia: true, paso: 15, t: "Pangea", fechas: "hace c. 335 – 175 millones de años (se formó y se rompió poco a poco)",
     color: "rgba(170, 120, 70, .42)",
@@ -3818,7 +3827,8 @@ function asignarCarriles(){
   const zonaTierra = [];
   // primero los seres vivos (y los océanos), más cerca de la línea; debajo, los continentes
   colocar(libres.filter(e => e.conImperios && !e.geografia), 0, zonaTierra);
-  colocar(libres.filter(e => e.conImperios && e.geografia), 1, zonaTierra);   // siempre en su propia fila
+  const kGeo = 1 + Math.max(0, ...zonaTierra.map(e => e.carril));     // el planeta, debajo de todas las filas de la vida
+  colocar(libres.filter(e => e.conImperios && e.geografia), kGeo, zonaTierra);
   // Debajo de la línea: primero los imperios (más cerca de la línea) y, por debajo, las etapas de Egipto
   const esImperio = e => /^Imperio /.test(e.t) && !/Egipto/.test(e.t);
   const abajo = libres.filter(e => e.añoDesde > -10000 && !e.conImperios);
