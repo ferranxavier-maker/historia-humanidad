@@ -507,7 +507,7 @@ const EDADES = [
 EDADES.forEach((e, i) => { e.id = 2000 + i; e.sub = "Edad de la historia"; });
 
 // Las edades: franja de rotulador muy ancha, por debajo del último carril de periodos
-const ALTO_EDADES = 96;            // cuatro veces la franja de las eras geológicas (24)
+const ALTO_EDADES = 72;            // tres veces la franja de las eras geológicas (24)
 // Especies humanas (y la prehistoria): van apiladas justo encima de la franja de las edades
 const esEspecie = e => e.desde && e.añoDesde <= -10000 && e.añoDesde > -50e6;
 function yEdades(yL){
@@ -527,9 +527,9 @@ function dibujarEdades(yL){
     if (x2 < 0 || x1 > W) continue;
     if (x2 - x1 < 2) x2 = x1 + 2;
     const r = aleatorio(e.id);
-    // Cuatro pasadas de rotulador que se pisan
+    // Tres pasadas de rotulador que se pisan
     ctx.save(); ctx.globalCompositeOperation = "multiply"; ctx.strokeStyle = `rgba(${e.c}, .45)`; ctx.lineCap = "butt";
-    for (const dy of [-36, -12, 12, 36]){
+    for (const dy of [-24, 0, 24]){
       ctx.lineWidth = 24 + r() * 1.5;
       ctx.beginPath(); ctx.moveTo(x1, yc + dy + (r() - .5) * 3);
       ctx.quadraticCurveTo((x1 + x2) / 2, yc + dy + (r() - .5) * 4, x2, yc + dy + (r() - .5) * 3);
@@ -544,9 +544,9 @@ function dibujarEdades(yL){
     for (const tam of [30, 24, 18]){
       ctx.font = `${tam}px ${MARCADOR}`;
       if (ctx.measureText(nombre).width + 16 < v2 - v1){
-        ctx.fillText(nombre, cx, yc - 10);
+        ctx.fillText(nombre, cx, yc - 9);
         ctx.font = `600 20px ${FUENTE}`; ctx.fillStyle = "#444";
-        if (ctx.measureText(e.txt).width + 16 < v2 - v1) ctx.fillText(e.txt, cx, yc + 22);
+        if (ctx.measureText(e.txt).width + 16 < v2 - v1) ctx.fillText(e.txt, cx, yc + 18);
         break;
       }
     }
