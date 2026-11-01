@@ -4318,6 +4318,11 @@ function visiblePorPeso(e, span, T = umbralHistoria(e)){
 const ESC_MIN = .1;                 // al salir, los dibujos miden 1/10 de lo normal…
 const PASOS_CRECER = 3;             // …y crecen hasta su tamaño en estos pasos de rueda (prehistoria)
 const esHistoria = e => e.año > -2559;          // después de la pirámide de Keops (c. 2560 a.C.)
+// Después de la pirámide, el tamaño depende solo de la escala: 1/10 con SPAN_TAMAÑO_NORMAL/ESC_MIN años en pantalla
+// (12.000) y tamaño normal con SPAN_TAMAÑO_NORMAL (1.200) o menos. Salen todos a la vez cuando empiezan a crecer.
+const SPAN_TAMAÑO_NORMAL = 1200;
+const escHistoria = span => Math.max(ESC_MIN, Math.min(1, SPAN_TAMAÑO_NORMAL / span));
+const PASO_HISTORIA = Math.ceil(Math.log(ZOOM_BASE_AÑOS / (SPAN_TAMAÑO_NORMAL / ESC_MIN)) / Math.log(PASO_RUEDA) + .5);
 // Lo que ocupa solo el dibujo (sin el año) a la izquierda y a la derecha de su fecha, en px
 function dibujoLR(e){
   if (e.icono === "piramide") return [65, 63];
@@ -4377,7 +4382,7 @@ function pasosDinamicos(lista){
     pasos.set(e, n); usados.add(n); ultP = n;
   }
   // Después de la pirámide: todo sale a la vez, en el paso siguiente al último de los anteriores
-  for (const e of prio) if (esHistoria(e)) pasos.set(e, ultP + 1);
+  for (const e of prio) if (esHistoria(e)) pasos.set(e, Math.max(ultP + 1, PASO_HISTORIA));
   return pasos;
 }
 function dibujarEventos(yL){
@@ -4546,11 +4551,10 @@ function dibujarEventos(yL){
     }
     // Fila de hitos e inventos.
     // Prehistoria: cada dibujo sale a 1/10 de su tamaño y crece hasta el normal en unos pasos de rueda.
-    // Después de la pirámide: todos salen a la vez a 1/10 y crecen juntos hasta el normal en PASOS_CRECER pasos,
+    // Después de la pirámide: todos salen a la vez a 1/10 y crecen juntos según la escala (escHistoria),
     // aunque se solapen. El año sale a tamaño normal y si cabe.
     if (dinamica){
-      const pasoH = Math.min(...cadena.filter(c => dinamica.has(c.e) && esHistoria(c.e)).map(c => pasoCadena.get(c.e)));
-      const escH = ESC_MIN + (1 - ESC_MIN) * Math.min(1, Math.max(0, (pasoActual + .5 - pasoH) / PASOS_CRECER));
+      const escH = escHistoria(W / ppa);
       const visH = cadena.filter(c => dinamica.has(c.e) && esHistoria(c.e) && pasoActual + .5 >= pasoCadena.get(c.e)).sort((p, q) => p.e.año - q.e.año);
       for (const c of visH) c.sinAño = escH < 1;
       for (let i = 1; i < visH.length; i++){
