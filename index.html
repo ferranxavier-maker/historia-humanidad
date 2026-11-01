@@ -606,15 +606,6 @@ function aplicarFilas(){
 aplicarFilas();
 
 const EVENTOS = [
-  { desde: "-2400000", f: "-1400000", fila: "periodos", t: "Homo habilis", fechas: "hace c. 2,4 – 1,4 millones de años",
-    color: "rgba(200, 120, 60, .42)",
-    resumen: "Una de las primeras especies de nuestro género, Homo, que vivió en África oriental y meridional entre hace unos 2,4 y 1,4 millones de años (fechas aproximadas). Su nombre significa «hombre hábil», porque se la asoció a las herramientas de piedra más antiguas. Era pequeña, de algo más de un metro, pero con un cerebro mayor que el de los Australopithecus.",
-    detalle: [
-      { h: "El hombre hábil", p: "En 1964, Louis Leakey, Phillip Tobias y John Napier describieron Homo habilis a partir de fósiles de la garganta de Olduvai (Tanzania), hallados junto a herramientas de piedra muy sencillas: cantos tallados para conseguir un filo cortante, la llamada tecnología olduvayense. Por eso le pusieron «hábil»." },
-      { h: "Entre dos mundos", p: "Tenía un cerebro de unos 550 a 690 centímetros cúbicos, algo mayor que el de los Australopithecus, pero conservaba brazos largos y rasgos de trepador. Por eso hay especialistas que creen que debería clasificarse como Australopithecus y no como Homo: es una de las especies más discutidas." },
-      { h: "No eran los primeros en tallar", p: "Hoy se sabe que la fabricación de herramientas es más antigua que Homo habilis: en Lomekwi (Kenia) hay útiles de piedra de unos 3,3 millones de años, probablemente obra de algún Australopithecus o pariente. Además, el fósil de Homo más antiguo, una mandíbula de Ledi-Geraru (Etiopía), tiene unos 2,8 millones de años." },
-      { h: "Convivencias", p: "Homo habilis compartió el este de África con Homo erectus (o ergaster) y con los Paranthropus, unos parientes de mandíbulas enormes. Durante varios cientos de miles de años, al menos tres tipos de homínidos vivieron en la misma región." }
-    ] },
   { desde: "-1200000", f: "-800000", fila: "periodos", t: "Homo antecessor", fechas: "hace c. 1,2 millones – 800.000 años",
     color: "rgba(220, 60, 90, .40)",
     resumen: "Especie humana descubierta en la Sierra de Atapuerca (Burgos), con fósiles de hace unos 850.000 años en la cueva de la Gran Dolina; en la Sima del Elefante hay restos humanos de hace cerca de 1,2 millones de años, aunque su especie se discute. Son algunos de los humanos más antiguos de Europa occidental.",
@@ -623,23 +614,6 @@ const EVENTOS = [
       { h: "Una cara moderna", p: "Lo más sorprendente es que el chico de la Gran Dolina tiene una cara de rasgos muy parecidos a los nuestros, con el hueso bajo los pómulos hundido, a pesar de su antigüedad. Un estudio de proteínas de su esmalte dental, publicado en 2020, indica que era un pariente cercano del linaje común de neandertales, denisovanos y sapiens, aunque no su antepasado directo." },
       { h: "Canibalismo", p: "Muchos de los huesos humanos de la Gran Dolina tienen marcas de corte iguales a las de los animales que cazaban: es una de las pruebas más antiguas de canibalismo, probablemente como fuente de alimento." },
       { h: "Atapuerca", p: "La Sierra de Atapuerca es uno de los yacimientos más importantes del mundo para la evolución humana y fue declarada Patrimonio de la Humanidad en 2000. Además de la Gran Dolina, incluye la Sima del Elefante, con una mandíbula de hace cerca de 1,2 millones de años, y la Sima de los Huesos, con restos de casi 30 individuos de hace unos 430.000 años." }
-    ] },
-  { desde: "-700000", f: "-200000", fila: "periodos", t: "Homo heidelbergensis", fechas: "hace c. 700.000 – 200.000 años",
-    color: "rgba(100, 140, 120, .45)",
-    resumen: "Especie humana que vivió en África y Europa, y quizá en Asia, entre hace unos 700.000 y 200.000 años (fechas aproximadas). De cuerpo robusto y cerebro ya grande, se la ha considerado a menudo el antepasado común de los neandertales y de Homo sapiens, aunque su clasificación se discute mucho.",
-    detalle: [
-      { h: "La mandíbula de Mauer", p: "La especie se definió en 1908 a partir de una mandíbula encontrada en un arenero de Mauer, cerca de Heidelberg (Alemania), de unos 600.000 años. Otros fósiles atribuidos a ella son el cráneo de Kabwe (Zambia), conocido como el Hombre de Broken Hill, o restos de Arago (Francia)." },
-      { h: "Cazadores de grandes animales", p: "Fabricaban hachas de mano y otras herramientas achelenses, cazaban grandes animales y probablemente controlaban el fuego. En Schöningen (Alemania) se encontraron lanzas de madera muy bien hechas de unos 300.000 años, junto a restos de caballos." },
-      { h: "¿Antepasado de quién?", p: "Durante años se pensó que una parte de heidelbergensis evolucionó en Europa hacia los neandertales y otra en África hacia Homo sapiens. Pero los fósiles de la Sima de los Huesos de Atapuerca, de hace unos 430.000 años, resultaron ser ya del linaje neandertal, lo que complica el cuadro. Algunos investigadores proponen nombres nuevos, como Homo bodoensis, para los fósiles africanos." }
-    ] },
-  { desde: "-200000", f: "-50000", fila: "periodos", t: "Denisovanos", fechas: "hace c. 200.000 – 50.000 años (fechas muy inciertas)",
-    color: "rgba(90, 90, 200, .40)",
-    resumen: "Especie humana hermana de los neandertales, conocida sobre todo por su ADN. Se identificó en 2010 a partir del hueso de un dedo de la cueva de Denisova, en Siberia. Vivieron en Asia y se cruzaron con Homo sapiens: muchas poblaciones actuales de Oceanía y del sudeste asiático conservan parte de su ADN.",
-    detalle: [
-      { h: "Una especie descubierta por su ADN", p: "En 2010, el equipo de Svante Pääbo analizó el ADN de un pequeño hueso de un dedo de una niña, hallado en la cueva de Denisova (montes Altái, Siberia). No era ni sapiens ni neandertal: era un grupo humano desconocido. Es la primera vez que se identificaba una población humana solo por su genética." },
-      { h: "Muy pocos fósiles", p: "Durante años solo se conocían unos pocos dientes y fragmentos. En 2019 se identificó como denisovana una mandíbula de Xiahe, en la meseta tibetana, de unos 160.000 años, y en 2025 se atribuyó a esta especie, por sus proteínas, el cráneo de Harbin (China), de al menos 146.000 años, lo que por fin permite hacerse una idea de su aspecto." },
-      { h: "Una niña de dos especies", p: "En 2018 se publicó el ADN de Denny, un fragmento de hueso de Denisova de una chica de unos 13 años que vivió hace unos 90.000 años: su madre era neandertal y su padre, denisovano. Es la prueba directa de que estas especies se cruzaban entre sí." },
-      { h: "Su herencia en nosotros", p: "Los habitantes de Papúa Nueva Guinea y de los aborígenes australianos tienen hasta un 4-6 % de ADN denisovano, y también lo hay en otras poblaciones de Asia. Un ejemplo famoso: una variante de un gen que ayuda a los tibetanos a vivir a gran altitud procede de los denisovanos." }
     ] },
   { desde: "-100000", f: "-50000", fila: "periodos", t: "Homo floresiensis", fechas: "hace c. 100.000 – 50.000 años",
     color: "rgba(240, 120, 180, .45)",
@@ -717,7 +691,7 @@ const EVENTOS = [
       { h: "¿Erectus o ergaster?", p: "Muchos especialistas llaman Homo ergaster a los ejemplares africanos más antiguos y reservan Homo erectus para los de Asia; otros los consideran la misma especie con variaciones. Es un debate abierto, como la relación exacta de erectus con especies posteriores, como Homo antecessor (Atapuerca) o Homo heidelbergensis." },
       { h: "Los últimos", p: "Los últimos Homo erectus que se conocen vivieron en Ngandong, en la isla de Java, hace entre unos 117.000 y 108.000 años. Para entonces ya existían los neandertales en Europa y Homo sapiens en África: durante un tiempo, varias especies humanas compartieron el planeta." }
     ] },
-  { desde: "-298000", f: "-20000", desvanece: "-10000", carril: 3, fila: "periodos", t: "Homo sapiens",
+  { desde: "-298000", f: "-20000", desvanece: "-10000", carril: 2, fila: "periodos", t: "Homo sapiens",
     fechas: "hace c. 300.000 años – hoy (y sigue)", color: "rgba(230, 80, 150, .40)",
     resumen: "Nuestra especie. Los fósiles más antiguos que se conocen, hallados en Jebel Irhoud (Marruecos), tienen unos 300.000 años. Nacimos en África, desde allí nos extendimos por todo el planeta y somos la única especie humana que queda. A veces se nos llama Homo sapiens sapiens, un nombre que hoy se usa menos.",
     detalle: [
