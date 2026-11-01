@@ -4438,9 +4438,13 @@ function dibujarEventos(yL){
   const sinTexto = new Set();
   for (const it of items){
     if (!it.cabe || !it.e._wTexto) continue;
-    const vec = items.filter(o => o !== it && o.cabe && o.yF === it.yF).map(o => ({ x: o.x, w: o.e._wTexto || o.w }));
+    const vec = items.filter(o => o !== it && o.cabe && o.yF === it.yF).map(o => o.e.icono === "piramide" ? { x: o.x, w: o.w, izq: 65 } : { x: o.x, w: o.e._wTexto || o.w });
     if (it.e.fila === "hitos") vec.push(...tierrasDibujadas);   // las Tierras van a la misma altura
-    if (vec.some(o => Math.abs(o.x - it.x) < it.e._wTexto / 2 + o.w / 2 + 6)) sinTexto.add(it);
+    if (it.e.icono === "papiro" && it.e.fila === "inventos"){   // su texto va a la derecha del dibujo
+      const a = it.x - 22, b = it.x + 28 + it.e._wTexto;
+      if (vec.some(o => o.x - (o.izq ?? o.w / 2) < b + 6 && o.x + o.w / 2 > a - 6)) sinTexto.add(it);
+    }
+    else if (vec.some(o => Math.abs(o.x - it.x) < it.e._wTexto / 2 + o.w / 2 + 6)) sinTexto.add(it);
   }
   for (const it of items){
     ctx.globalAlpha = visib(it.e);
@@ -4484,7 +4488,7 @@ function dibujarEventos(yL){
       // Los de la fila de arriba (las extinciones) suben 50 px para que su texto no pise la fila de los animales
       const subeTD = it.e.fila === "personas" && TEXTO_DEBAJO.includes(it.e.icono) && it.e.icono !== "papiro" ? 50 : 0;
       if (it.e.icono === "calavera") calavera(it.x, it.yF - 18 - subeTD, it.e.id);
-      if (it.e.icono === "papiro")   papiro(it.x, it.yF - 18 - subeTD);
+      if (it.e.icono === "papiro")   papiro(it.x, it.e.fila === "inventos" ? it.yF + 40 : it.yF - 18 - subeTD);   // en la fila de inventos, a la altura de la pirámide
       if (it.e.icono === "asteroide") asteroide(it.x, it.yF - 18 - subeTD, it.e.id);
       if (it.e.icono === "tierraHoy") tierraHoy(it.x, it.yF - 14 - subeTD, it.e.id);
       if (it.e.icono === "trilobites") trilobites(it.x, it.yF - 18 - subeTD);
@@ -4510,6 +4514,15 @@ function dibujarEventos(yL){
         if (sinTexto.has(it)){ ctx.restore(); ctx.textAlign = "left"; continue; }
         const L = lineasCalavera(it.e); let y = it.yF + 8 - (it.e.fila === "personas" && it.e.icono !== "papiro" ? 50 : 0);
         ctx.textAlign = "center"; ctx.textBaseline = "top";
+        if (it.e.icono === "papiro" && it.e.fila === "inventos"){   // papiro en la fila de inventos: texto a su derecha, como la pirámide
+          let yt = it.yF + 40 - 17 * (L.tit.length + L.fec.length) / 2;
+          ctx.textAlign = "left";
+          ctx.fillStyle = TINTA; ctx.font = `15px ${MARCADOR}`;
+          for (const t of L.tit){ ctx.fillText(t, it.x + 28, yt); yt += 17; }
+          ctx.fillStyle = "#555"; ctx.font = `600 15px ${FUENTE}`;
+          for (const t of L.fec){ ctx.fillText(t, it.x + 28, yt); yt += 17; }
+          ctx.restore(); ctx.textAlign = "left"; continue;
+        }
         ctx.fillStyle = TINTA; ctx.font = `15px ${MARCADOR}`;
         for (const t of L.tit){ ctx.fillText(t, it.x, y); y += 17; }
         ctx.fillStyle = "#555"; ctx.font = `600 15px ${FUENTE}`;
