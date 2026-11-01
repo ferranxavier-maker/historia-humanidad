@@ -4359,6 +4359,9 @@ function pasosDinamicos(lista){
     const historia = esHistoria(e);
     if (historia) continue;                       // se ponen al final: todos justo después de la pirámide
     let n = ultP + 1;
+    // Rueda, escritura y pirámide: cada una en el paso siguiente a la anterior, sin esperar a caber
+    // (salen pequeñas y crecen; si se tocan un rato, se tocan)
+    if (e.año >= -5000 && [...pasos.keys()].some(o => o.año >= -5000)){ pasos.set(e, n); usados.add(n); ultP = n; continue; }
     for (; n < 400; n++){
       if (usados.has(n)) continue;
       let ok = true;
@@ -4565,6 +4568,12 @@ function dibujarEventos(yL){
           c.esc = ESC_MIN + (1 - ESC_MIN) * g;
           c.sinAño = c.esc < 1;
         }
+      }
+      // Del arado en adelante: el año solo se pone si no pisa al siguiente
+      const vis = cadena.filter(c => dinamica.has(c.e) && c.e.año >= -5000 && pasoActual + .5 >= pasoCadena.get(c.e)).sort((p, q) => p.e.año - q.e.año);
+      for (let i = 0; i < vis.length - 1; i++){
+        const a = vis[i], b = vis[i + 1], lb = dibujoLR(b.e) || [0, 0];
+        if (b.x - lb[0] * (b.esc || 1) < a.cx + a.w + 6) a.sinAño = true;
       }
     }
     let cadenaRota = false;
